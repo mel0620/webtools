@@ -22,7 +22,7 @@ function dismissLoader () {
 requestAnimationFrame(() => requestAnimationFrame(dismissLoader))
 
 // Handle back-forward cache restores (iOS Safari, Chrome bfcache):
-// the page is shown from snapshot — JS doesn't re-run, but pageshow fires.
+// the page is shown from snapshot. JS doesn't re-run, but pageshow fires.
 window.addEventListener('pageshow', e => {
   if (e.persisted) dismissLoader()
 })

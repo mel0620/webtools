@@ -425,7 +425,7 @@
 
       setModelProgress(100, 'Model ready', 100);
       modelReadyBadge.classList.remove('hidden');
-      modelStatusText.textContent = 'Model cached — subsequent runs will be faster.';
+      modelStatusText.textContent = 'Model cached. Subsequent runs will be faster.';
 
       results = queue.filter(q => q.status === 'done').map(q => ({
         name: q.file.name.replace(/\.[^.]+$/, '') + '-nobg.png',

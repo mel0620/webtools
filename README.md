@@ -7,8 +7,8 @@ Live site: [wb2ls.netlify.app](https://wb2ls.netlify.app/)
 ## Features
 
 - 38+ tools across Image, Design, Text, Web, and AI categories
-- 100% client-side processing — no server, no uploads
-- Progressive Web App (PWA) — installable and works offline
+- 100% client-side processing, no server, no uploads
+- Progressive Web App (PWA), installable and works offline
 - Dark-themed responsive UI built with Tailwind CSS
 
 ## Tool Categories
@@ -125,7 +125,7 @@ netlify deploy --prod
 
 ## Adding a New Tool
 
-1. Create `tools/your-tool-name.html` — copy any existing tool as a template.
+1. Create `tools/your-tool-name.html` - copy any existing tool as a template.
 2. Include `/src/css/main.css` and `<script type="module" src="/src/js/tool-page.js">` for the shared shell.
 3. Register the entry point in `vite.config.js` under `rollupOptions.input`.
 4. Add a card to the `#tools-grid` in `index.html` with the correct `data-cat` attribute.

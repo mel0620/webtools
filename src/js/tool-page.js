@@ -13,7 +13,7 @@ import { renderFooter } from './components/footer.js'
 // and the inline flex styles below always win.
 document.body.removeAttribute('class')
 
-// Inline styles override every class-based rule — ensures identical appearance
+// Inline styles override every class-based rule, ensures identical appearance
 // across all tool pages regardless of any residual markup differences.
 Object.assign(document.body.style, {
   background:      '#0f0f0f',
