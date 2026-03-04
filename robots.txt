@@ -4,4 +4,4 @@ Allow: /
 # Block admin / private paths (add as needed)
 # Disallow: /admin/
 
-Sitemap: https://webtools.pro/sitemap.xml
+Sitemap: https://wb2ls.netlify.app/sitemap.xml

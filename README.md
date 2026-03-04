@@ -2,7 +2,7 @@
 
 A collection of free, privacy-first web developer tools that run entirely in the browser. No data is ever uploaded to a server.
 
-Live site: [webtools.pro](https://webtools.pro)
+Live site: [wb2ls.netlify.app](https://wb2ls.netlify.app/)
 
 ## Features
 
