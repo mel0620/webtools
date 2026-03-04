@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Base Converter – WebTools</title>
+  <meta name="description" content="Convert numbers between binary, octal, decimal, and hexadecimal in real-time." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/number-base-converter.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/number-base-converter.html" />
+  <meta property="og:title" content="Number Base Converter – WebTools" />
+  <meta property="og:description" content="Convert numbers between binary, octal, decimal, and hexadecimal in real-time." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Number Base Converter – WebTools" />
+  <meta name="twitter:description" content="Convert numbers between binary, octal, decimal, and hexadecimal in real-time." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+<body>
+  <main class="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+    <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0" aria-hidden="true">
+          <i class="fa-solid fa-hashtag text-black text-lg"></i>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">Number Base Converter</h1>
+      </div>
+      <p class="text-neutral-400 text-sm mb-8 ml-[52px]">Type in any field <i class="fa-solid fa-circle text-[5px] align-middle mx-1.5 opacity-40"></i> all others update instantly</p>
+
+      <!-- Inputs -->
+      <div class="space-y-4" id="converterForm">
+
+        <!-- Decimal -->
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <label for="decInput" class="text-xs font-semibold uppercase tracking-widest text-[#29C79F]">
+              Decimal <span class="text-neutral-500 font-mono normal-case tracking-normal">base 10</span>
+            </label>
+            <button type="button" data-copy="decInput" class="copy-btn text-neutral-500 hover:text-[#29C79F] text-xs transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i>Copy
+            </button>
+          </div>
+          <input type="text" id="decInput" placeholder="255"
+            class="w-full bg-transparent font-mono text-xl text-white focus:outline-none placeholder-neutral-600"
+            inputmode="numeric" spellcheck="false" autocomplete="off" aria-label="Decimal value">
+        </div>
+
+        <!-- Hex -->
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <label for="hexInput" class="text-xs font-semibold uppercase tracking-widest text-[#29C79F]">
+              Hexadecimal <span class="text-neutral-500 font-mono normal-case tracking-normal">base 16</span>
+            </label>
+            <button type="button" data-copy="hexInput" class="copy-btn text-neutral-500 hover:text-[#29C79F] text-xs transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i>Copy
+            </button>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-neutral-500 font-mono text-sm mr-1">0x</span>
+            <input type="text" id="hexInput" placeholder="FF"
+              class="w-full bg-transparent font-mono text-xl text-white focus:outline-none placeholder-neutral-600 uppercase"
+              spellcheck="false" autocomplete="off" aria-label="Hexadecimal value">
+          </div>
+        </div>
+
+        <!-- Binary -->
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <label for="binInput" class="text-xs font-semibold uppercase tracking-widest text-[#29C79F]">
+              Binary <span class="text-neutral-500 font-mono normal-case tracking-normal">base 2</span>
+            </label>
+            <button type="button" data-copy="binInput" class="copy-btn text-neutral-500 hover:text-[#29C79F] text-xs transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i>Copy
+            </button>
+          </div>
+          <input type="text" id="binInput" placeholder="11111111"
+            class="w-full bg-transparent font-mono text-lg text-white focus:outline-none placeholder-neutral-600 break-all"
+            inputmode="numeric" spellcheck="false" autocomplete="off" aria-label="Binary value">
+        </div>
+
+        <!-- Octal -->
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <label for="octInput" class="text-xs font-semibold uppercase tracking-widest text-[#29C79F]">
+              Octal <span class="text-neutral-500 font-mono normal-case tracking-normal">base 8</span>
+            </label>
+            <button type="button" data-copy="octInput" class="copy-btn text-neutral-500 hover:text-[#29C79F] text-xs transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i>Copy
+            </button>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-neutral-500 font-mono text-sm mr-1">0o</span>
+            <input type="text" id="octInput" placeholder="377"
+              class="w-full bg-transparent font-mono text-xl text-white focus:outline-none placeholder-neutral-600"
+              inputmode="numeric" spellcheck="false" autocomplete="off" aria-label="Octal value">
+          </div>
+        </div>
+      </div>
+
+      <!-- Info bar -->
+      <div id="infoBar" class="mt-6 grid grid-cols-3 gap-3 hidden">
+        <div class="bg-neutral-900 rounded-lg p-3 text-center border border-neutral-700">
+          <div class="text-xs text-neutral-500 mb-1">Decimal</div>
+          <div id="infoDecimal" class="font-mono text-sm text-white font-semibold"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div>
+        </div>
+        <div class="bg-neutral-900 rounded-lg p-3 text-center border border-neutral-700">
+          <div class="text-xs text-neutral-500 mb-1">Bits</div>
+          <div id="infoBits" class="font-mono text-sm text-white font-semibold"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div>
+        </div>
+        <div class="bg-neutral-900 rounded-lg p-3 text-center border border-neutral-700">
+          <div class="text-xs text-neutral-500 mb-1">Bytes</div>
+          <div id="infoBytes" class="font-mono text-sm text-white font-semibold"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <p id="errorMsg" class="mt-4 text-xs text-red-400 text-center hidden"></p>
+
+      <!-- Clear -->
+      <button id="clearBtn" type="button"
+        class="mt-6 w-full py-2.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-white font-medium rounded-xl transition-all text-sm border border-neutral-600">
+        <i class="fa-solid fa-xmark mr-2"></i>Clear All
+      </button>
+    </div>
+  </main>
+
+  <script type="module">
+    import { copyToClipboard } from '../src/js/utils/clipboard.js';
+
+    const decInput = document.getElementById('decInput');
+    const hexInput = document.getElementById('hexInput');
+    const binInput = document.getElementById('binInput');
+    const octInput = document.getElementById('octInput');
+    const infoBar  = document.getElementById('infoBar');
+    const infoDecimal = document.getElementById('infoDecimal');
+    const infoBits    = document.getElementById('infoBits');
+    const infoBytes   = document.getElementById('infoBytes');
+    const errorMsg    = document.getElementById('errorMsg');
+    const clearBtn    = document.getElementById('clearBtn');
+
+    let updating = false;
+
+    function setError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.toggle('hidden', !msg);
+    }
+
+    function updateFrom(value, fromBase) {
+      if (updating) return;
+      setError('');
+      const clean = value.trim();
+      if (!clean) { clearAll(false); return; }
+
+      let n;
+      if (fromBase === 10) {
+        n = parseInt(clean, 10);
+        if (isNaN(n) || !/^-?\d+$/.test(clean)) { setError('Invalid decimal number'); return; }
+      } else if (fromBase === 16) {
+        n = parseInt(clean, 16);
+        if (isNaN(n) || !/^[0-9a-fA-F]+$/.test(clean)) { setError('Invalid hexadecimal value'); return; }
+      } else if (fromBase === 2) {
+        n = parseInt(clean, 2);
+        if (isNaN(n) || !/^[01]+$/.test(clean)) { setError('Invalid binary value'); return; }
+      } else if (fromBase === 8) {
+        n = parseInt(clean, 8);
+        if (isNaN(n) || !/^[0-7]+$/.test(clean)) { setError('Invalid octal value'); return; }
+      }
+
+      updating = true;
+      if (fromBase !== 10) decInput.value = n.toString(10);
+      if (fromBase !== 16) hexInput.value = n.toString(16).toUpperCase();
+      if (fromBase !== 2)  binInput.value = n.toString(2);
+      if (fromBase !== 8)  octInput.value = n.toString(8);
+      updating = false;
+
+      // Info bar
+      const bin = n.toString(2).replace('-', '');
+      infoDecimal.textContent = n.toLocaleString();
+      infoBits.textContent    = bin.length;
+      infoBytes.textContent   = Math.ceil(bin.length / 8);
+      infoBar.classList.remove('hidden');
+    }
+
+    function clearAll(clearInputs = true) {
+      if (clearInputs) {
+        decInput.value = '';
+        hexInput.value = '';
+        binInput.value = '';
+        octInput.value = '';
+      }
+      infoBar.classList.add('hidden');
+      setError('');
+    }
+
+    decInput.addEventListener('input', e => updateFrom(e.target.value, 10));
+    hexInput.addEventListener('input', e => updateFrom(e.target.value, 16));
+    binInput.addEventListener('input', e => updateFrom(e.target.value, 2));
+    octInput.addEventListener('input', e => updateFrom(e.target.value, 8));
+    clearBtn.addEventListener('click', () => clearAll(true));
+
+    // Force uppercase on hex
+    hexInput.addEventListener('input', () => {
+      const pos = hexInput.selectionStart;
+      hexInput.value = hexInput.value.toUpperCase();
+      hexInput.setSelectionRange(pos, pos);
+    });
+
+    // Copy buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const el = document.getElementById(btn.dataset.copy);
+        if (el && el.value) await copyToClipboard(el.value, btn);
+      });
+    });
+  </script>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

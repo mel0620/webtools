@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/" />
+
+  <title>WebTools – Free Developer &amp; Creator Tools</title>
+  <meta name="description" content="30+ free, privacy-first browser-based tools for developers and creators. No installs, no accounts, no data collection. Just open and use." />
+  <meta name="keywords" content="free web tools, developer tools online, image compressor, color picker, JSON formatter, QR code generator, PDF tools, CSS generator, password generator, browser tools" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/" />
+  <meta property="og:title" content="WebTools – Free Developer &amp; Creator Tools" />
+  <meta property="og:description" content="30+ free, privacy-first browser-based tools for developers and creators. No installs, no accounts, no data collection." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="WebTools – Free Developer &amp; Creator Tools" />
+  <meta name="twitter:description" content="30+ free, privacy-first browser-based tools for developers and creators. No installs, no accounts, no data collection." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="WebTools" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <!-- Resource hints -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+
+  <!-- Font Awesome 6 Free -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Vite / Tailwind entry -->
+  <script type="module" src="/src/js/main.js"></script>
+
+  <!-- Loader + layout-shift prevention: runs before any paint -->
+  <style>
+    /* Reserve exact navbar height so content never shifts */
+    #app-navbar {
+      min-height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    /* Full-page loader overlay */
+    #page-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0f0f0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    #page-loader.done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loader-ring {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(41,199,159,0.15);
+      border-top-color: #29C79F;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "WebTools",
+    "description": "Free, privacy-first browser-based tools for developers and creators.",
+    "url": "https://webtools.pro/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://webtools.pro/?search={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+
+<body class="flex flex-col min-h-dvh bg-[#0f0f0f] text-[#f4f4f5] font-sans antialiased">
+
+  <!-- ─── Page loader (removed by main.js after content is ready) ─── -->
+  <div id="page-loader" aria-hidden="true"><div class="loader-ring"></div></div>
+
+  <!-- ─── Navbar (injected by main.js) ─── -->
+  <div id="app-navbar"></div>
+
+  <!-- ─── Hero ─── -->
+  <header class="relative overflow-hidden pt-20 pb-14 px-4 sm:px-6 lg:px-8 text-center">
+    <!-- Background glow -->
+    <div class="pointer-events-none absolute inset-0 -z-10 flex items-start justify-center" aria-hidden="true">
+      <div class="w-[600px] h-[400px] rounded-full opacity-10 blur-[120px]"
+           style="background:radial-gradient(circle, #29C79F 0%, transparent 70%)"></div>
+    </div>
+
+    <!-- PWA install button (hidden until prompt fires) -->
+    <div class="flex justify-center mb-6">
+      <button id="pwa-install-btn"
+              class="hidden items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border transition-all duration-200
+                     text-brand border-brand/30 bg-brand/5 hover:bg-brand/10"
+              aria-label="Install WebTools as an app">
+        <i class="fa-solid fa-download"></i>
+        Install App
+      </button>
+    </div>
+
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-6
+                bg-brand/10 text-brand border border-brand/20">
+      <i class="fa-solid fa-circle-check text-[10px]"></i>
+      100% client-side • no data leaves your browser
+    </div>
+
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1] mb-5">
+      Free <span class="text-brand">Web Tools</span><br class="hidden sm:block" />
+      for Developers &amp; Creators
+    </h1>
+    <p class="max-w-xl mx-auto text-zinc-400 text-base sm:text-lg leading-relaxed mb-10">
+      <span id="tool-count-text">22</span> browser-based utilities. No installs, no accounts,
+      no data collection. Just open and use.
+    </p>
+
+    <!-- Stats row -->
+    <dl class="flex flex-wrap justify-center gap-x-10 gap-y-4 text-center mb-10">
+      <div>
+        <dt class="text-2xl font-bold text-white" id="tool-count-stat">22</dt>
+        <dd class="text-xs text-zinc-500 mt-0.5">Tools</dd>
+      </div>
+      <div class="w-px bg-zinc-800 self-stretch hidden sm:block" aria-hidden="true"></div>
+      <div>
+        <dt class="text-2xl font-bold text-white">0</dt>
+        <dd class="text-xs text-zinc-500 mt-0.5">Sign-ups needed</dd>
+      </div>
+      <div class="w-px bg-zinc-800 self-stretch hidden sm:block" aria-hidden="true"></div>
+      <div>
+        <dt class="text-2xl font-bold text-white">∞</dt>
+        <dd class="text-xs text-zinc-500 mt-0.5">Free forever</dd>
+      </div>
+    </dl>
+
+    <!-- Search -->
+    <div class="max-w-md mx-auto relative">
+      <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none" aria-hidden="true">
+        <i class="fa-solid fa-magnifying-glass text-zinc-500 text-sm"></i>
+      </div>
+      <input id="tool-search"
+             type="search"
+             placeholder="Search tools…"
+             autocomplete="off"
+             class="w-full pl-11 pr-4 py-3 rounded-2xl text-sm text-white bg-zinc-900
+                    border border-zinc-800 focus:outline-none focus:border-brand
+                    focus:ring-2 focus:ring-brand/20 transition-all placeholder:text-zinc-600"
+             aria-label="Search tools" />
+    </div>
+  </header>
+
+  <!-- ─── Tools section ─── -->
+  <main id="tools" class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-20">
+
+    <!-- Category filter -->
+    <nav class="flex flex-wrap gap-2 mb-8 justify-center sm:justify-start"
+         role="navigation" aria-label="Filter tools by category">
+      <button data-cat="all"    class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150 text-brand bg-brand/10 border-brand">All</button>
+      <button data-cat="image"  class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150 text-zinc-400 bg-transparent border-transparent hover:text-white hover:border-zinc-700">
+        <i class="fa-solid fa-image mr-1.5"></i>Image &amp; Media
+      </button>
+      <button data-cat="design" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150 text-zinc-400 bg-transparent border-transparent hover:text-white hover:border-zinc-700">
+        <i class="fa-solid fa-palette mr-1.5"></i>CSS &amp; Design
+      </button>
+      <button data-cat="text"   class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150 text-zinc-400 bg-transparent border-transparent hover:text-white hover:border-zinc-700">
+        <i class="fa-solid fa-font mr-1.5"></i>Text &amp; Code
+      </button>
+      <button data-cat="web"    class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150 text-zinc-400 bg-transparent border-transparent hover:text-white hover:border-zinc-700">
+        <i class="fa-solid fa-globe mr-1.5"></i>Web &amp; SEO
+      </button>
+      <button data-cat="ai"     class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150 text-zinc-400 bg-transparent border-transparent hover:text-white hover:border-zinc-700">
+        <i class="fa-solid fa-microchip mr-1.5"></i>AI Tools
+      </button>
+    </nav>
+
+    <!-- Tool grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+         id="tools-grid"
+         role="list"
+         aria-label="Available tools">
+
+      <!-- Aspect Ratio Calculator -->
+      <a href="/tools/aspect-ratio-calculator.html"
+         data-tool="aspect-ratio-calculator" data-cat="image" data-name="aspect ratio calculator dimensions video photo resize"
+         class="tool-card group" role="listitem" aria-label="Aspect Ratio Calculator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-maximize"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Aspect Ratio</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Equivalent sizes for any ratio</p>
+      </a>
+
+      <!-- Base Converter -->
+      <a href="/tools/number-base-converter.html"
+         data-tool="number-base-converter" data-cat="text" data-name="number base converter binary hex octal decimal"
+         class="tool-card group" role="listitem" aria-label="Number Base Converter">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-hashtag"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Base Converter</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Binary, octal, decimal, hex</p>
+      </a>
+
+      <!-- Box Shadow -->
+      <a href="/tools/box-shadow-generator.html"
+         data-tool="box-shadow-generator" data-cat="design" data-name="box shadow css generator multi layer visual"
+         class="tool-card group" role="listitem" aria-label="CSS Box Shadow Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-square-full"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Box Shadow</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Visual CSS box-shadow builder</p>
+      </a>
+
+      <!-- Breakpoint Tester -->
+      <a href="/tools/breakpoint-tester.html"
+         data-tool="breakpoint-tester" data-cat="web" data-name="breakpoint tester responsive viewport css"
+         class="tool-card group" role="listitem" aria-label="Breakpoint Tester">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-mobile-screen-button"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Breakpoint Tester</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Test responsive breakpoints live</p>
+      </a>
+
+      <!-- Case Converter -->
+      <a href="/tools/case-converter.html"
+         data-tool="case-converter" data-cat="text" data-name="case converter upper lower camel snake kebab"
+         class="tool-card group" role="listitem" aria-label="Case Converter">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-font"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Case Converter</h2>
+        <p class="text-xs text-zinc-500 leading-snug">camelCase, snake_case &amp; more</p>
+      </a>
+
+      <!-- Clip-Path Generator -->
+      <a href="/tools/clip-path-generator.html"
+         data-tool="clip-path-generator" data-cat="design" data-name="clip path css generator polygon shape visual"
+         class="tool-card group" role="listitem" aria-label="CSS Clip-Path Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-scissors"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Clip-Path Generator</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Visual CSS clip-path shape editor</p>
+      </a>
+
+      <!-- Color Palette Extractor -->
+      <a href="/tools/color-palette-extractor.html"
+         data-tool="color-palette-extractor" data-cat="design" data-name="color palette extractor dominant colors image swatch branding"
+         class="tool-card group" role="listitem" aria-label="Color Palette Extractor">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-eye-dropper"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Color Palette</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Extract colors from any image</p>
+      </a>
+
+      <!-- Color Picker -->
+      <a href="/tools/color-picker.html"
+         data-tool="color-picker" data-cat="design" data-name="color picker palette hex rgb hsl"
+         class="tool-card group" role="listitem" aria-label="Color Picker">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-palette"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Color Picker</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Pick &amp; convert HEX, RGB, HSL</p>
+      </a>
+
+      <!-- Contrast Checker -->
+      <a href="/tools/contrast-checker.html"
+         data-tool="contrast-checker" data-cat="design" data-name="contrast checker wcag accessibility color ratio"
+         class="tool-card group" role="listitem" aria-label="Contrast Checker">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-eye"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Contrast Checker</h2>
+        <p class="text-xs text-zinc-500 leading-snug">WCAG AA/AAA contrast ratios</p>
+      </a>
+
+      <!-- Compress PDF -->
+      <a href="/tools/compress-pdf.html"
+         data-tool="compress-pdf" data-cat="image" data-name="compress pdf reduce file size optimize"
+         class="tool-card group" role="listitem" aria-label="Compress PDF">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-file-zipper"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Compress PDF</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Reduce PDF file size in-browser</p>
+      </a>
+
+      <!-- Fancy Text Generator -->
+      <a href="/tools/fancy-text-generator.html"
+         data-tool="fancy-text-generator" data-cat="text" data-name="fancy text generator unicode bold italic script fraktur monospace"
+         class="tool-card group" role="listitem" aria-label="Fancy Text Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-wand-sparkles"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Fancy Text</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Unicode bold, italic, script &amp; more</p>
+      </a>
+
+      <!-- Gradient Generator -->
+      <a href="/tools/gradient-generator.html"
+         data-tool="gradient-generator" data-cat="design" data-name="css gradient generator linear radial conic"
+         class="tool-card group" role="listitem" aria-label="CSS Gradient Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Gradient Generator</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Create CSS linear &amp; radial gradients</p>
+      </a>
+
+      <!-- Icon Generator -->
+      <a href="/tools/icon-generator.html"
+         data-tool="icon-generator" data-cat="design" data-name="icon generator favicon app icon png"
+         class="tool-card group" role="listitem" aria-label="Icon Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-icons"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Icon Generator</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Generate app icons &amp; favicons</p>
+      </a>
+
+      <!-- JSON Formatter -->
+      <a href="/tools/json-formatter.html"
+         data-tool="json-formatter" data-cat="text" data-name="json formatter validator minify pretty print syntax highlight"
+         class="tool-card group" role="listitem" aria-label="JSON Formatter & Validator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-code"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">JSON Formatter</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Format, minify &amp; validate JSON</p>
+      </a>
+
+      <!-- Image Compressor -->
+      <a href="/tools/image-compressor.html"
+         data-tool="image-compressor" data-cat="image" data-name="image compressor compress images bulk"
+         class="tool-card group" role="listitem" aria-label="Image Compressor">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-compress"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Image Compressor</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Bulk-compress images client-side</p>
+      </a>
+
+      <!-- Image Converter -->
+      <a href="/tools/image-converter.html"
+         data-tool="image-converter" data-cat="image" data-name="image converter format webp png jpg avif"
+         class="tool-card group" role="listitem" aria-label="Image Converter">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-repeat"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Image Converter</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Convert between WebP, PNG, JPG…</p>
+      </a>
+
+      <!-- Image Resizer -->
+      <a href="/tools/image-resizer.html"
+         data-tool="image-resizer" data-cat="image" data-name="image resizer crop resize dimensions canvas"
+         class="tool-card group" role="listitem" aria-label="Image Resizer">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-crop-simple"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Image Resizer</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Resize &amp; crop to exact dimensions</p>
+      </a>
+
+      <!-- Images to PDF -->
+      <a href="/tools/images_to_pdf.html"
+         data-tool="images-to-pdf" data-cat="image" data-name="images to pdf convert combine"
+         class="tool-card group" role="listitem" aria-label="Images to PDF">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-file-pdf"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Images to PDF</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Combine images into a PDF file</p>
+      </a>
+
+      <!-- Image Watermark -->
+      <a href="/tools/image-watermark.html"
+         data-tool="image-watermark" data-cat="image" data-name="image watermark text logo stamp protect brand"
+         class="tool-card group" role="listitem" aria-label="Image Watermark">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-stamp"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Image Watermark</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Add text or logo watermarks</p>
+      </a>
+
+      <!-- Lorem Ipsum -->
+      <a href="/tools/lorem-ipsum.html"
+         data-tool="lorem-ipsum" data-cat="text" data-name="lorem ipsum placeholder dummy text generator"
+         class="tool-card group" role="listitem" aria-label="Lorem Ipsum Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-align-left"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Lorem Ipsum</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Generate placeholder text fast</p>
+      </a>
+
+      <!-- Markdown Preview -->
+      <a href="/tools/markdown-preview.html"
+         data-tool="markdown-preview" data-cat="text" data-name="markdown preview editor live render"
+         class="tool-card group" role="listitem" aria-label="Markdown Preview">
+        <div class="tool-icon-wrap"><i class="fa-brands fa-markdown"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Markdown Preview</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Live markdown editor &amp; preview</p>
+      </a>
+
+      <!-- Merge PDF -->
+      <a href="/tools/merge-pdf.html"
+         data-tool="merge-pdf" data-cat="image" data-name="merge pdf combine join files"
+         class="tool-card group" role="listitem" aria-label="Merge PDF">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-file-pdf"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Merge PDF</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Combine multiple PDFs into one</p>
+      </a>
+
+      <!-- Meta Tags -->
+      <a href="/tools/meta-tags.html"
+         data-tool="meta-tags" data-cat="web" data-name="meta tags seo og open graph twitter card"
+         class="tool-card group" role="listitem" aria-label="Meta Tags Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-tags"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Meta Tags</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Generate SEO &amp; OG meta tags</p>
+      </a>
+
+      <!-- Password Generator -->
+      <a href="/tools/password-generator.html"
+         data-tool="password-generator" data-cat="web" data-name="password generator secure random strength"
+         class="tool-card group" role="listitem" aria-label="Password Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-key"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Password Generator</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Generate strong, secure passwords</p>
+      </a>
+
+      <!-- PDF to JPG -->
+      <a href="/tools/pdf-to-jpg.html"
+         data-tool="pdf-to-jpg" data-cat="image" data-name="pdf to jpg convert pages images jpeg png"
+         class="tool-card group" role="listitem" aria-label="PDF to JPG">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-file-image"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">PDF to JPG</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Convert PDF pages to images</p>
+      </a>
+
+      <!-- QR Code Generator -->
+      <a href="/tools/qr-code-generator.html"
+         data-tool="qr-code-generator" data-cat="web" data-name="qr code generator create scan url"
+         class="tool-card group" role="listitem" aria-label="QR Code Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-qrcode"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">QR Code Generator</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Create custom QR codes instantly</p>
+      </a>
+
+      <!-- Readability Checker -->
+      <a href="/tools/readability-checker.html"
+         data-tool="readability-checker" data-cat="text" data-name="readability checker flesch kincaid gunning fog smog grade level writing"
+         class="tool-card group" role="listitem" aria-label="Readability Checker">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-book-open"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Readability</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Flesch, Fog &amp; SMOG scores</p>
+      </a>
+
+      <!-- Remove Background -->
+      <a href="/tools/remove-background.html"
+         data-tool="remove-background" data-cat="ai" data-name="remove background ai cutout transparent eraser photo"
+         class="tool-card group" role="listitem" aria-label="Remove Background">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-eraser"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Remove Background</h2>
+        <p class="text-xs text-zinc-500 leading-snug">AI background removal, in-browser</p>
+      </a>
+
+      <!-- Screen Resolution -->
+      <a href="/tools/screen-resolution.html"
+         data-tool="screen-resolution" data-cat="web" data-name="screen resolution display viewport size dpi"
+         class="tool-card group" role="listitem" aria-label="Screen Resolution Info">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-display"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Screen Resolution</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Check display &amp; viewport specs</p>
+      </a>
+
+      <!-- Social Image Resizer -->
+      <a href="/tools/social-image-resizer.html"
+         data-tool="social-image-resizer" data-cat="image" data-name="social image resizer instagram youtube twitter facebook thumbnail platform"
+         class="tool-card group" role="listitem" aria-label="Social Image Resizer">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-crop-simple"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Social Image Resizer</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Resize for every platform</p>
+      </a>
+
+      <!-- Split PDF -->
+      <a href="/tools/split-pdf.html"
+         data-tool="split-pdf" data-cat="image" data-name="split pdf extract pages separate divide range"
+         class="tool-card group" role="listitem" aria-label="Split PDF">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-scissors"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Split PDF</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Extract pages or split by range</p>
+      </a>
+
+      <!-- SVG to DataURI -->
+      <a href="/tools/svg-to-datauri.html"
+         data-tool="svg-to-datauri" data-cat="design" data-name="svg datauri base64 encode"
+         class="tool-card group" role="listitem" aria-label="SVG to DataURI">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-code"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">SVG to DataURI</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Encode SVG to inline data URIs</p>
+      </a>
+
+      <!-- Text Diff -->
+      <a href="/tools/text-diff.html"
+         data-tool="text-diff" data-cat="text" data-name="text diff compare difference checker lines"
+         class="tool-card group" role="listitem" aria-label="Text Diff Checker">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-code-compare"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Text Diff</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Compare two texts line-by-line</p>
+      </a>
+
+      <!-- Word Counter -->
+      <a href="/tools/word-counter.html"
+         data-tool="word-counter" data-cat="text" data-name="word counter character count reading time sentences"
+         class="tool-card group" role="listitem" aria-label="Word &amp; Character Counter">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-calculator"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">Word Counter</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Count words, chars &amp; reading time</p>
+      </a>
+
+      <!-- AI Caption Generator -->
+      <a href="/tools/ai-caption-generator.html"
+         data-tool="ai-caption-generator" data-cat="ai" data-name="ai caption generator image alt text description automatic"
+         class="tool-card group" role="listitem" aria-label="AI Caption Generator">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-comment-dots"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">AI Caption Generator</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Auto-generate image captions &amp; alt-text</p>
+      </a>
+
+      <!-- AI Image Upscaler -->
+      <a href="/tools/ai-image-upscaler.html"
+         data-tool="ai-image-upscaler" data-cat="ai" data-name="ai image upscaler super resolution enhance 2x 4x quality"
+         class="tool-card group" role="listitem" aria-label="AI Image Upscaler">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">AI Image Upscaler</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Upscale images 2x or 4x with AI</p>
+      </a>
+
+      <!-- AI Sentiment Analyzer -->
+      <a href="/tools/ai-sentiment-analyzer.html"
+         data-tool="ai-sentiment-analyzer" data-cat="ai" data-name="ai sentiment analysis positive negative text emotion nlp"
+         class="tool-card group" role="listitem" aria-label="AI Sentiment Analyzer">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-face-smile"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">AI Sentiment Analyzer</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Detect positive &amp; negative tone with AI</p>
+      </a>
+
+      <!-- AI Text Summarizer -->
+      <a href="/tools/ai-text-summarizer.html"
+         data-tool="ai-text-summarizer" data-cat="ai" data-name="ai text summarizer summary article condense nlp transformers"
+         class="tool-card group" role="listitem" aria-label="AI Text Summarizer">
+        <div class="tool-icon-wrap"><i class="fa-solid fa-align-left"></i></div>
+        <h2 class="text-sm font-semibold text-white mb-1 leading-snug">AI Text Summarizer</h2>
+        <p class="text-xs text-zinc-500 leading-snug">Condense long text with AI</p>
+      </a>
+
+    </div><!-- /grid -->
+
+    <script>
+      (function () {
+        const n = document.querySelectorAll('#tools-grid [data-tool]').length;
+        document.getElementById('tool-count-stat').textContent = n;
+        document.getElementById('tool-count-text').textContent = n;
+      })();
+    </script>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="hidden text-center py-24 animate-fade-in" aria-live="polite">
+      <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5
+                  bg-zinc-900 border border-zinc-800">
+        <i class="fa-solid fa-magnifying-glass text-zinc-600 text-xl"></i>
+      </div>
+      <p class="text-zinc-400 font-medium">No tools match your search</p>
+      <p class="text-zinc-600 text-sm mt-1">Try a different keyword or browse all categories</p>
+    </div>
+
+  </main>
+
+  <!-- ─── Footer (injected by main.js) ─── -->
+  <div id="app-footer"></div>
+
+</body>
+</html>

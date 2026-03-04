@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Image Upscaler – WebTools</title>
+  <meta name="description" content="Upscale images up to 4x using AI super-resolution in your browser. No upload, 100% client-side and private." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/ai-image-upscaler.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/ai-image-upscaler.html" />
+  <meta property="og:title" content="AI Image Upscaler – WebTools" />
+  <meta property="og:description" content="Upscale images up to 4x using AI super-resolution in your browser. No upload, 100% client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="AI Image Upscaler – WebTools" />
+  <meta name="twitter:description" content="Upscale images up to 4x using AI super-resolution in your browser. No upload, 100% client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+  <style>
+    .checker-bg {
+      background-image: linear-gradient(45deg,#333 25%,transparent 25%),
+                        linear-gradient(-45deg,#333 25%,transparent 25%),
+                        linear-gradient(45deg,transparent 75%,#333 75%),
+                        linear-gradient(-45deg,transparent 75%,#333 75%);
+      background-size: 14px 14px;
+      background-position: 0 0,0 7px,7px -7px,-7px 0;
+      background-color: #1e1e1e;
+    }
+    .compare-wrap { position:relative; overflow:hidden; cursor:col-resize; user-select:none; }
+    .compare-wrap img { display:block; width:100%; height:100%; object-fit:contain; }
+    .compare-after { position:absolute; inset:0; overflow:hidden; }
+    .compare-divider {
+      position:absolute; top:0; bottom:0; width:3px; background:#29C79F;
+      cursor:col-resize; z-index:10;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .compare-handle {
+      width:28px; height:28px; border-radius:50%; background:#29C79F;
+      border:2px solid #fff; display:flex; align-items:center; justify-content:center;
+      color:#fff; font-size:10px; flex-shrink:0;
+    }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-up-right-and-down-left-from-center text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">AI Image Upscaler</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Super-resolution upscaling powered by UpscalerJS + TensorFlow.js. 100% in-browser.</p>
+          </div>
+        </div>
+
+        <!-- AI badge -->
+        <div class="flex items-center gap-2 mb-6 px-3 py-2 bg-purple-500/10 border border-purple-500/20 rounded-xl w-fit text-xs text-purple-300">
+          <i class="fa-solid fa-microchip"></i>
+          Powered by UpscalerJS + TensorFlow.js &mdash; runs entirely in your browser
+        </div>
+
+        <!-- Settings -->
+        <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-5 mb-6">
+          <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">
+            <i class="fa-solid fa-sliders text-[#29C79F] mr-2"></i>Upscale Settings
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Scale Factor</label>
+              <select id="scaleFactor" class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+                <option value="2" selected>2x (faster)</option>
+                <option value="4">4x (best quality)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Output Format</label>
+              <select id="outFormat" class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+                <option value="image/png" selected>PNG (lossless)</option>
+                <option value="image/jpeg">JPG (smaller file)</option>
+                <option value="image/webp">WebP</option>
+              </select>
+            </div>
+          </div>
+          <p class="text-xs text-neutral-500 mt-3">
+            <i class="fa-solid fa-circle-info mr-1"></i>
+            First run downloads the AI model (~6 MB) and caches it. Large images may take longer.
+          </p>
+        </div>
+
+        <!-- Drop zone -->
+        <div id="dropZone"
+             class="border-2 border-dashed border-neutral-600 rounded-xl p-12 mb-6 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+          <i class="fa-solid fa-cloud-arrow-up text-4xl text-neutral-500 mb-3"></i>
+          <p class="text-neutral-300 font-medium">Drop an image here or <span class="text-[#29C79F] underline">browse</span></p>
+          <p class="text-neutral-500 text-sm mt-1">JPG, PNG, WebP &mdash; recommended max 1000x1000 px</p>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" class="hidden">
+        </div>
+
+        <!-- Preview + action -->
+        <div id="previewSection" class="hidden mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-semibold text-neutral-300">
+              <span id="previewName" class="truncate"></span>
+              <span id="previewDims" class="text-neutral-500 font-normal ml-2"></span>
+            </p>
+            <button id="clearBtn" class="text-xs text-neutral-500 hover:text-red-400 transition-colors">
+              <i class="fa-solid fa-xmark mr-1"></i>Clear
+            </button>
+          </div>
+          <div class="checker-bg rounded-xl overflow-hidden mb-4" style="max-height:320px;">
+            <img id="previewImg" src="" alt="Preview" class="mx-auto" style="max-height:320px;max-width:100%;object-fit:contain;">
+          </div>
+          <button id="upscaleBtn"
+            class="w-full px-5 py-3 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            <i class="fa-solid fa-up-right-and-down-left-from-center mr-2"></i>Upscale with AI
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progressWrap" class="hidden mb-5">
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span id="progressLabel" class="text-neutral-300">Loading model...</span>
+            <span id="progressPct" class="text-[#29C79F] font-semibold">0%</span>
+          </div>
+          <div class="w-full bg-neutral-700 rounded-full h-2">
+            <div id="progressBar" class="h-2 rounded-full bg-[#29C79F] transition-all duration-300" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Result compare -->
+        <div id="resultSection" class="hidden">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-semibold text-neutral-300">
+              <i class="fa-solid fa-check-circle text-[#29C79F] mr-2"></i>
+              Upscaled: <span id="resultDims" class="text-[#29C79F]"></span>
+            </p>
+            <button id="downloadBtn"
+              class="px-4 py-2 bg-[#29C79F] hover:bg-[#22b08c] text-white text-xs font-semibold rounded-lg transition-colors">
+              <i class="fa-solid fa-download mr-1.5"></i>Download
+            </button>
+          </div>
+          <!-- Drag-compare slider -->
+          <div id="compareWrap" class="compare-wrap rounded-xl overflow-hidden checker-bg" style="height:320px;">
+            <img id="compareOrig" src="" alt="Original" class="w-full h-full object-contain">
+            <div id="compareAfterEl" class="compare-after" style="width:50%">
+              <img id="compareResult" src="" alt="Upscaled" class="w-full h-full object-contain" style="min-width:2000px">
+            </div>
+            <div id="compareDivider" class="compare-divider" style="left:50%">
+              <div class="compare-handle"><i class="fa-solid fa-left-right text-[10px]"></i></div>
+            </div>
+            <span class="absolute bottom-2 left-3 text-xs bg-black/60 text-white px-1.5 py-0.5 rounded pointer-events-none">Original</span>
+            <span class="absolute bottom-2 right-3 text-xs bg-[#29C79F]/80 text-white px-1.5 py-0.5 rounded pointer-events-none">Upscaled</span>
+          </div>
+          <p class="text-xs text-neutral-600 text-center mt-2">Drag the slider to compare original vs upscaled</p>
+        </div>
+
+        <!-- Error -->
+        <div id="errorBox" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-400 mt-4">
+          <i class="fa-solid fa-triangle-exclamation mr-2"></i><span id="errorMsg"></span>
+        </div>
+
+        <p class="text-xs text-neutral-600 text-center mt-6">
+          <i class="fa-solid fa-lock mr-1"></i>Your image never leaves your device. All AI processing happens locally.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- TensorFlow.js + UpscalerJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/upscaler@1.0.0-beta.19/dist/browser/umd/upscaler.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/default-model@1.0.0-beta.16/dist/umd/index.min.js"></script>
+
+  <script>
+    const dropZone      = document.getElementById('dropZone');
+    const fileInput     = document.getElementById('fileInput');
+    const previewSection= document.getElementById('previewSection');
+    const previewImg    = document.getElementById('previewImg');
+    const upscaleBtn    = document.getElementById('upscaleBtn');
+    const progressWrap  = document.getElementById('progressWrap');
+    const progressBar   = document.getElementById('progressBar');
+    const progressLbl   = document.getElementById('progressLabel');
+    const progressPct   = document.getElementById('progressPct');
+    const resultSection = document.getElementById('resultSection');
+    const errorBox      = document.getElementById('errorBox');
+
+    let currentFile = null;
+    let resultCanvas = null;
+    let origObjectUrl = null;
+
+    // ── Drop / browse ──────────────────────────────────────────────────────
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]','bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5');
+      const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
+      if (f) loadFile(f);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); fileInput.value=''; });
+    document.getElementById('clearBtn').addEventListener('click', resetTool);
+
+    function loadFile(f) {
+      currentFile = f;
+      if (origObjectUrl) URL.revokeObjectURL(origObjectUrl);
+      origObjectUrl = URL.createObjectURL(f);
+      previewImg.src = origObjectUrl;
+      previewImg.onload = () => {
+        document.getElementById('previewName').textContent = f.name;
+        document.getElementById('previewDims').textContent = `${previewImg.naturalWidth} x ${previewImg.naturalHeight} px`;
+      };
+      dropZone.classList.add('hidden');
+      previewSection.classList.remove('hidden');
+      resultSection.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      progressWrap.classList.add('hidden');
+    }
+
+    function resetTool() {
+      currentFile = null; resultCanvas = null;
+      if (origObjectUrl) { URL.revokeObjectURL(origObjectUrl); origObjectUrl = null; }
+      dropZone.classList.remove('hidden');
+      previewSection.classList.add('hidden');
+      resultSection.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      progressWrap.classList.add('hidden');
+    }
+
+    function setProgress(pct, label) {
+      progressBar.style.width = pct + '%';
+      progressPct.textContent = pct + '%';
+      progressLbl.textContent = label;
+    }
+
+    // ── Upscale ────────────────────────────────────────────────────────────
+    upscaleBtn.addEventListener('click', async () => {
+      if (!currentFile) return;
+      upscaleBtn.disabled = true;
+      errorBox.classList.add('hidden');
+      resultSection.classList.add('hidden');
+      progressWrap.classList.remove('hidden');
+      setProgress(5, 'Initialising AI model...');
+
+      try {
+        const scale = parseInt(document.getElementById('scaleFactor').value);
+
+        // The UMD global is DefaultUpscalerJSModel.
+        // UpscalerJS already prepends the CDN base URL to _internals.path internally,
+        // so the model definition must be used as-is with the original relative path.
+        const model = window.DefaultUpscalerJSModel;
+        if (!model) throw new Error('Could not find UpscalerJS model. Check CDN scripts loaded correctly.');
+        const upscaler = new Upscaler({ model });
+
+        setProgress(20, 'Loading model weights...');
+        // Warm up
+        await upscaler.warmup([{ patchSize: 64, padding: 2 }]);
+        setProgress(50, 'Running super-resolution...');
+
+        const img = previewImg;
+        const upscaled = await upscaler.upscale(img, {
+          output: 'tensor',
+          patchSize: 64,
+          padding: 2,
+          progress: (p) => setProgress(50 + Math.round(p * 40), `Processing... ${Math.round(p * 100)}%`),
+        });
+
+        setProgress(92, 'Rendering result...');
+        // The RDN model uses outputRange [0, 255] but tf.browser.toPixels expects [0, 1].
+        // Normalize before any toPixels call.
+        const tf = window.tf;
+        async function tensorToCanvas(t, canvas) {
+          const norm = tf.div(t, 255);
+          await tf.browser.toPixels(norm, canvas);
+          norm.dispose();
+        }
+
+        let finalTensor = upscaled;
+        if (scale === 4) {
+          // Run a second pass: tensor -> normalized canvas -> upscale again
+          const upscaler2 = new Upscaler({ model });
+          await upscaler2.warmup([{ patchSize: 64, padding: 2 }]);
+          const tmpCanvas = document.createElement('canvas');
+          await tensorToCanvas(upscaled, tmpCanvas);
+          tf.dispose(upscaled);
+          finalTensor = await upscaler2.upscale(tmpCanvas, { output: 'tensor', patchSize: 64, padding: 2 });
+        }
+
+        resultCanvas = document.createElement('canvas');
+        await tensorToCanvas(finalTensor, resultCanvas);
+        tf.dispose(finalTensor);
+
+        setProgress(100, 'Done!');
+        showResult();
+      } catch (e) {
+        errorBox.classList.remove('hidden');
+        document.getElementById('errorMsg').textContent = 'Upscaling failed: ' + e.message;
+        console.error(e);
+      } finally {
+        upscaleBtn.disabled = false;
+        progressWrap.classList.add('hidden');
+      }
+    });
+
+    function showResult() {
+      const w = resultCanvas.width, h = resultCanvas.height;
+      document.getElementById('resultDims').textContent = `${w} x ${h} px`;
+
+      const resultUrl = resultCanvas.toDataURL('image/png');
+      const origUrl   = origObjectUrl;
+
+      document.getElementById('compareOrig').src   = origUrl;
+      document.getElementById('compareResult').src = resultUrl;
+      // Fix inner image width for compare
+      document.getElementById('compareResult').style.minWidth = document.getElementById('compareWrap').offsetWidth + 'px';
+
+      resultSection.classList.remove('hidden');
+      initCompare();
+    }
+
+    // ── Drag-compare slider ────────────────────────────────────────────────
+    function initCompare() {
+      const wrap    = document.getElementById('compareWrap');
+      const divider = document.getElementById('compareDivider');
+      const after   = document.getElementById('compareAfterEl');
+      let dragging  = false;
+
+      function setPos(x) {
+        const rect = wrap.getBoundingClientRect();
+        const pct  = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+        divider.style.left = (pct * 100) + '%';
+        after.style.width  = (pct * 100) + '%';
+        after.querySelector('img').style.marginLeft = -(pct * wrap.offsetWidth) + 'px';
+        after.querySelector('img').style.minWidth   = wrap.offsetWidth + 'px';
+      }
+
+      divider.addEventListener('mousedown',  () => dragging = true);
+      wrap.addEventListener('touchstart',    () => dragging = true, { passive: true });
+      document.addEventListener('mousemove', e => { if (dragging) setPos(e.clientX); });
+      document.addEventListener('touchmove', e => { if (dragging) setPos(e.touches[0].clientX); }, { passive: true });
+      document.addEventListener('mouseup',   () => dragging = false);
+      document.addEventListener('touchend',  () => dragging = false);
+      setPos(wrap.getBoundingClientRect().left + wrap.offsetWidth * 0.5);
+    }
+
+    // ── Download ───────────────────────────────────────────────────────────
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      if (!resultCanvas || !currentFile) return;
+      const fmt  = document.getElementById('outFormat').value;
+      const ext  = fmt === 'image/jpeg' ? 'jpg' : fmt === 'image/webp' ? 'webp' : 'png';
+      const name = currentFile.name.replace(/\.[^.]+$/, '') + '-upscaled.' + ext;
+      const url  = resultCanvas.toDataURL(fmt, 0.92);
+      const a    = document.createElement('a');
+      a.href = url; a.download = name; a.click();
+    });
+  </script>
+</body>
+</html>

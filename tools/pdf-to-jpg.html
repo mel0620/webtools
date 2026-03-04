@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF to JPG – WebTools</title>
+  <meta name="description" content="Convert every PDF page to a JPG image in your browser. Adjust DPI and quality, then download individually or as a ZIP. No upload, 100% client-side." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/pdf-to-jpg.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/pdf-to-jpg.html" />
+  <meta property="og:title" content="PDF to JPG – WebTools" />
+  <meta property="og:description" content="Convert every PDF page to a JPG image in your browser. No upload, 100% client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="PDF to JPG – WebTools" />
+  <meta name="twitter:description" content="Convert every PDF page to a JPG image in your browser. No upload, 100% client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-file-image text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">PDF to JPG</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Convert each PDF page to a JPG image. 100% client-side, files never leave your device.</p>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-5 mb-6">
+          <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">
+            <i class="fa-solid fa-sliders text-[#29C79F] mr-2"></i>Output Settings
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">
+                Quality: <span id="qualityVal" class="text-[#29C79F] font-semibold">90</span>%
+              </label>
+              <input type="range" id="qualitySlider" min="10" max="100" value="90" class="w-full accent-[#29C79F]">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">
+                Scale: <span id="scaleVal" class="text-[#29C79F] font-semibold">2x</span>
+              </label>
+              <input type="range" id="scaleSlider" min="1" max="4" step="0.5" value="2" class="w-full accent-[#29C79F]">
+              <p class="text-xs text-neutral-600 mt-1">Higher = sharper, larger file</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Output Format</label>
+              <select id="imgFormat" class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+                <option value="jpeg" selected>JPG</option>
+                <option value="png">PNG (lossless)</option>
+                <option value="webp">WebP</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drop zone -->
+        <div id="dropZone"
+             class="border-2 border-dashed border-neutral-600 rounded-xl p-10 mb-6 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+          <i class="fa-solid fa-cloud-arrow-up text-4xl text-neutral-500 mb-3"></i>
+          <p class="text-neutral-300 font-medium">Drop a PDF here or <span class="text-[#29C79F] underline">browse</span></p>
+          <p class="text-neutral-500 text-sm mt-1">Each page will be converted to an image file.</p>
+          <input type="file" id="fileInput" accept=".pdf,application/pdf" class="hidden">
+        </div>
+
+        <!-- File info bar -->
+        <div id="fileInfoBar" class="hidden bg-neutral-900 border border-neutral-700 rounded-xl p-4 mb-5 flex items-center gap-3">
+          <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-file-pdf text-red-400"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p id="fileNameEl" class="text-sm text-white font-medium truncate"></p>
+            <p id="fileStatsEl" class="text-xs text-neutral-500 mt-0.5"></p>
+          </div>
+          <button id="clearFileBtn" class="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-800 hover:bg-red-500/20 hover:text-red-400 text-neutral-500 transition-colors">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Convert button -->
+        <button id="convertBtn"
+          class="w-full px-5 py-3 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed mb-4"
+          disabled>
+          <i class="fa-solid fa-images mr-2"></i>Convert to Images
+        </button>
+
+        <!-- Progress -->
+        <div id="progressWrap" class="hidden mb-5">
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span id="progressLabel" class="text-neutral-300">Converting...</span>
+            <span id="progressPct" class="text-[#29C79F] font-semibold">0%</span>
+          </div>
+          <div class="w-full bg-neutral-700 rounded-full h-2">
+            <div id="progressBar" class="h-2 rounded-full bg-[#29C79F] transition-all duration-300" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Results grid -->
+        <div id="resultsSection" class="hidden">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm font-semibold text-neutral-300">
+              <i class="fa-solid fa-images text-[#29C79F] mr-2"></i>
+              <span id="pageCountLabel"></span> pages converted
+            </p>
+            <button id="downloadAllBtn"
+              class="px-4 py-2 bg-[#29C79F] hover:bg-[#22b08c] text-white text-xs font-semibold rounded-lg transition-colors">
+              <i class="fa-solid fa-download mr-1.5"></i>Download All (ZIP)
+            </button>
+          </div>
+          <div id="pagesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+        </div>
+
+        <!-- Error -->
+        <div id="errorBox" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-400">
+          <i class="fa-solid fa-triangle-exclamation mr-2"></i><span id="errorMsg"></span>
+        </div>
+
+        <p class="text-xs text-neutral-600 text-center mt-6">
+          <i class="fa-solid fa-lock mr-1"></i>All processing happens in your browser. Your files are never uploaded to any server.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const dropZone    = document.getElementById('dropZone');
+    const fileInput   = document.getElementById('fileInput');
+    const fileInfoBar = document.getElementById('fileInfoBar');
+    const fileNameEl  = document.getElementById('fileNameEl');
+    const fileStatsEl = document.getElementById('fileStatsEl');
+    const convertBtn  = document.getElementById('convertBtn');
+    const progressWrap= document.getElementById('progressWrap');
+    const progressBar = document.getElementById('progressBar');
+    const progressLbl = document.getElementById('progressLabel');
+    const progressPct = document.getElementById('progressPct');
+    const resultsSection = document.getElementById('resultsSection');
+    const pagesGrid   = document.getElementById('pagesGrid');
+    const errorBox    = document.getElementById('errorBox');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const scaleSlider   = document.getElementById('scaleSlider');
+
+    let currentFile = null;
+    let renderedPages = []; // { dataUrl, width, height, pageNum }
+
+    qualitySlider.addEventListener('input', () => { document.getElementById('qualityVal').textContent = qualitySlider.value + '%'; });
+    scaleSlider.addEventListener('input',   () => { document.getElementById('scaleVal').textContent = parseFloat(scaleSlider.value).toFixed(1) + 'x'; });
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]','bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5');
+      const f = [...e.dataTransfer.files].find(f => f.type === 'application/pdf' || f.name.endsWith('.pdf'));
+      if (f) setFile(f);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); fileInput.value = ''; });
+    document.getElementById('clearFileBtn').addEventListener('click', resetTool);
+
+    function setFile(f) {
+      currentFile = f;
+      dropZone.classList.add('hidden');
+      fileInfoBar.classList.remove('hidden');
+      fileNameEl.textContent = f.name;
+      fileStatsEl.textContent = formatBytes(f.size);
+      convertBtn.disabled = false;
+      resultsSection.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      progressWrap.classList.add('hidden');
+      renderedPages = [];
+    }
+
+    function resetTool() {
+      currentFile = null; renderedPages = [];
+      dropZone.classList.remove('hidden');
+      fileInfoBar.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      progressWrap.classList.add('hidden');
+      pagesGrid.innerHTML = '';
+      convertBtn.disabled = true;
+    }
+
+    function setProgress(pct, label) {
+      progressBar.style.width = pct + '%';
+      progressPct.textContent = pct + '%';
+      progressLbl.textContent = label;
+    }
+
+    convertBtn.addEventListener('click', async () => {
+      if (!currentFile) return;
+      convertBtn.disabled = true;
+      resultsSection.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      progressWrap.classList.remove('hidden');
+      pagesGrid.innerHTML = '';
+      renderedPages = [];
+      setProgress(0, 'Loading PDF...');
+
+      const quality = parseInt(qualitySlider.value) / 100;
+      const scale   = parseFloat(scaleSlider.value);
+      const fmt     = document.getElementById('imgFormat').value;
+      const mimeType = fmt === 'png' ? 'image/png' : fmt === 'webp' ? 'image/webp' : 'image/jpeg';
+      const ext      = fmt === 'png' ? 'png' : fmt === 'webp' ? 'webp' : 'jpg';
+
+      try {
+        const arrayBuffer = await currentFile.arrayBuffer();
+        const pdfDoc      = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const numPages    = pdfDoc.numPages;
+        const baseName    = currentFile.name.replace(/\.pdf$/i, '');
+
+        for (let i = 1; i <= numPages; i++) {
+          setProgress(Math.round(((i - 1) / numPages) * 95), `Converting page ${i} of ${numPages}...`);
+
+          const page     = await pdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale });
+          const canvas   = document.createElement('canvas');
+          canvas.width   = viewport.width;
+          canvas.height  = viewport.height;
+          const ctx      = canvas.getContext('2d');
+
+          if (fmt !== 'png') {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          const dataUrl = canvas.toDataURL(mimeType, quality);
+          renderedPages.push({
+            dataUrl,
+            width:  canvas.width,
+            height: canvas.height,
+            pageNum: i,
+            name:    `${baseName}-page-${String(i).padStart(3, '0')}.${ext}`,
+          });
+          canvas.remove();
+        }
+
+        setProgress(100, 'Done!');
+        progressWrap.classList.add('hidden');
+        renderPageGrid(ext);
+        resultsSection.classList.remove('hidden');
+        document.getElementById('pageCountLabel').textContent = numPages;
+      } catch (e) {
+        errorBox.classList.remove('hidden');
+        document.getElementById('errorMsg').textContent = 'Conversion failed: ' + e.message;
+        progressWrap.classList.add('hidden');
+      } finally {
+        convertBtn.disabled = false;
+      }
+    });
+
+    function renderPageGrid(ext) {
+      pagesGrid.innerHTML = '';
+      renderedPages.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden group';
+        card.innerHTML = `
+          <div class="relative aspect-[3/4] overflow-hidden bg-neutral-950">
+            <img src="${p.dataUrl}" alt="Page ${p.pageNum}" class="w-full h-full object-contain" loading="lazy">
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <button data-idx="${p.pageNum - 1}" class="dl-btn px-3 py-1.5 bg-[#29C79F] text-white text-xs font-semibold rounded-lg">
+                <i class="fa-solid fa-download mr-1"></i>Download
+              </button>
+            </div>
+          </div>
+          <div class="px-3 py-2 flex items-center justify-between">
+            <span class="text-xs text-neutral-400">Page ${p.pageNum}</span>
+            <span class="text-xs text-neutral-600">${p.width} x ${p.height}</span>
+          </div>
+        `;
+        pagesGrid.appendChild(card);
+      });
+
+      pagesGrid.querySelectorAll('.dl-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = renderedPages[parseInt(btn.dataset.idx)];
+          downloadDataUrl(p.dataUrl, p.name);
+        });
+      });
+    }
+
+    document.getElementById('downloadAllBtn').addEventListener('click', async () => {
+      if (!renderedPages.length) return;
+      const btn = document.getElementById('downloadAllBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Zipping...';
+
+      const zip     = new JSZip();
+      const folder  = zip.folder('pages');
+      renderedPages.forEach(p => {
+        const base64 = p.dataUrl.split(',')[1];
+        folder.file(p.name, base64, { base64: true });
+      });
+
+      const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+      const baseName = currentFile.name.replace(/\.pdf$/i, '');
+      downloadBlob(blob, `${baseName}-pages.zip`);
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-download mr-1.5"></i>Download All (ZIP)';
+    });
+
+    function downloadDataUrl(dataUrl, name) {
+      const a = document.createElement('a');
+      a.href = dataUrl; a.download = name;
+      a.click();
+    }
+
+    function downloadBlob(blob, name) {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url; a.download = name;
+      a.click(); URL.revokeObjectURL(url);
+    }
+
+    function formatBytes(n) {
+      if (n < 1024)    return n + ' B';
+      if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+      return (n / 1048576).toFixed(2) + ' MB';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Diff Checker – WebTools</title>
+    <meta name="description" content="Compare two blocks of text and highlight differences line-by-line. Instant, free diff tool that runs entirely in your browser." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://webtools.pro/tools/text-diff.html" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://webtools.pro/tools/text-diff.html" />
+    <meta property="og:title" content="Text Diff Checker – WebTools" />
+    <meta property="og:description" content="Compare two blocks of text and highlight differences line-by-line. Instant, free diff tool that runs entirely in your browser." />
+    <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+    <meta property="og:site_name" content="WebTools" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Text Diff Checker – WebTools" />
+    <meta name="twitter:description" content="Compare two blocks of text and highlight differences line-by-line. Instant, free diff tool that runs entirely in your browser." />
+    <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- PWA + Vite entry -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#29C79F" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+    <style>
+        .diff-added { background-color: rgba(34, 197, 94, 0.2); border-left: 3px solid #22c55e; }
+        .diff-removed { background-color: rgba(239, 68, 68, 0.2); border-left: 3px solid #ef4444; }
+        .diff-line { padding: 4px 8px; font-family: 'Courier New', monospace; white-space: pre-wrap; word-break: break-all; }
+        .line-number { 
+            display: inline-block; 
+            width: 40px; 
+            text-align: right; 
+            margin-right: 12px; 
+            color: #94a3b8;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="bg-neutral-800/80 backdrop-blur-sm border-b border-neutral-700 sticky top-0 z-50">
+        <div class="container max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <div class="block">
+                            <span class="text-xl font-bold text-white">AWD Digital</span>
+                            <span class="text-xl font-bold text-[#29C79F] ml-1">Tools</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/" class="text-white font-medium hover:text-[#de4d44] transition-colors">
+                        Home
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-neutral-300 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-neutral-700 bg-neutral-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-white font-medium hover:text-[#de4d44] transition-colors">
+                    Home
+                </a>
+                <a href="#tools" class="block text-neutral-300 hover:text-white transition-colors">
+                    Tools
+                </a>
+                <a href="https://awddigital.com" target="_blank" class="block text-neutral-300 hover:text-white transition-colors">
+                    About
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+        <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                </div>
+                <h1 class="text-lg md:text-3xl font-bold text-white">Text Diff Checker</h1>
+            </div>
+            <p class="text-neutral-400 mb-8">Compare two texts and see the differences side-by-side</p>
+
+            <!-- Input Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Original Text -->
+                <div class="bg-neutral-700 rounded-xl p-6 border border-neutral-600">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-medium text-neutral-300">Original Text</label>
+                        <button onclick="clearText('text1')" class="text-xs text-neutral-400 hover:text-neutral-200">Clear</button>
+                    </div>
+                    <textarea id="text1" rows="12" placeholder="Paste your original text here..." class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-white rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"></textarea>
+                    <div class="mt-2 text-xs text-neutral-400">
+                        Lines: <span id="lines1">0</span> | Characters: <span id="chars1">0</span>
+                    </div>
+                </div>
+
+                <!-- Modified Text -->
+                <div class="bg-neutral-700 rounded-xl p-6 border border-neutral-600">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-medium text-neutral-300">Modified Text</label>
+                        <button onclick="clearText('text2')" class="text-xs text-neutral-400 hover:text-neutral-200">Clear</button>
+                    </div>
+                    <textarea id="text2" rows="12" placeholder="Paste your modified text here..." class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-white rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"></textarea>
+                    <div class="mt-2 text-xs text-neutral-400">
+                        Lines: <span id="lines2">0</span> | Characters: <span id="chars2">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Options & Actions -->
+            <div class="flex flex-wrap items-center gap-4 mb-6">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="ignoreWhitespace" class="w-4 h-4 text-red-600 rounded">
+                    <span class="ml-2 text-neutral-300 text-sm">Ignore whitespace</span>
+                </label>
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="ignoreCase" class="w-4 h-4 text-red-600 rounded">
+                    <span class="ml-2 text-neutral-300 text-sm">Ignore case</span>
+                </label>
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="showLineNumbers" checked class="w-4 h-4 text-red-600 rounded">
+                    <span class="ml-2 text-neutral-300 text-sm">Show line numbers</span>
+                </label>
+                <div class="flex-1"></div>
+                <button id="compareBtn" class="bg-[#29C79F] hover:bg-[#22a884] text-white font-semibold py-3 px-8 rounded-lg transition-all">
+                    Compare Texts
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div id="statsSection" class="hidden bg-neutral-700 rounded-xl p-6 border border-neutral-600 mb-6">
+                <h3 class="font-semibold text-white mb-4">Comparison Summary</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                        <p class="text-sm text-neutral-400">Total Lines</p>
+                        <p class="text-2xl font-bold text-neutral-200" id="totalLines">0</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral-400">Added Lines</p>
+                        <p class="text-2xl font-bold text-green-400" id="addedLines">0</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral-400">Removed Lines</p>
+                        <p class="text-2xl font-bold text-red-400" id="removedLines">0</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral-400">Unchanged Lines</p>
+                        <p class="text-2xl font-bold text-neutral-400" id="unchangedLines">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="hidden">
+                <div class="bg-neutral-700 rounded-xl p-6 border border-neutral-600">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-white">Comparison Results</h3>
+                        <div class="flex items-center gap-4 text-xs">
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-green-500 rounded"></span>
+                                <span class="text-neutral-300">Added</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-red-500 rounded"></span>
+                                <span class="text-neutral-300">Removed</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="diffOutput" class="bg-neutral-800 rounded-lg p-4 max-h-[600px] overflow-y-auto text-sm text-neutral-200"></div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="bg-neutral-700 rounded-xl p-12 border border-neutral-600 text-center">
+                <svg class="w-16 h-16 mx-auto mb-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p class="text-neutral-400">Enter text in both fields and click "Compare Texts" to see the differences</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const text1 = document.getElementById('text1');
+        const text2 = document.getElementById('text2');
+        const compareBtn = document.getElementById('compareBtn');
+        const diffOutput = document.getElementById('diffOutput');
+        const statsSection = document.getElementById('statsSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const emptyState = document.getElementById('emptyState');
+        const ignoreWhitespace = document.getElementById('ignoreWhitespace');
+        const ignoreCase = document.getElementById('ignoreCase');
+        const showLineNumbers = document.getElementById('showLineNumbers');
+
+        // Update stats on input
+        text1.addEventListener('input', () => updateInputStats('text1'));
+        text2.addEventListener('input', () => updateInputStats('text2'));
+
+        compareBtn.addEventListener('click', compareTexts);
+
+        function updateInputStats(textId) {
+            const textarea = document.getElementById(textId);
+            const text = textarea.value;
+            const lines = text ? text.split('\n').length : 0;
+            const chars = text.length;
+            
+            document.getElementById(`lines${textId === 'text1' ? '1' : '2'}`).textContent = lines;
+            document.getElementById(`chars${textId === 'text1' ? '1' : '2'}`).textContent = chars;
+        }
+
+        function clearText(textId) {
+            document.getElementById(textId).value = '';
+            updateInputStats(textId);
+        }
+
+        function compareTexts() {
+            let original = text1.value;
+            let modified = text2.value;
+
+            if (!original && !modified) {
+                return;
+            }
+
+            // Apply options
+            if (ignoreCase.checked) {
+                original = original.toLowerCase();
+                modified = modified.toLowerCase();
+            }
+
+            if (ignoreWhitespace.checked) {
+                original = original.replace(/\s+/g, ' ').trim();
+                modified = modified.replace(/\s+/g, ' ').trim();
+            }
+
+            const originalLines = original.split('\n');
+            const modifiedLines = modified.split('\n');
+
+            const diff = computeDiff(originalLines, modifiedLines);
+            displayDiff(diff);
+            updateStats(diff);
+
+            emptyState.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            statsSection.classList.remove('hidden');
+        }
+
+        function computeDiff(original, modified) {
+            const result = [];
+            const m = original.length;
+            const n = modified.length;
+            
+            // Simple LCS-based diff
+            const lcs = longestCommonSubsequence(original, modified);
+            
+            let i = 0, j = 0, k = 0;
+            
+            while (i < m || j < n) {
+                if (k < lcs.length && i < m && original[i] === lcs[k]) {
+                    result.push({ type: 'unchanged', content: original[i], line1: i + 1, line2: j + 1 });
+                    i++;
+                    j++;
+                    k++;
+                } else if (k < lcs.length && j < n && modified[j] === lcs[k]) {
+                    result.push({ type: 'added', content: modified[j], line1: null, line2: j + 1 });
+                    j++;
+                } else if (i < m) {
+                    result.push({ type: 'removed', content: original[i], line1: i + 1, line2: null });
+                    i++;
+                } else {
+                    result.push({ type: 'added', content: modified[j], line1: null, line2: j + 1 });
+                    j++;
+                }
+            }
+            
+            return result;
+        }
+
+        function longestCommonSubsequence(arr1, arr2) {
+            const m = arr1.length;
+            const n = arr2.length;
+            const dp = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+            
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (arr1[i - 1] === arr2[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+            
+            // Reconstruct LCS
+            const lcs = [];
+            let i = m, j = n;
+            while (i > 0 && j > 0) {
+                if (arr1[i - 1] === arr2[j - 1]) {
+                    lcs.unshift(arr1[i - 1]);
+                    i--;
+                    j--;
+                } else if (dp[i - 1][j] > dp[i][j - 1]) {
+                    i--;
+                } else {
+                    j--;
+                }
+            }
+            
+            return lcs;
+        }
+
+        function displayDiff(diff) {
+            const showNumbers = showLineNumbers.checked;
+            let html = '';
+            
+            diff.forEach(item => {
+                let lineNumHtml = '';
+                if (showNumbers) {
+                    const num1 = item.line1 ? item.line1 : '  ';
+                    const num2 = item.line2 ? item.line2 : '  ';
+                    lineNumHtml = `<span class="line-number">${num1} ${num2}</span>`;
+                }
+                
+                if (item.type === 'added') {
+                    html += `<div class="diff-line diff-added">${lineNumHtml}+ ${escapeHtml(item.content)}</div>`;
+                } else if (item.type === 'removed') {
+                    html += `<div class="diff-line diff-removed">${lineNumHtml}- ${escapeHtml(item.content)}</div>`;
+                } else {
+                    html += `<div class="diff-line">${lineNumHtml}  ${escapeHtml(item.content)}</div>`;
+                }
+            });
+            
+            diffOutput.innerHTML = html;
+        }
+
+        function updateStats(diff) {
+            const added = diff.filter(d => d.type === 'added').length;
+            const removed = diff.filter(d => d.type === 'removed').length;
+            const unchanged = diff.filter(d => d.type === 'unchanged').length;
+            const total = diff.length;
+            
+            document.getElementById('totalLines').textContent = total;
+            document.getElementById('addedLines').textContent = added;
+            document.getElementById('removedLines').textContent = removed;
+            document.getElementById('unchangedLines').textContent = unchanged;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.clearText = clearText;
+    </script>
+  </main>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

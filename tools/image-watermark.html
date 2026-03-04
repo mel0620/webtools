@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Watermark Tool – WebTools</title>
+  <meta name="description" content="Add text or logo watermarks to images online. Customize position, opacity, font, and color. 100% private — no upload needed." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/image-watermark.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/image-watermark.html" />
+  <meta property="og:title" content="Image Watermark Tool – WebTools" />
+  <meta property="og:description" content="Add text or logo watermarks to images online. Customize position, opacity, font, and color. 100% private — no upload needed." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Image Watermark Tool – WebTools" />
+  <meta name="twitter:description" content="Add text or logo watermarks to images online. Customize position, opacity, font, and color. 100% private — no upload needed." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-stamp text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Image Watermark</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Add text or image watermark. 100% client-side, no upload</p>
+          </div>
+        </div>
+
+        <!-- Upload -->
+        <div id="dropZone"
+             class="border-2 border-dashed border-neutral-600 rounded-xl p-10 mb-6 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+          <!-- Empty state -->
+          <div id="dropZoneEmpty">
+            <i class="fa-solid fa-cloud-arrow-up text-4xl text-neutral-500 mb-3"></i>
+            <p class="text-neutral-300 font-medium">Drop an image here or <span class="text-[#29C79F] underline">browse</span></p>
+            <p class="text-neutral-500 text-sm mt-1">PNG, JPG, WebP supported</p>
+          </div>
+          <!-- Loaded state -->
+          <div id="dropZoneLoaded" class="hidden flex flex-col items-center gap-3">
+            <img id="dropZoneThumb" src="" alt="" class="max-h-24 max-w-full rounded-lg border border-neutral-600 object-contain">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-[#29C79F]"></i>
+              <span id="dropZoneFilename" class="text-sm text-neutral-300 font-medium max-w-xs truncate"></span>
+            </div>
+            <span class="text-xs text-neutral-500 underline hover:text-neutral-300 transition-colors">Click to change image</span>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="hidden">
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Settings -->
+          <div class="space-y-5">
+
+            <!-- Watermark type tabs -->
+            <div>
+              <p class="text-sm font-semibold text-neutral-300 mb-2">Watermark Type</p>
+              <div class="flex gap-2">
+                <button data-tab="text" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-[#29C79F] text-white transition-colors">
+                  <i class="fa-solid fa-font mr-1.5"></i>Text
+                </button>
+                <button data-tab="logo" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-neutral-700 text-neutral-300 hover:bg-neutral-600 transition-colors">
+                  <i class="fa-solid fa-image mr-1.5"></i>Logo Image
+                </button>
+              </div>
+            </div>
+
+            <!-- Text settings -->
+            <div id="tabText" class="space-y-4">
+              <div>
+                <label class="block text-xs text-neutral-400 mb-1">Watermark Text</label>
+                <input type="text" id="wmText" value="© Your Brand 2026"
+                  class="w-full px-3 py-2 bg-neutral-900 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-neutral-400 mb-1">Font Size (px)</label>
+                  <input type="range" id="fontSize" min="12" max="120" value="36" class="w-full">
+                  <span id="fontSizeVal" class="text-xs text-[#29C79F]">36px</span>
+                </div>
+                <div>
+                  <label class="block text-xs text-neutral-400 mb-1">Font Color</label>
+                  <input type="color" id="fontColor" value="#ffffff"
+                    class="w-full h-9 rounded-lg bg-neutral-700 border border-neutral-600 cursor-pointer">
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs text-neutral-400 mb-1">Font Family</label>
+                <select id="fontFamily" class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm">
+                  <option value="Arial">Arial</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Trebuchet MS">Trebuchet MS</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Impact">Impact</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Logo settings -->
+            <div id="tabLogo" class="hidden space-y-4">
+              <div id="logoDropZone"
+                   class="border-2 border-dashed border-neutral-600 rounded-xl p-6 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+                <div id="logoDropZoneEmpty">
+                  <i class="fa-solid fa-image text-2xl text-neutral-500 mb-2"></i>
+                  <p class="text-sm text-neutral-400">Drop logo / PNG with transparency</p>
+                </div>
+                <div id="logoDropZoneLoaded" class="hidden flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-circle-check text-[#29C79F]"></i>
+                  <span id="logoDropZoneFilename" class="text-sm text-neutral-300 font-medium max-w-[180px] truncate"></span>
+                  <span class="text-xs text-neutral-500 underline">change</span>
+                </div>
+                <input type="file" id="logoInput" accept="image/*" class="hidden">
+              </div>
+              <div>
+                <label class="block text-xs text-neutral-400 mb-1">Logo Size: <span id="logoSizeVal" class="text-[#29C79F]">20%</span> of image width</label>
+                <input type="range" id="logoSize" min="5" max="60" value="20" class="w-full">
+              </div>
+            </div>
+
+            <!-- Shared settings -->
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs text-neutral-400 mb-1">Opacity: <span id="opacityVal" class="text-[#29C79F]">70%</span></label>
+                <input type="range" id="wmOpacity" min="5" max="100" value="70" class="w-full">
+              </div>
+              <div>
+                <label class="block text-xs text-neutral-400 mb-2">Position</label>
+                <div class="grid grid-cols-3 gap-1.5" id="posGrid">
+                  <!-- 9 position cells -->
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <input type="checkbox" id="tileMode" class="rounded">
+                <label for="tileMode" class="text-sm text-neutral-300">Tile / Repeat watermark</label>
+              </div>
+              <div>
+                <label class="block text-xs text-neutral-400 mb-1">Rotation: <span id="rotationVal" class="text-[#29C79F]">-30°</span></label>
+                <input type="range" id="wmRotation" min="-90" max="90" value="-30" class="w-full">
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 pt-2">
+              <button id="applyBtn"
+                class="flex-1 px-5 py-2.5 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-lg text-sm transition-colors disabled:opacity-40"
+                disabled>
+                <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>Apply Watermark
+              </button>
+              <button id="downloadBtn"
+                class="hidden px-5 py-2.5 bg-neutral-700 hover:bg-neutral-600 text-white font-semibold rounded-lg text-sm transition-colors">
+                <i class="fa-solid fa-download mr-1.5"></i>Download
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas preview -->
+          <div>
+            <p class="text-xs text-neutral-500 uppercase tracking-wider mb-2">Live Preview</p>
+            <div class="bg-neutral-900 rounded-xl border border-neutral-700 overflow-hidden min-h-[300px] flex items-center justify-center">
+              <canvas id="previewCanvas" class="hidden max-w-full rounded-xl" style="max-height:480px;object-fit:contain;"></canvas>
+              <p id="previewEmpty" class="text-neutral-600 text-sm">Load an image to see preview</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const POSITIONS = [
+      {id:'tl',label:'↖',x:'left',  y:'top'},
+      {id:'tc',label:'↑',x:'center',y:'top'},
+      {id:'tr',label:'↗',x:'right', y:'top'},
+      {id:'ml',label:'←',x:'left',  y:'middle'},
+      {id:'mc',label:'·',x:'center',y:'middle'},
+      {id:'mr',label:'→',x:'right', y:'middle'},
+      {id:'bl',label:'↙',x:'left',  y:'bottom'},
+      {id:'bc',label:'↓',x:'center',y:'bottom'},
+      {id:'br',label:'↘',x:'right', y:'bottom'},
+    ];
+    let selectedPos = 'br';
+    let baseImg = null, logoImg = null;
+
+    // Build position grid
+    const posGrid = document.getElementById('posGrid');
+    POSITIONS.forEach(p => {
+      const btn = document.createElement('button');
+      btn.dataset.pos = p.id;
+      btn.textContent = p.label;
+      btn.className = 'pos-btn py-2 rounded-lg text-sm font-semibold transition-colors ' +
+        (p.id === selectedPos ? 'bg-[#29C79F] text-white' : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600');
+      btn.addEventListener('click', () => {
+        selectedPos = p.id;
+        document.querySelectorAll('.pos-btn').forEach(b => {
+          b.className = 'pos-btn py-2 rounded-lg text-sm font-semibold transition-colors ' +
+            (b.dataset.pos === selectedPos ? 'bg-[#29C79F] text-white' : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600');
+        });
+      });
+      posGrid.appendChild(btn);
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-colors ' +
+            (b.dataset.tab === tab ? 'bg-[#29C79F] text-white' : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600');
+        });
+        document.getElementById('tabText').classList.toggle('hidden', tab !== 'text');
+        document.getElementById('tabLogo').classList.toggle('hidden', tab !== 'logo');
+      });
+    });
+
+    // Range inputs
+    function bindRange(id, displayId, suffix='') {
+      const el = document.getElementById(id);
+      el.addEventListener('input', () => document.getElementById(displayId).textContent = el.value + suffix);
+    }
+    bindRange('fontSize','fontSizeVal','px');
+    bindRange('wmOpacity','opacityVal','%');
+    bindRange('wmRotation','rotationVal','°');
+    bindRange('logoSize','logoSizeVal','%');
+
+    // Drop zone
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+      if (e.dataTransfer.files[0]) loadBase(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadBase(fileInput.files[0]); });
+
+    const logoDropZone = document.getElementById('logoDropZone');
+    const logoInput = document.getElementById('logoInput');
+    logoDropZone.addEventListener('click', () => logoInput.click());
+    logoInput.addEventListener('change', () => { if (logoInput.files[0]) loadLogo(logoInput.files[0]); });
+    logoDropZone.addEventListener('dragover', e => { e.preventDefault(); logoDropZone.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5'); });
+    logoDropZone.addEventListener('dragleave', () => logoDropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5'));
+    logoDropZone.addEventListener('drop', e => { e.preventDefault(); logoDropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5'); if (e.dataTransfer.files[0]) loadLogo(e.dataTransfer.files[0]); });
+
+    function loadBase(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          baseImg = img;
+          document.getElementById('applyBtn').disabled = false;
+          // Update drop zone to loaded state
+          document.getElementById('dropZoneEmpty').classList.add('hidden');
+          const loaded = document.getElementById('dropZoneLoaded');
+          loaded.classList.remove('hidden');
+          document.getElementById('dropZoneThumb').src = e.target.result;
+          document.getElementById('dropZoneFilename').textContent = file.name;
+          // Auto-render preview immediately
+          applyWatermark();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadLogo(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          logoImg = img;
+          // Update logo drop zone to loaded state
+          document.getElementById('logoDropZoneEmpty').classList.add('hidden');
+          const loaded = document.getElementById('logoDropZoneLoaded');
+          loaded.classList.remove('hidden');
+          document.getElementById('logoDropZoneFilename').textContent = file.name;
+          // Re-render if base image already loaded
+          if (baseImg) applyWatermark();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('applyBtn').addEventListener('click', applyWatermark);
+
+    // Live preview: re-render whenever any setting changes
+    ['wmText','fontSize','fontColor','fontFamily','wmOpacity','wmRotation','logoSize','tileMode'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', () => { if (baseImg) applyWatermark(); });
+    });
+    document.querySelectorAll('.pos-btn').forEach(btn => {
+      btn.addEventListener('click', () => { if (baseImg) applyWatermark(); });
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => { if (baseImg) applyWatermark(); });
+    });
+
+    function applyWatermark() {
+      if (!baseImg) return;
+      const canvas = document.getElementById('previewCanvas');
+      canvas.width  = baseImg.naturalWidth;
+      canvas.height = baseImg.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(baseImg, 0, 0);
+
+      const opacity  = parseInt(document.getElementById('wmOpacity').value) / 100;
+      const rotation = parseInt(document.getElementById('wmRotation').value) * Math.PI / 180;
+      const tile     = document.getElementById('tileMode').checked;
+      const pos      = POSITIONS.find(p => p.id === selectedPos);
+
+      const activeTab = document.querySelector('.tab-btn.bg-\\[\\#29C79F\\]')?.dataset.tab || 'text';
+
+      ctx.save();
+      ctx.globalAlpha = opacity;
+
+      if (tile) {
+        drawTiled(ctx, canvas.width, canvas.height, rotation, activeTab);
+      } else {
+        const padding = Math.min(canvas.width, canvas.height) * 0.03;
+        let wmW, wmH;
+
+        if (activeTab === 'text') {
+          const fontSize = parseInt(document.getElementById('fontSize').value);
+          const scaledFont = Math.max(12, Math.round(fontSize * canvas.width / 800));
+          ctx.font = `bold ${scaledFont}px ${document.getElementById('fontFamily').value}`;
+          ctx.fillStyle = document.getElementById('fontColor').value;
+          wmW = ctx.measureText(document.getElementById('wmText').value).width;
+          wmH = scaledFont;
+        } else {
+          if (!logoImg) { ctx.restore(); return; }
+          const pct = parseInt(document.getElementById('logoSize').value) / 100;
+          wmW = canvas.width * pct;
+          wmH = logoImg.naturalHeight * (wmW / logoImg.naturalWidth);
+        }
+
+        let x = padding, y = canvas.height - padding;
+        if (pos.x === 'center') x = (canvas.width - wmW) / 2;
+        if (pos.x === 'right')  x = canvas.width - wmW - padding;
+        if (pos.y === 'top')    y = wmH + padding;
+        if (pos.y === 'middle') y = (canvas.height + wmH) / 2;
+
+        ctx.translate(x + wmW/2, y - wmH/2);
+        ctx.rotate(rotation);
+
+        if (activeTab === 'text') {
+          ctx.fillText(document.getElementById('wmText').value, -wmW/2, wmH/2);
+        } else {
+          ctx.drawImage(logoImg, -wmW/2, -wmH/2, wmW, wmH);
+        }
+      }
+
+      ctx.restore();
+      canvas.classList.remove('hidden');
+      document.getElementById('previewEmpty').classList.add('hidden');
+      document.getElementById('downloadBtn').classList.remove('hidden');
+    }
+
+    function drawTiled(ctx, W, H, rotation, tab) {
+      const spacing = Math.min(W, H) * 0.25;
+      for (let y = -H; y < H * 2; y += spacing) {
+        for (let x = -W; x < W * 2; x += spacing) {
+          ctx.save();
+          ctx.translate(x + spacing/2, y + spacing/2);
+          ctx.rotate(rotation);
+          if (tab === 'text') {
+            const scaledFont = Math.max(12, Math.round(parseInt(document.getElementById('fontSize').value) * W / 800));
+            ctx.font = `bold ${scaledFont}px ${document.getElementById('fontFamily').value}`;
+            ctx.fillStyle = document.getElementById('fontColor').value;
+            ctx.fillText(document.getElementById('wmText').value, 0, 0);
+          } else if (logoImg) {
+            const pct = parseInt(document.getElementById('logoSize').value) / 100;
+            const lw = W * pct * 0.5;
+            const lh = logoImg.naturalHeight * (lw / logoImg.naturalWidth);
+            ctx.drawImage(logoImg, -lw/2, -lh/2, lw, lh);
+          }
+          ctx.restore();
+        }
+      }
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('previewCanvas');
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'watermarked.png';
+        a.click(); URL.revokeObjectURL(url);
+      });
+    });
+  </script>
+</body>
+</html>

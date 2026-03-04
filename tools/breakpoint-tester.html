@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Breakpoint Tester – WebTools</title>
+    <meta name="description" content="Preview your website at any responsive breakpoint live in the browser. Test Tailwind, Bootstrap, and custom viewport widths instantly." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://webtools.pro/tools/breakpoint-tester.html" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://webtools.pro/tools/breakpoint-tester.html" />
+    <meta property="og:title" content="Responsive Breakpoint Tester – WebTools" />
+    <meta property="og:description" content="Preview your website at any responsive breakpoint live in the browser. Test Tailwind, Bootstrap, and custom viewport widths instantly." />
+    <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+    <meta property="og:site_name" content="WebTools" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Responsive Breakpoint Tester – WebTools" />
+    <meta name="twitter:description" content="Preview your website at any responsive breakpoint live in the browser. Test Tailwind, Bootstrap, and custom viewport widths instantly." />
+    <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- PWA + Vite entry -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#29C79F" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+    <style>
+        .iframe-container {
+            background: repeating-conic-gradient(#e5e7eb 0% 25%, #f3f4f6 0% 50%) 50% / 20px 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav class="bg-neutral-800/80 backdrop-blur-sm border-b border-neutral-700 sticky top-0 z-50">
+        <div class="container max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <div class="block">
+                            <span class="text-xl font-bold text-white">AWD Digital</span>
+                            <span class="text-xl font-bold text-[#29C79F] ml-1">Tools</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/" class="text-white font-medium hover:text-[#de4d44] transition-colors">
+                        Home
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-neutral-300 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-neutral-700 bg-neutral-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-white font-medium hover:text-[#de4d44] transition-colors">
+                    Home
+                </a>
+                <a href="#tools" class="block text-neutral-300 hover:text-white transition-colors">
+                    Tools
+                </a>
+                <a href="https://awddigital.com" target="_blank" class="block text-neutral-300 hover:text-white transition-colors">
+                    About
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+        <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700 mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-lg md:text-3xl font-bold text-white">Responsive Breakpoint Tester</h1>
+                </div>
+            </div>
+
+            <!-- URL Input -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-neutral-300 mb-2">Website URL</label>
+                <div class="flex gap-2">
+                    <input type="url" id="urlInput" placeholder="https://example.com" value="" class="flex-1 px-4 py-3 bg-neutral-700 border border-neutral-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <button id="loadBtn" class="bg-[#29C79F] hover:bg-[#22a884] text-white font-semibold px-8 py-3 rounded-lg transition-all">
+                        Load
+                    </button>
+                </div>
+            </div>
+
+            <!-- Device Presets -->
+            <div class="mb-6">
+                <h3 class="text-sm font-medium text-neutral-300 mb-3"><i class="fa-solid fa-mobile-screen-button mr-1.5 text-[#29C79F]"></i>Mobile Phones</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-4">
+                    <button onclick="setSize(320, 568)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPhone SE<br><span class="text-xs text-neutral-400">320×568</span>
+                    </button>
+                    <button onclick="setSize(375, 667)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPhone 8<br><span class="text-xs text-neutral-400">375×667</span>
+                    </button>
+                    <button onclick="setSize(390, 844)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPhone 13<br><span class="text-xs text-neutral-400">390×844</span>
+                    </button>
+                    <button onclick="setSize(393, 852)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPhone 14 Pro<br><span class="text-xs text-neutral-400">393×852</span>
+                    </button>
+                    <button onclick="setSize(430, 932)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPhone 15 Pro Max<br><span class="text-xs text-neutral-400">430×932</span>
+                    </button>
+                    <button onclick="setSize(360, 640)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Galaxy S20<br><span class="text-xs text-neutral-400">360×640</span>
+                    </button>
+                    <button onclick="setSize(360, 780)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Galaxy S21<br><span class="text-xs text-neutral-400">360×780</span>
+                    </button>
+                    <button onclick="setSize(384, 854)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Galaxy S22<br><span class="text-xs text-neutral-400">384×854</span>
+                    </button>
+                    <button onclick="setSize(412, 915)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Galaxy S23 Ultra<br><span class="text-xs text-neutral-400">412×915</span>
+                    </button>
+                    <button onclick="setSize(384, 824)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Pixel 7<br><span class="text-xs text-neutral-400">384×824</span>
+                    </button>
+                    <button onclick="setSize(412, 915)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Pixel 8 Pro<br><span class="text-xs text-neutral-400">412×915</span>
+                    </button>
+                </div>
+
+                <h3 class="text-sm font-medium text-neutral-300 mb-3"><i class="fa-solid fa-tablet-screen-button mr-1.5 text-[#29C79F]"></i>Tablets</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-4">
+                    <button onclick="setSize(768, 1024)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPad<br><span class="text-xs text-neutral-400">768×1024</span>
+                    </button>
+                    <button onclick="setSize(810, 1080)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPad Air<br><span class="text-xs text-neutral-400">810×1080</span>
+                    </button>
+                    <button onclick="setSize(834, 1194)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPad Pro 11"<br><span class="text-xs text-neutral-400">834×1194</span>
+                    </button>
+                    <button onclick="setSize(1024, 1366)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        iPad Pro 12.9"<br><span class="text-xs text-neutral-400">1024×1366</span>
+                    </button>
+                    <button onclick="setSize(800, 1280)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Galaxy Tab S7<br><span class="text-xs text-neutral-400">800×1280</span>
+                    </button>
+                    <button onclick="setSize(753, 1037)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Surface Pro 7<br><span class="text-xs text-neutral-400">753×1037</span>
+                    </button>
+                </div>
+
+                <h3 class="text-sm font-medium text-neutral-300 mb-3"><i class="fa-solid fa-laptop mr-1.5 text-[#29C79F]"></i>Laptops &amp; Desktops</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                    <button onclick="setSize(1280, 720)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        HD Laptop<br><span class="text-xs text-neutral-400">1280×720</span>
+                    </button>
+                    <button onclick="setSize(1366, 768)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Laptop 13"<br><span class="text-xs text-neutral-400">1366×768</span>
+                    </button>
+                    <button onclick="setSize(1440, 900)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Laptop 15"<br><span class="text-xs text-neutral-400">1440×900</span>
+                    </button>
+                    <button onclick="setSize(1536, 864)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Laptop 15.6"<br><span class="text-xs text-neutral-400">1536×864</span>
+                    </button>
+                    <button onclick="setSize(1920, 1080)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Full HD<br><span class="text-xs text-neutral-400">1920×1080</span>
+                    </button>
+                    <button onclick="setSize(2560, 1440)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        2K/QHD<br><span class="text-xs text-neutral-400">2560×1440</span>
+                    </button>
+                    <button onclick="setSize(3840, 2160)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        4K/UHD<br><span class="text-xs text-neutral-400">3840×2160</span>
+                    </button>
+                    <button onclick="setSize(1280, 800)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        MacBook Air<br><span class="text-xs text-neutral-400">1280×800</span>
+                    </button>
+                    <button onclick="setSize(1440, 900)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        MacBook Pro 13"<br><span class="text-xs text-neutral-400">1440×900</span>
+                    </button>
+                    <button onclick="setSize(1728, 1117)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        MacBook Pro 14"<br><span class="text-xs text-neutral-400">1728×1117</span>
+                    </button>
+                    <button onclick="setSize(1920, 1200)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        MacBook Pro 16"<br><span class="text-xs text-neutral-400">1920×1200</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Common Breakpoints -->
+            <div class="mb-6">
+                <h3 class="text-sm font-medium text-neutral-300 mb-3">Common CSS Breakpoints</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+                    <button onclick="setSize(640, 800)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Small (sm)<br><span class="text-xs text-neutral-400">640px</span>
+                    </button>
+                    <button onclick="setSize(768, 900)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Medium (md)<br><span class="text-xs text-neutral-400">768px</span>
+                    </button>
+                    <button onclick="setSize(1024, 900)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        Large (lg)<br><span class="text-xs text-neutral-400">1024px</span>
+                    </button>
+                    <button onclick="setSize(1280, 900)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        XLarge (xl)<br><span class="text-xs text-neutral-400">1280px</span>
+                    </button>
+                    <button onclick="setSize(1536, 900)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm">
+                        2XL (2xl)<br><span class="text-xs text-neutral-400">1536px</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Size Controls -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-neutral-300 mb-2">
+                        Width: <span id="widthValue" class="text-[#29C79F]">1920</span>px
+                    </label>
+                    <input type="range" id="widthSlider" min="320" max="3840" value="1920" class="w-full">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-neutral-300 mb-2">
+                        Height: <span id="heightValue" class="text-[#29C79F]">1080</span>px
+                    </label>
+                    <input type="range" id="heightSlider" min="568" max="2160" value="1080" class="w-full">
+                </div>
+            </div>
+
+            <!-- Orientation & Zoom -->
+            <div class="flex gap-4 mb-6">
+                <button id="rotateBtn" class="flex items-center gap-2 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Rotate
+                </button>
+                <button id="zoomOutBtn" class="flex items-center gap-2 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+                    </svg>
+                    Zoom Out
+                </button>
+                <button id="zoomInBtn" class="flex items-center gap-2 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                    Zoom In
+                </button>
+                <div class="flex-1"></div>
+                <span class="px-4 py-2 bg-neutral-700 text-neutral-200 rounded-lg text-sm">
+                    Zoom: <span id="zoomValue" class="text-[#29C79F]">100</span>%
+                </span>
+            </div>
+        </div>
+
+        <!-- Preview Container -->
+        <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+            <div class="iframe-container rounded-lg overflow-auto" style="max-height: 800px;">
+                <div class="inline-block min-w-full p-8">
+                    <div id="iframeWrapper" style="width: 1920px; height: 1080px; transform: scale(1); transform-origin: top left; transition: all 0.3s ease; display: inline-block;">
+                        <iframe id="previewFrame" src="" class="w-full h-full border-4 border-neutral-600 rounded-lg bg-white shadow-2xl"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <span class="text-neutral-400 text-sm">
+                    Current viewport: <span id="currentSize" class="text-white font-semibold">1920 × 1080</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentWidth = 1920;
+        let currentHeight = 1080;
+        let currentZoom = 1;
+
+        const urlInput = document.getElementById('urlInput');
+        const loadBtn = document.getElementById('loadBtn');
+        const widthSlider = document.getElementById('widthSlider');
+        const heightSlider = document.getElementById('heightSlider');
+        const widthValue = document.getElementById('widthValue');
+        const heightValue = document.getElementById('heightValue');
+        const zoomValue = document.getElementById('zoomValue');
+        const currentSize = document.getElementById('currentSize');
+        const iframeWrapper = document.getElementById('iframeWrapper');
+        const previewFrame = document.getElementById('previewFrame');
+        const rotateBtn = document.getElementById('rotateBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+
+        loadBtn.addEventListener('click', () => {
+            let url = urlInput.value.trim();
+            if (url && !url.startsWith('http')) {
+                url = 'https://' + url;
+            }
+            if (url) {
+                previewFrame.src = url;
+            }
+        });
+
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadBtn.click();
+            }
+        });
+
+        widthSlider.addEventListener('input', (e) => {
+            currentWidth = parseInt(e.target.value);
+            widthValue.textContent = currentWidth;
+            updateSize();
+        });
+
+        heightSlider.addEventListener('input', (e) => {
+            currentHeight = parseInt(e.target.value);
+            heightValue.textContent = currentHeight;
+            updateSize();
+        });
+
+        rotateBtn.addEventListener('click', () => {
+            const temp = currentWidth;
+            currentWidth = currentHeight;
+            currentHeight = temp;
+            widthSlider.value = currentWidth;
+            heightSlider.value = currentHeight;
+            widthValue.textContent = currentWidth;
+            heightValue.textContent = currentHeight;
+            updateSize();
+        });
+
+        zoomInBtn.addEventListener('click', () => {
+            currentZoom = Math.min(currentZoom + 0.1, 2);
+            updateZoom();
+        });
+
+        zoomOutBtn.addEventListener('click', () => {
+            currentZoom = Math.max(currentZoom - 0.1, 0.1);
+            updateZoom();
+        });
+
+        function setSize(width, height) {
+            currentWidth = width;
+            currentHeight = height;
+            widthSlider.value = width;
+            heightSlider.value = height;
+            widthValue.textContent = width;
+            heightValue.textContent = height;
+            updateSize();
+        }
+
+        function updateSize() {
+            iframeWrapper.style.width = currentWidth + 'px';
+            iframeWrapper.style.height = currentHeight + 'px';
+            currentSize.textContent = `${currentWidth} × ${currentHeight}`;
+        }
+
+        function updateZoom() {
+            iframeWrapper.style.transform = `scale(${currentZoom})`;
+            zoomValue.textContent = Math.round(currentZoom * 100);
+        }
+
+        window.setSize = setSize;
+    </script>
+  </main>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

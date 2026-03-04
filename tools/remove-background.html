@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove Background – WebTools</title>
+  <meta name="description" content="Remove image backgrounds automatically in your browser using AI. No upload to any server, 100% client-side and private. Works with photos, products, and portraits." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/remove-background.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/remove-background.html" />
+  <meta property="og:title" content="Remove Background – WebTools" />
+  <meta property="og:description" content="Remove image backgrounds automatically in your browser using AI. No upload, 100% client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Remove Background – WebTools" />
+  <meta name="twitter:description" content="Remove image backgrounds automatically in your browser using AI. No upload, 100% client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    .checker-bg {
+      background-image: linear-gradient(45deg, #444 25%, transparent 25%),
+                        linear-gradient(-45deg, #444 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #444 75%),
+                        linear-gradient(-45deg, transparent 75%, #444 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+      background-color: #2a2a2a;
+    }
+    .model-dl-bar {
+      transition: width 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-eraser text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Remove Background</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">AI-powered background removal, fully in-browser. Your images never leave your device.</p>
+          </div>
+        </div>
+
+        <!-- AI model status banner -->
+        <div id="modelBanner" class="bg-neutral-900 border border-neutral-700 rounded-xl p-4 mb-6">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+              <i class="fa-solid fa-microchip text-purple-400 text-sm"></i>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-white mb-0.5">AI Model (ONNX, runs in browser)</p>
+              <p id="modelStatusText" class="text-xs text-neutral-400">The AI model (~5 MB) is loaded on first use and cached automatically.</p>
+              <div id="modelDlWrap" class="hidden mt-2">
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span id="modelDlLabel" class="text-neutral-400">Loading model...</span>
+                  <span id="modelDlPct" class="text-[#29C79F] font-semibold">0%</span>
+                </div>
+                <div class="w-full bg-neutral-700 rounded-full h-1.5">
+                  <div id="modelDlBar" class="h-1.5 rounded-full bg-purple-500 model-dl-bar" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+            <div id="modelReadyBadge" class="hidden shrink-0 px-2 py-0.5 bg-[#29C79F]/20 text-[#29C79F] text-xs font-semibold rounded-full">
+              Ready
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-4 mb-6">
+          <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
+            <i class="fa-solid fa-sliders text-[#29C79F] mr-2"></i>Settings
+          </p>
+          <div class="flex flex-wrap gap-5">
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">AI Model</label>
+              <select id="modelSize" class="px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+                <option value="briaai/RMBG-1.4" selected>RMBG-1.4 (recommended, ~40 MB)</option>
+                <option value="Xenova/modnet">MODNet (portrait, ~25 MB)</option>
+              </select>
+              <p class="text-xs text-neutral-600 mt-1">Downloaded once, then cached.</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Output Background</label>
+              <select id="bgColor" class="px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+                <option value="transparent" selected>Transparent (PNG)</option>
+                <option value="white">White</option>
+                <option value="black">Black</option>
+                <option value="custom">Custom color</option>
+                <option value="blur">Blur background</option>
+              </select>
+            </div>
+            <div id="customColorWrap" class="hidden">
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Custom Color</label>
+              <input type="color" id="customColor" value="#00ff00"
+                class="w-12 h-9 rounded-lg border border-neutral-600 bg-neutral-700 cursor-pointer px-1">
+            </div>
+            <div id="blurWrap" class="hidden">
+              <label class="block text-sm font-medium text-neutral-300 mb-2">
+                Blur Amount: <span id="blurVal" class="text-[#29C79F] font-semibold">15</span>px
+              </label>
+              <input type="range" id="blurSlider" min="2" max="40" value="15" class="w-full accent-[#29C79F]">
+            </div>
+          </div>
+        </div>
+
+        <!-- Drop zone -->
+        <div id="dropZone"
+             class="border-2 border-dashed border-neutral-600 rounded-xl p-10 mb-6 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+          <i class="fa-solid fa-cloud-arrow-up text-4xl text-neutral-500 mb-3"></i>
+          <p class="text-neutral-300 font-medium">Drop images here or <span class="text-[#29C79F] underline">browse</span></p>
+          <p class="text-neutral-500 text-sm mt-1">Supports JPG, PNG, WebP. Multiple files accepted.</p>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple class="hidden">
+        </div>
+
+        <!-- Queue + actions -->
+        <div id="queueSection" class="hidden mb-5">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              Queue <span id="queueCount" class="text-[#29C79F]"></span>
+            </p>
+            <div class="flex gap-2">
+              <button id="addMoreBtn" class="px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                <i class="fa-solid fa-plus mr-1"></i>Add More
+              </button>
+              <button id="clearAllBtn" class="px-3 py-1.5 bg-neutral-700 hover:bg-red-500/20 hover:text-red-400 text-neutral-400 text-xs font-semibold rounded-lg transition-colors">
+                <i class="fa-solid fa-trash mr-1"></i>Clear
+              </button>
+            </div>
+          </div>
+          <div id="queueList" class="space-y-2 mb-4"></div>
+
+          <button id="processBtn"
+            class="w-full px-5 py-3 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Remove Backgrounds
+          </button>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsSection" class="hidden">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm font-semibold text-neutral-300">
+              <i class="fa-solid fa-check-circle text-[#29C79F] mr-2"></i>Results
+            </p>
+            <div class="flex gap-2">
+              <button id="reapplyBtn"
+                class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                <i class="fa-solid fa-rotate-right mr-1.5"></i>Re-apply Background
+              </button>
+              <button id="downloadAllBtn"
+                class="px-4 py-2 bg-[#29C79F] hover:bg-[#22b08c] text-white text-xs font-semibold rounded-lg transition-colors">
+                <i class="fa-solid fa-download mr-1.5"></i>Download All (ZIP)
+              </button>
+            </div>
+          </div>
+          <div id="resultsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- Error -->
+        <div id="errorBox" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-400 mb-4">
+          <i class="fa-solid fa-triangle-exclamation mr-2"></i><span id="errorMsg"></span>
+        </div>
+
+        <p class="text-xs text-neutral-600 text-center mt-6">
+          <i class="fa-solid fa-lock mr-1"></i>All AI processing happens locally in your browser. No images are ever sent to a server.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    // ── Transformers.js – briaai/RMBG-1.4 ────────────────────────────────
+    const TRANSFORMERS_CDN = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/transformers.min.js';
+    let tfModule   = null; // { AutoModel, AutoProcessor, RawImage, env }
+    let bgModel    = null;
+    let bgProc     = null;
+    let loadedModelId = null;
+
+    async function ensureModel(modelId, onProgress) {
+      // Import transformers.js once
+      if (!tfModule) {
+        try {
+          tfModule = await import(TRANSFORMERS_CDN);
+        } catch (e) {
+          throw new Error('Could not load Transformers.js from CDN. Please check your internet connection.');
+        }
+        // Point WASM files to jsDelivr
+        tfModule.env.backends.onnx.wasm.wasmPaths =
+          'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/';
+        tfModule.env.allowRemoteModels = true;
+        tfModule.env.useBrowserCache  = true;
+      }
+
+      // Re-use loaded model if same id
+      if (bgModel && bgProc && loadedModelId === modelId) return;
+
+      const { AutoModel, AutoProcessor } = tfModule;
+
+      onProgress(5, 'Downloading AI model weights...');
+
+      bgModel = await AutoModel.from_pretrained(modelId, {
+        config: { model_type: 'custom' },
+        progress_callback: (data) => {
+          if (data.status === 'progress') {
+            const pct = Math.round(5 + (data.progress ?? 0) * 0.85);
+            onProgress(pct, `Downloading model... ${Math.round(data.progress ?? 0)}%`);
+          }
+        },
+      });
+
+      onProgress(94, 'Loading processor...');
+      bgProc = await AutoProcessor.from_pretrained(modelId, {
+        config: {
+          do_normalize: true, do_pad: false, do_rescale: true, do_resize: true,
+          image_mean: [0.5, 0.5, 0.5],
+          feature_extractor_type: 'ImageFeatureExtractor',
+          image_std: [1, 1, 1],
+          resample: 2,
+          rescale_factor: 0.00392156862745098,
+          size: { width: 1024, height: 1024 },
+        },
+      });
+      loadedModelId = modelId;
+      onProgress(100, 'Model ready');
+    }
+
+    async function removeBg(file) {
+      const { RawImage } = tfModule;
+      const objectUrl = URL.createObjectURL(file);
+      const image     = await RawImage.fromURL(objectUrl);
+      URL.revokeObjectURL(objectUrl);
+
+      const { pixel_values } = await bgProc(image);
+      const { output }       = await bgModel({ input: pixel_values });
+
+      // Build alpha mask at original resolution
+      const mask = await RawImage.fromTensor(
+        output[0].mul(255).to('uint8')
+      ).resize(image.width, image.height);
+
+      const canvas = document.createElement('canvas');
+      canvas.width  = image.width;
+      canvas.height = image.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(image.toCanvas(), 0, 0);
+
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < mask.data.length; i++) {
+        imgData.data[4 * i + 3] = mask.data[i];
+      }
+      ctx.putImageData(imgData, 0, 0);
+      return new Promise(res => canvas.toBlob(res, 'image/png'));
+    }
+
+    // ── State ─────────────────────────────────────────────────────────────
+    const queue   = []; // { file, id, status: 'pending'|'processing'|'done'|'error', resultBlob }
+    let   nextId  = 0;
+    let   results = []; // { name, blob }
+
+    // ── DOM ───────────────────────────────────────────────────────────────
+    const dropZone      = document.getElementById('dropZone');
+    const fileInput     = document.getElementById('fileInput');
+    const queueSection  = document.getElementById('queueSection');
+    const queueList     = document.getElementById('queueList');
+    const queueCount    = document.getElementById('queueCount');
+    const processBtn    = document.getElementById('processBtn');
+    const resultsSection= document.getElementById('resultsSection');
+    const resultsGrid   = document.getElementById('resultsGrid');
+    const errorBox      = document.getElementById('errorBox');
+    const bgColorSel    = document.getElementById('bgColor');
+    const customColorWrap = document.getElementById('customColorWrap');
+    const modelDlWrap   = document.getElementById('modelDlWrap');
+    const modelDlBar    = document.getElementById('modelDlBar');
+    const modelDlLabel  = document.getElementById('modelDlLabel');
+    const modelDlPct    = document.getElementById('modelDlPct');
+    const modelReadyBadge = document.getElementById('modelReadyBadge');
+    const modelStatusText = document.getElementById('modelStatusText');
+
+    bgColorSel.addEventListener('change', () => {
+      customColorWrap.classList.toggle('hidden', bgColorSel.value !== 'custom');
+      document.getElementById('blurWrap').classList.toggle('hidden', bgColorSel.value !== 'blur');
+    });
+    document.getElementById('blurSlider').addEventListener('input', () => {
+      document.getElementById('blurVal').textContent = document.getElementById('blurSlider').value;
+    });
+
+    // ── File input ────────────────────────────────────────────────────────
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]','bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5');
+      addFiles([...e.dataTransfer.files].filter(isImageFile));
+    });
+    fileInput.addEventListener('change', () => { addFiles([...fileInput.files].filter(isImageFile)); fileInput.value = ''; });
+    document.getElementById('addMoreBtn').addEventListener('click', () => fileInput.click());
+    document.getElementById('clearAllBtn').addEventListener('click', clearQueue);
+
+    function isImageFile(f) {
+      return f.type.startsWith('image/') || /\.(jpe?g|png|webp)$/i.test(f.name);
+    }
+
+    function addFiles(files) {
+      files.forEach(f => queue.push({ file: f, id: nextId++, status: 'pending', resultBlob: null }));
+      renderQueue();
+      if (queue.length > 0 && dropZone.classList.contains('border-dashed')) {
+        dropZone.classList.add('hidden');
+        queueSection.classList.remove('hidden');
+      }
+    }
+
+    function clearQueue() {
+      queue.length = 0;
+      dropZone.classList.remove('hidden');
+      queueSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      results = [];
+    }
+
+    function renderQueue() {
+      queueList.innerHTML = '';
+      queueCount.textContent = `(${queue.length})`;
+      queue.forEach((item, i) => {
+        const li = document.createElement('div');
+        li.className = 'flex items-center gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl transition-colors';
+        const iconHtml = item.status === 'done'
+          ? `<i class="fa-solid fa-circle-check text-[#29C79F]"></i>`
+          : item.status === 'error'
+          ? `<i class="fa-solid fa-circle-xmark text-red-400"></i>`
+          : item.status === 'processing'
+          ? `<i class="fa-solid fa-spinner fa-spin text-yellow-400"></i>`
+          : `<i class="fa-solid fa-image text-neutral-500"></i>`;
+        li.innerHTML = `
+          <div class="w-8 h-8 bg-neutral-800 rounded flex items-center justify-center shrink-0">${iconHtml}</div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-white truncate">${escHtml(item.file.name)}</p>
+            <p class="text-xs text-neutral-500">${formatBytes(item.file.size)} &middot; ${statusLabel(item.status)}</p>
+          </div>
+          ${item.status === 'pending' ? `<button data-remove="${i}" class="remove-item shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-neutral-800 hover:bg-red-500/20 hover:text-red-400 text-neutral-500 transition-colors"><i class="fa-solid fa-xmark text-xs"></i></button>` : ''}
+        `;
+        queueList.appendChild(li);
+      });
+
+      queueList.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          queue.splice(parseInt(btn.dataset.remove), 1);
+          if (queue.length === 0) { clearQueue(); return; }
+          renderQueue();
+        });
+      });
+
+      processBtn.disabled = queue.filter(q => q.status === 'pending').length === 0;
+    }
+
+    function statusLabel(s) {
+      return { pending: 'Waiting', processing: 'Processing...', done: 'Done', error: 'Error' }[s] || s;
+    }
+
+    // ── Process ───────────────────────────────────────────────────────────
+    processBtn.addEventListener('click', processQueue);
+
+    async function processQueue() {
+      const pending = queue.filter(q => q.status === 'pending');
+      if (!pending.length) return;
+
+      processBtn.disabled = true;
+      errorBox.classList.add('hidden');
+
+      const modelId = document.getElementById('modelSize').value;
+      const bgVal   = bgColorSel.value;
+      const bgHex   = document.getElementById('customColor').value;
+
+      // Load / warm-up model
+      modelStatusText.textContent = 'Initialising AI model...';
+      modelDlWrap.classList.remove('hidden');
+      modelReadyBadge.classList.add('hidden');
+
+      try {
+        await ensureModel(modelId, (pct, label) => setModelProgress(pct, label, pct));
+      } catch (e) {
+        showError(e.message);
+        processBtn.disabled = false;
+        modelDlWrap.classList.add('hidden');
+        return;
+      }
+
+      // Process each image
+      for (const item of pending) {
+        item.status = 'processing';
+        renderQueue();
+        try {
+          const rawBlob         = await removeBg(item.file);
+          item.transparentBlob  = rawBlob;  // keep for re-apply
+          item.resultBlob       = await applyBackground(rawBlob, item.file, bgVal, bgHex);
+          item.status           = 'done';
+        } catch (e) {
+          item.status = 'error';
+          console.error('removeBg error', e);
+        }
+        renderQueue();
+      }
+
+      setModelProgress(100, 'Model ready', 100);
+      modelReadyBadge.classList.remove('hidden');
+      modelStatusText.textContent = 'Model cached — subsequent runs will be faster.';
+
+      results = queue.filter(q => q.status === 'done').map(q => ({
+        name: q.file.name.replace(/\.[^.]+$/, '') + '-nobg.png',
+        blob: q.resultBlob,
+        originalFile: q.file,
+        transparentBlob: q.transparentBlob,
+      }));
+
+      if (results.length) renderResults();
+
+      const errCount = queue.filter(q => q.status === 'error').length;
+      if (errCount) showError(`${errCount} image(s) could not be processed.`);
+
+      processBtn.disabled = false;
+    }
+
+    // ── Re-apply background without re-running AI ─────────────────────────
+    async function reapplyBackground() {
+      if (!results.length) return;
+      const btn = document.getElementById('reapplyBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Applying...';
+
+      const bgVal = bgColorSel.value;
+      const bgHex = document.getElementById('customColor').value;
+
+      for (const r of results) {
+        r.blob = await applyBackground(r.transparentBlob, r.originalFile, bgVal, bgHex);
+        // update the suffix for transparent vs non-transparent
+        r.name = r.originalFile.name.replace(/\.[^.]+$/, '') + (bgVal === 'transparent' ? '-nobg.png' : '-bg.png');
+      }
+
+      renderResults();
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-1.5"></i>Re-apply Background';
+    }
+
+    async function applyBackground(transparentBlob, originalFile, bgVal, bgHex) {
+      if (bgVal === 'transparent') return transparentBlob;
+
+      const fgImg  = await createImageBitmap(transparentBlob);
+      const canvas = document.createElement('canvas');
+      canvas.width  = fgImg.width;
+      canvas.height = fgImg.height;
+      const ctx    = canvas.getContext('2d');
+
+      if (bgVal === 'blur') {
+        // Draw the original image blurred as background, then sharp subject on top
+        const blurPx  = parseInt(document.getElementById('blurSlider').value);
+        const origImg = await createImageBitmap(originalFile);
+        // Expand draw region to hide blur edge fade
+        const pad = blurPx * 2;
+        ctx.filter = `blur(${blurPx}px)`;
+        ctx.drawImage(origImg, -pad, -pad, canvas.width + pad * 2, canvas.height + pad * 2);
+        ctx.filter = 'none';
+      } else {
+        ctx.fillStyle = bgVal === 'white' ? '#ffffff'
+                      : bgVal === 'black' ? '#000000'
+                      : bgHex;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Composite sharp foreground on top
+      ctx.drawImage(fgImg, 0, 0);
+      return new Promise(res => canvas.toBlob(res, 'image/png'));
+    }
+
+    function setModelProgress(pct, label, barPct) {
+      modelDlBar.style.width   = barPct + '%';
+      modelDlLabel.textContent = label;
+      modelDlPct.textContent   = pct + '%';
+    }
+
+    function renderResults() {
+      resultsGrid.innerHTML = '';
+      resultsSection.classList.remove('hidden');
+
+      results.forEach((r, i) => {
+        const url  = URL.createObjectURL(r.blob);
+        const origUrl = URL.createObjectURL(r.originalFile);
+        const card = document.createElement('div');
+        card.className = 'bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden';
+        card.innerHTML = `
+          <div class="flex border-b border-neutral-700">
+            <div class="flex-1 relative">
+              <img src="${origUrl}" alt="Original" class="w-full h-40 object-contain p-2" style="background:#1a1a1a">
+              <span class="absolute bottom-1 left-2 text-xs text-neutral-500 bg-neutral-900/80 px-1.5 py-0.5 rounded">Before</span>
+            </div>
+            <div class="w-px bg-neutral-700"></div>
+            <div class="flex-1 relative">
+              <img src="${url}" alt="No background" class="w-full h-40 object-contain p-2 checker-bg" loading="lazy">
+              <span class="absolute bottom-1 right-2 text-xs text-[#29C79F] bg-neutral-900/80 px-1.5 py-0.5 rounded">After</span>
+            </div>
+          </div>
+          <div class="px-3 py-2.5 flex items-center justify-between gap-2">
+            <p class="text-xs text-neutral-400 truncate" title="${escHtml(r.name)}">${escHtml(r.name)}</p>
+            <button data-idx="${i}" class="dl-single shrink-0 px-3 py-1.5 bg-[#29C79F] hover:bg-[#22b08c] text-white text-xs font-semibold rounded-lg transition-colors">
+              <i class="fa-solid fa-download mr-1"></i>PNG
+            </button>
+          </div>
+        `;
+        resultsGrid.appendChild(card);
+      });
+
+      resultsGrid.querySelectorAll('.dl-single').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const r = results[parseInt(btn.dataset.idx)];
+          downloadBlob(r.blob, r.name);
+        });
+      });
+    }
+
+    document.getElementById('reapplyBtn').addEventListener('click', reapplyBackground);
+
+    document.getElementById('downloadAllBtn').addEventListener('click', async () => {
+      if (!results.length) return;
+      const dlBtn = document.getElementById('downloadAllBtn');
+      dlBtn.disabled = true;
+      dlBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Zipping...';
+
+      const zip = new JSZip();
+      for (const r of results) {
+        const buf = await r.blob.arrayBuffer();
+        zip.file(r.name, buf);
+      }
+      const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+      downloadBlob(zipBlob, 'no-background-images.zip');
+
+      dlBtn.disabled = false;
+      dlBtn.innerHTML = '<i class="fa-solid fa-download mr-1.5"></i>Download All (ZIP)';
+    });
+
+    function showError(msg) {
+      errorBox.classList.remove('hidden');
+      document.getElementById('errorMsg').textContent = msg;
+    }
+
+    function downloadBlob(blob, name) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name;
+      a.click(); URL.revokeObjectURL(url);
+    }
+
+    function formatBytes(n) {
+      if (n < 1024)    return n + ' B';
+      if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+      return (n / 1048576).toFixed(2) + ' MB';
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Format Converter – WebTools</title>
+    <meta name="description" content="Convert images between WebP, PNG, JPG, AVIF, and more with quality control. Batch convert client-side — no upload needed." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://webtools.pro/tools/image-converter.html" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://webtools.pro/tools/image-converter.html" />
+    <meta property="og:title" content="Image Format Converter – WebTools" />
+    <meta property="og:description" content="Convert images between WebP, PNG, JPG, AVIF, and more with quality control. Batch convert client-side — no upload needed." />
+    <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+    <meta property="og:site_name" content="WebTools" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Image Format Converter – WebTools" />
+    <meta name="twitter:description" content="Convert images between WebP, PNG, JPG, AVIF, and more with quality control. Batch convert client-side — no upload needed." />
+    <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- PWA + Vite entry -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#29C79F" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="bg-neutral-800/80 backdrop-blur-sm border-b border-neutral-700 sticky top-0 z-50">
+        <div class="container max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <div class="block">
+                            <span class="text-xl font-bold text-white">AWD Digital</span>
+                            <span class="text-xl font-bold text-[#29C79F] ml-1">Tools</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/" class="text-white font-medium hover:text-[#de4d44] transition-colors">
+                        Home
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-neutral-300 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-neutral-700 bg-neutral-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-white font-medium hover:text-[#de4d44] transition-colors">
+                    Home
+                </a>
+                <a href="#tools" class="block text-neutral-300 hover:text-white transition-colors">
+                    Tools
+                </a>
+                <a href="https://awddigital.com" target="_blank" class="block text-neutral-300 hover:text-white transition-colors">
+                    About
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+        <div class="bg-neutral-800 rounded-2xl shadow-xl p-4 md:p-8 border border-neutral-700">
+            <div class="flex items-center gap-3 mb-6 md:mb-8">
+                <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold text-white">Image Format Converter</h1>
+            </div>
+            <p class="text-neutral-400 mb-6 md:mb-8">Convert images between PNG, JPG, WebP, BMP, and HEIC formats</p>
+
+            <!-- Upload Section -->
+            <div class="mb-6 md:mb-8">
+                <div id="dropZone" class="border-2 border-dashed border-neutral-600 rounded-xl p-10 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+                    <svg class="mx-auto h-12 md:h-16 w-12 md:w-16 text-neutral-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="text-base md:text-lg text-neutral-300 mb-2">Click to upload or drag and drop</p>
+                    <p class="text-xs md:text-sm text-neutral-500">PNG, JPG, JPEG, WebP, BMP, HEIC (Multiple files supported)</p>
+                    <input type="file" id="fileInput" accept="image/*,.heic,.heif" multiple class="hidden">
+                </div>
+            </div>
+
+            <!-- Conversion Settings -->
+            <div id="settingsSection" class="hidden mb-6 md:mb-8">
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <h3 class="font-semibold text-white mb-4">Conversion Settings</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">Convert To</label>
+                            <select id="outputFormat" class="w-full px-4 py-2 bg-neutral-600 border border-neutral-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <option value="png">PNG</option>
+                                <option value="jpeg">JPG/JPEG</option>
+                                <option value="webp">WebP</option>
+                                <option value="bmp">BMP</option>
+                            </select>
+                        </div>
+                        <div id="qualitySection">
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">
+                                Quality: <span id="qualityValue" class="text-[#29C79F]">90</span>%
+                            </label>
+                            <input type="range" id="quality" min="1" max="100" value="90" class="w-full">
+                            <p class="text-xs text-neutral-400 mt-1">Higher = Better quality, larger file</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">Resize (Optional)</label>
+                            <select id="resizeOption" class="w-full px-4 py-2 bg-neutral-600 border border-neutral-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <option value="none">Keep Original Size</option>
+                                <option value="50">50% of Original</option>
+                                <option value="75">75% of Original</option>
+                                <option value="custom">Custom Size</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="customSizeSection" class="hidden mt-4 grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">Width (px)</label>
+                            <input type="number" id="customWidth" placeholder="800" class="w-full px-4 py-2 bg-neutral-600 border border-neutral-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">Height (px)</label>
+                            <input type="number" id="customHeight" placeholder="600" class="w-full px-4 py-2 bg-neutral-600 border border-neutral-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div id="actionButtons" class="hidden flex flex-col sm:flex-row gap-3 mb-6 md:mb-8">
+                <button id="convertAll" class="flex-1 bg-[#29C79F] hover:bg-[#22a884] text-white font-semibold py-3 md:py-4 px-8 rounded-xl shadow-lg transition-all">
+                    Convert All Images
+                </button>
+                <button id="downloadAll" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 md:py-4 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download All as ZIP
+                </button>
+                <button id="clearAll" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 md:py-4 px-8 rounded-xl shadow-lg transition-all">
+                    Clear All
+                </button>
+            </div>
+
+            <!-- Images List -->
+            <div id="imagesSection" class="hidden">
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-white">Images (<span id="imageCount">0</span>)</h3>
+                    </div>
+                    <div id="imagesList" class="space-y-3 max-h-96 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="bg-neutral-700 rounded-xl p-8 md:p-12 border border-neutral-600 text-center">
+                <svg class="w-12 md:w-16 h-12 md:h-16 mx-auto mb-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p class="text-neutral-400">No images uploaded yet</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const settingsSection = document.getElementById('settingsSection');
+        const imagesSection = document.getElementById('imagesSection');
+        const actionButtons = document.getElementById('actionButtons');
+        const imagesList = document.getElementById('imagesList');
+        const imageCount = document.getElementById('imageCount');
+        const emptyState = document.getElementById('emptyState');
+        const outputFormat = document.getElementById('outputFormat');
+        const quality = document.getElementById('quality');
+        const qualityValue = document.getElementById('qualityValue');
+        const qualitySection = document.getElementById('qualitySection');
+        const resizeOption = document.getElementById('resizeOption');
+        const customSizeSection = document.getElementById('customSizeSection');
+        const customWidth = document.getElementById('customWidth');
+        const customHeight = document.getElementById('customHeight');
+
+        let images = [];
+
+        // Drag and drop
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/') || f.name.toLowerCase().endsWith('.heic') || f.name.toLowerCase().endsWith('.heif'));
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        quality.addEventListener('input', (e) => {
+            qualityValue.textContent = e.target.value;
+        });
+
+        outputFormat.addEventListener('change', () => {
+            if (outputFormat.value === 'png' || outputFormat.value === 'bmp') {
+                qualitySection.style.display = 'none';
+            } else {
+                qualitySection.style.display = 'block';
+            }
+        });
+
+        resizeOption.addEventListener('change', () => {
+            if (resizeOption.value === 'custom') {
+                customSizeSection.classList.remove('hidden');
+            } else {
+                customSizeSection.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('convertAll').addEventListener('click', convertAll);
+        document.getElementById('downloadAll').addEventListener('click', downloadAll);
+        document.getElementById('clearAll').addEventListener('click', clearAll);
+
+        const MAX_IMAGES = 10;
+
+        function showToast(msg, type = 'info') {
+            let el = document.getElementById('toastMsg');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'toastMsg';
+                el.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-lg text-sm font-medium shadow-lg transition-all';
+                document.body.appendChild(el);
+            }
+            el.textContent = msg;
+            el.className = el.className.replace(/bg-\S+/g, '');
+            el.classList.add(type === 'error' ? 'bg-red-600' : type === 'warn' ? 'bg-amber-500' : 'bg-neutral-700', 'text-white');
+            el.style.opacity = '1';
+            clearTimeout(el._t);
+            el._t = setTimeout(() => { el.style.opacity = '0'; }, 3500);
+        }
+
+        function handleFiles(files) {
+            const slots = MAX_IMAGES - images.length;
+            if (slots <= 0) { showToast(`Limit reached: max ${MAX_IMAGES} images per session.`, 'warn'); return; }
+            const allowed = files.filter(f => f.type.startsWith('image/') || f.name.toLowerCase().endsWith('.heic') || f.name.toLowerCase().endsWith('.heif')).slice(0, slots);
+            if (allowed.length < files.filter(f => f.type.startsWith('image/')).length) {
+                showToast(`Only ${allowed.length} image(s) added \u2013 ${MAX_IMAGES}-image limit reached.`, 'warn');
+            }
+            allowed.forEach(async file => {
+                // Check if it's a HEIC/HEIF file
+                if (file.type === 'image/heic' || file.type === 'image/heif' || 
+                    file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
+                    try {
+                        // Convert HEIC to blob first
+                        const convertedBlob = await heic2any({
+                            blob: file,
+                            toType: 'image/jpeg',
+                            quality: 0.9
+                        });
+                        
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                images.push({
+                                    id: Date.now() + Math.random(),
+                                    name: file.name,
+                                    originalSrc: e.target.result,
+                                    convertedSrc: null,
+                                    width: img.width,
+                                    height: img.height,
+                                    originalSize: file.size,
+                                    convertedSize: null,
+                                    status: 'pending',
+                                    isHeic: true
+                                });
+                                updateUI();
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(convertedBlob);
+                    } catch (error) {
+                        console.error('Error converting HEIC:', error);
+                        alert(`Failed to process HEIC file: ${file.name}`);
+                    }
+                } else if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            images.push({
+                                id: Date.now() + Math.random(),
+                                name: file.name,
+                                originalSrc: e.target.result,
+                                convertedSrc: null,
+                                width: img.width,
+                                height: img.height,
+                                originalSize: file.size,
+                                convertedSize: null,
+                                status: 'pending',
+                                isHeic: false
+                            });
+                            updateUI();
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function updateUI() {
+            if (images.length === 0) {
+                settingsSection.classList.add('hidden');
+                imagesSection.classList.add('hidden');
+                actionButtons.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            // Update slot counter if present
+            const slotEl = document.getElementById('slotCounter');
+            if (slotEl) {
+                slotEl.textContent = `${images.length} / ${MAX_IMAGES} images`;
+                slotEl.classList.toggle('hidden', images.length === 0);
+                slotEl.classList.toggle('text-amber-400', images.length >= MAX_IMAGES);
+                slotEl.classList.toggle('text-neutral-400', images.length < MAX_IMAGES);
+            }
+
+            settingsSection.classList.remove('hidden');
+            imagesSection.classList.remove('hidden');
+            actionButtons.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            imageCount.textContent = images.length;
+            
+            imagesList.innerHTML = images.map(image => {
+                const extension = outputFormat.value === 'jpeg' ? 'jpg' : outputFormat.value;
+                const newName = image.name.replace(/\.[^/.]+$/, '') + '.' + extension;
+                
+                return `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-neutral-600 rounded-lg p-3">
+                    <img src="${image.convertedSrc || image.originalSrc}" class="w-16 h-16 object-cover rounded border border-neutral-500 flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-neutral-200 font-medium text-sm truncate">${image.name}${image.isHeic ? ' (HEIC)' : ''}</p>
+                        <p class="text-neutral-400 text-xs">${image.width} × ${image.height} • ${formatSize(image.originalSize)}</p>
+                        ${image.convertedSize ? `<p class="text-green-400 text-xs">→ ${newName} • ${formatSize(image.convertedSize)}</p>` : ''}
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        ${image.status === 'pending' ? '<span class="text-xs text-neutral-400 px-3 py-1 bg-neutral-700 rounded">Pending</span>' : ''}
+                        ${image.status === 'converting' ? '<span class="text-xs text-blue-400 px-3 py-1 bg-blue-900/50 rounded">Converting...</span>' : ''}
+                        ${image.status === 'complete' ? `
+                            <span class="text-xs text-green-400 px-3 py-1 bg-green-900/50 rounded">Complete</span>
+                            <button onclick="downloadImage(${image.id})" class="p-2 text-[#de4d44] hover:bg-neutral-700 rounded-lg transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                            </button>
+                        ` : ''}
+                        <button onclick="removeImage(${image.id})" class="p-2 text-red-400 hover:bg-neutral-700 rounded-lg transition-all">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        async function convertAll() {
+            const format = outputFormat.value;
+            const qual = parseInt(quality.value) / 100;
+            const resize = resizeOption.value;
+
+            for (const image of images) {
+                if (image.status !== 'pending') continue;
+
+                image.status = 'converting';
+                updateUI();
+
+                const converted = await convertImage(image, format, qual, resize);
+                Object.assign(image, converted);
+                image.status = 'complete';
+                updateUI();
+            }
+        }
+
+        async function convertImage(image, format, quality, resize) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (resize !== 'none') {
+                        if (resize === 'custom') {
+                            width = parseInt(customWidth.value) || width;
+                            height = parseInt(customHeight.value) || height;
+                        } else {
+                            const scale = parseInt(resize) / 100;
+                            width = Math.floor(width * scale);
+                            height = Math.floor(height * scale);
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const mimeType = format === 'jpeg' ? 'image/jpeg' : 
+                                   format === 'png' ? 'image/png' : 
+                                   format === 'webp' ? 'image/webp' : 
+                                   'image/bmp';
+
+                    canvas.toBlob((blob) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            resolve({
+                                convertedSrc: e.target.result,
+                                convertedSize: blob.size
+                            });
+                        };
+                        reader.readAsDataURL(blob);
+                    }, mimeType, quality);
+                };
+                img.src = image.originalSrc;
+            });
+        }
+
+        function downloadImage(id) {
+            const image = images.find(img => img.id === id);
+            if (!image || !image.convertedSrc) return;
+
+            const extension = outputFormat.value === 'jpeg' ? 'jpg' : outputFormat.value;
+            const filename = image.name.replace(/\.[^/.]+$/, '') + '.' + extension;
+            
+            const link = document.createElement('a');
+            link.href = image.convertedSrc;
+            link.download = filename;
+            link.click();
+        }
+
+        async function downloadAll() {
+            const completedImages = images.filter(img => img.status === 'complete');
+            if (completedImages.length === 0) return;
+
+            const zip = new JSZip();
+            const extension = outputFormat.value === 'jpeg' ? 'jpg' : outputFormat.value;
+
+            completedImages.forEach(img => {
+                const filename = img.name.replace(/\.[^/.]+$/, '') + '.' + extension;
+                const base64Data = img.convertedSrc.split(',')[1];
+                zip.file(filename, base64Data, {base64: true});
+            });
+
+            const zipBlob = await zip.generateAsync({type: 'blob'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(zipBlob);
+            link.download = `converted_images.zip`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function removeImage(id) {
+            images = images.filter(img => img.id !== id);
+            updateUI();
+        }
+
+        function clearAll() {
+            images = [];
+            updateUI();
+        }
+
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        window.downloadImage = downloadImage;
+        window.removeImage = removeImage;
+    </script>
+  </main>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

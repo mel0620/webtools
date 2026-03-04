@@ -1,0 +1,66 @@
+# ─── Build ────────────────────────────────────────────────────────────────────
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# ─── Dev server (netlify dev) ────────────────────────────────────────────────
+[dev]
+  command   = "npm run dev"
+  port      = 5173
+  targetPort = 5173
+
+# ─── Headers ──────────────────────────────────────────────────────────────────
+# Vite appends a content hash to every JS/CSS asset → cache forever
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Service worker must NOT be cached by the browser
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# HTML pages: revalidate on every visit so users always get the latest shell
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/tools/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# PWA manifest & icons: short cache so icon changes propagate quickly
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type  = "application/manifest+json"
+
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# ─── Security headers (applied to every response) ────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options  = "nosniff"
+    X-Frame-Options         = "SAMEORIGIN"
+    Referrer-Policy         = "strict-origin-when-cross-origin"
+    Permissions-Policy      = "camera=(), microphone=(), geolocation=()"
+    X-XSS-Protection        = "1; mode=block"
+
+# ─── Redirects ────────────────────────────────────────────────────────────────
+# Serve index.html for bare root without a trailing-slash redirect loop
+[[redirects]]
+  from   = "/"
+  to     = "/index.html"
+  status = 200

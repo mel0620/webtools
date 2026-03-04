@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Palette Extractor – WebTools</title>
+  <meta name="description" content="Extract dominant colors from any image and build beautiful palettes. Download swatches in HEX, RGB, or CSS format. 100% client-side." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/color-palette-extractor.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/color-palette-extractor.html" />
+  <meta property="og:title" content="Color Palette Extractor – WebTools" />
+  <meta property="og:description" content="Extract dominant colors from any image and build beautiful palettes. Download swatches in HEX, RGB, or CSS format. 100% client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Color Palette Extractor – WebTools" />
+  <meta name="twitter:description" content="Extract dominant colors from any image and build beautiful palettes. Download swatches in HEX, RGB, or CSS format. 100% client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-eye-dropper text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Color Palette Extractor</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Extract dominant colors from any image. 100% client-side</p>
+          </div>
+        </div>
+
+        <!-- Upload -->
+        <div id="dropZone"
+             class="border-2 border-dashed border-neutral-600 rounded-xl p-10 mb-8 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+          <i class="fa-solid fa-image text-4xl text-neutral-500 mb-3"></i>
+          <p class="text-neutral-300 font-medium">Drop an image here or <span class="text-[#29C79F] underline">browse</span></p>
+          <p class="text-neutral-500 text-sm mt-1">PNG, JPG, WebP supported</p>
+          <input type="file" id="fileInput" accept="image/*" class="hidden">
+        </div>
+
+        <!-- Settings row -->
+        <div class="flex flex-wrap items-center gap-4 mb-6">
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-neutral-300">Colors:</label>
+            <select id="colorCount" class="px-3 py-1.5 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm">
+              <option value="6">6</option>
+              <option value="8" selected>8</option>
+              <option value="10">10</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-neutral-300">Format:</label>
+            <select id="copyFormat" class="px-3 py-1.5 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm">
+              <option value="hex">HEX</option>
+              <option value="rgb">RGB</option>
+              <option value="hsl">HSL</option>
+              <option value="tailwind">Tailwind bg-[]</option>
+            </select>
+          </div>
+          <button id="extractBtn"
+            class="px-5 py-2 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-lg text-sm transition-colors disabled:opacity-40"
+            disabled>
+            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>Extract Palette
+          </button>
+          <button id="copyAllBtn"
+            class="hidden px-5 py-2 bg-neutral-700 hover:bg-neutral-600 text-white font-semibold rounded-lg text-sm transition-colors">
+            <i class="fa-solid fa-copy mr-1.5"></i>Copy All
+          </button>
+        </div>
+
+        <!-- Main area -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Image preview -->
+          <div>
+            <p class="text-xs text-neutral-500 uppercase tracking-wider mb-2">Image Preview</p>
+            <div class="bg-neutral-900 rounded-xl border border-neutral-700 overflow-hidden min-h-[200px] flex items-center justify-center">
+              <img id="preview" class="hidden max-w-full max-h-72 object-contain" alt="Preview">
+              <p id="previewEmpty" class="text-neutral-600 text-sm">No image loaded</p>
+            </div>
+          </div>
+
+          <!-- Palette -->
+          <div>
+            <p class="text-xs text-neutral-500 uppercase tracking-wider mb-2">Extracted Palette</p>
+            <div id="paletteGrid" class="grid grid-cols-4 gap-2">
+              <div class="col-span-4 bg-neutral-900 rounded-xl border border-neutral-700 min-h-[200px] flex items-center justify-center">
+                <p id="paletteEmpty" class="text-neutral-600 text-sm">Palette will appear here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CSS / Export output -->
+        <div id="exportSection" class="hidden mt-6">
+          <p class="text-xs text-neutral-500 uppercase tracking-wider mb-2">CSS Variables</p>
+          <div class="relative">
+            <textarea id="cssOutput" readonly rows="8"
+              class="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-neutral-300 text-sm font-mono resize-none"></textarea>
+            <button id="copyCssBtn"
+              class="absolute top-2 right-2 px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 text-xs rounded-lg transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i>Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-6 right-6 px-4 py-2.5 bg-[#29C79F] text-white text-sm font-medium rounded-xl shadow-lg z-50 transition-opacity">
+          Copied!
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <canvas id="offscreen" class="hidden"></canvas>
+
+  <script>
+    const dropZone   = document.getElementById('dropZone');
+    const fileInput  = document.getElementById('fileInput');
+    const preview    = document.getElementById('preview');
+    const canvas     = document.getElementById('offscreen');
+    const ctx        = canvas.getContext('2d');
+    const extractBtn = document.getElementById('extractBtn');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    const copyCssBtn = document.getElementById('copyCssBtn');
+    let loadedImg = null;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+      if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+    function loadFile(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          loadedImg = img;
+          preview.src = e.target.result;
+          preview.classList.remove('hidden');
+          document.getElementById('previewEmpty').classList.add('hidden');
+          extractBtn.disabled = false;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    extractBtn.addEventListener('click', () => {
+      if (!loadedImg) return;
+      const count = parseInt(document.getElementById('colorCount').value);
+
+      // Downsample for speed
+      const SIZE = 120;
+      canvas.width = SIZE; canvas.height = SIZE;
+      ctx.drawImage(loadedImg, 0, 0, SIZE, SIZE);
+      const data = ctx.getImageData(0, 0, SIZE, SIZE).data;
+      const colors = extractColors(data, count);
+      renderPalette(colors);
+    });
+
+    function extractColors(data, n) {
+      // Median-cut style: quantize to a reduced set, then pick top-n by frequency
+      const buckets = {};
+      for (let i = 0; i < data.length; i += 4) {
+        const a = data[i+3];
+        if (a < 128) continue;
+        // Quantize to 5-bit per channel
+        const r = data[i]   >> 3;
+        const g = data[i+1] >> 3;
+        const b = data[i+2] >> 3;
+        const key = (r << 10) | (g << 5) | b;
+        buckets[key] = (buckets[key] || 0) + 1;
+      }
+      // Sort by frequency
+      const sorted = Object.entries(buckets).sort((a,b) => b[1]-a[1]);
+      const colors = [];
+      for (const [key] of sorted) {
+        const r = ((key >> 10) & 31) << 3;
+        const g = ((key >> 5)  & 31) << 3;
+        const b = (key         & 31) << 3;
+        // Ensure perceptual diversity (min delta)
+        if (colors.every(c => colorDist(c, [r,g,b]) > 30)) {
+          colors.push([r, g, b]);
+          if (colors.length >= n) break;
+        }
+      }
+      return colors;
+    }
+
+    function colorDist([r1,g1,b1], [r2,g2,b2]) {
+      return Math.sqrt((r1-r2)**2 + (g1-g2)**2 + (b1-b2)**2);
+    }
+
+    function toHex([r,g,b]) {
+      return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+    }
+    function toRgb([r,g,b])  { return `rgb(${r}, ${g}, ${b})`; }
+    function toHsl([r,g,b]) {
+      r/=255; g/=255; b/=255;
+      const max=Math.max(r,g,b), min=Math.min(r,g,b);
+      let h,s,l=(max+min)/2;
+      if (max===min) { h=s=0; }
+      else {
+        const d=max-min; s=l>.5?d/(2-max-min):d/(max+min);
+        h = (max===r?(g-b)/d+(g<b?6:0):max===g?(b-r)/d+2:(r-g)/d+4)/6;
+      }
+      return `hsl(${Math.round(h*360)}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`;
+    }
+
+    function formatColor(rgb) {
+      const fmt = document.getElementById('copyFormat').value;
+      if (fmt==='hex')      return toHex(rgb);
+      if (fmt==='rgb')      return toRgb(rgb);
+      if (fmt==='hsl')      return toHsl(rgb);
+      if (fmt==='tailwind') return `bg-[${toHex(rgb)}]`;
+      return toHex(rgb);
+    }
+
+    function luminance([r,g,b]) {
+      return 0.299*r + 0.587*g + 0.114*b;
+    }
+
+    function renderPalette(colors) {
+      const grid = document.getElementById('paletteGrid');
+      document.getElementById('paletteEmpty')?.remove();
+      grid.innerHTML = '';
+      // Clear old children except empty placeholder
+      colors.forEach(c => {
+        const hex = toHex(c);
+        const fgDark = luminance(c) > 140;
+        const div = document.createElement('div');
+        div.className = 'rounded-xl overflow-hidden border border-neutral-700 cursor-pointer group hover:scale-105 transition-transform';
+        div.innerHTML = `
+          <div class="h-16" style="background:${hex}"></div>
+          <div class="px-2 py-1.5 bg-neutral-900">
+            <p class="text-xs font-mono text-neutral-200 truncate">${hex}</p>
+            <p class="text-[10px] text-neutral-500">${toRgb(c)}</p>
+          </div>
+        `;
+        div.title = 'Click to copy';
+        div.addEventListener('click', () => { copyText(formatColor(c)); showToast(formatColor(c)); });
+        grid.appendChild(div);
+      });
+
+      // CSS Variables output
+      const cssLines = [':root {', ...colors.map((c,i) => `  --color-${i+1}: ${toHex(c)};`), '}'].join('\n');
+      document.getElementById('cssOutput').value = cssLines;
+      document.getElementById('exportSection').classList.remove('hidden');
+      copyAllBtn.classList.remove('hidden');
+
+      copyAllBtn.onclick = () => {
+        const fmt = document.getElementById('copyFormat').value;
+        const all = colors.map(c => formatColor(c)).join('\n');
+        copyText(all); showToast('All colors copied!');
+      };
+      copyCssBtn.onclick = () => { copyText(document.getElementById('cssOutput').value); showToast('CSS copied!'); };
+    }
+
+    function copyText(t) {
+      navigator.clipboard?.writeText(t).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = t; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      });
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.add('hidden'), 2000);
+    }
+  </script>
+</body>
+</html>

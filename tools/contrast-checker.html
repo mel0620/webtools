@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WCAG Contrast Checker – WebTools</title>
+  <meta name="description" content="Check WCAG AA/AAA colour contrast ratios for accessible web design. Free, instant, client-side." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/contrast-checker.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/contrast-checker.html" />
+  <meta property="og:title" content="WCAG Contrast Checker – WebTools" />
+  <meta property="og:description" content="Check WCAG AA/AAA colour contrast ratios for accessible web design. Free, instant, client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="WCAG Contrast Checker – WebTools" />
+  <meta name="twitter:description" content="Check WCAG AA/AAA colour contrast ratios for accessible web design. Free, instant, client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+<body>
+  <main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+    <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0" aria-hidden="true">
+          <i class="fa-solid fa-eye text-black text-lg"></i>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">Contrast Checker</h1>
+      </div>
+      <p class="text-neutral-400 text-sm mb-8 ml-[52px]">WCAG 2.1 AA &amp; AAA accessibility contrast ratios</p>
+
+      <!-- Color pickers -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <!-- Foreground -->
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <label class="text-xs font-semibold uppercase tracking-widest text-[#29C79F] block mb-3">Foreground (Text)</label>
+          <div class="flex items-center gap-3 mb-3">
+            <input type="color" id="fgColor" value="#ffffff"
+              class="w-12 h-12 rounded-xl border border-neutral-600 cursor-pointer flex-shrink-0 bg-transparent">
+            <div class="flex-1">
+              <input type="text" id="fgHex" value="#FFFFFF"
+                class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-white rounded-lg text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#29C79F]"
+                maxlength="7" spellcheck="false">
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div><div class="text-xs text-neutral-500">R</div><div id="fgR" class="font-mono text-xs text-white">255</div></div>
+            <div><div class="text-xs text-neutral-500">G</div><div id="fgG" class="font-mono text-xs text-white">255</div></div>
+            <div><div class="text-xs text-neutral-500">B</div><div id="fgB" class="font-mono text-xs text-white">255</div></div>
+          </div>
+        </div>
+
+        <!-- Background -->
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <label class="text-xs font-semibold uppercase tracking-widest text-[#29C79F] block mb-3">Background</label>
+          <div class="flex items-center gap-3 mb-3">
+            <input type="color" id="bgColor" value="#1a1a2e"
+              class="w-12 h-12 rounded-xl border border-neutral-600 cursor-pointer flex-shrink-0 bg-transparent">
+            <div class="flex-1">
+              <input type="text" id="bgHex" value="#1A1A2E"
+                class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-white rounded-lg text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#29C79F]"
+                maxlength="7" spellcheck="false">
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div><div class="text-xs text-neutral-500">R</div><div id="bgR" class="font-mono text-xs text-white">26</div></div>
+            <div><div class="text-xs text-neutral-500">G</div><div id="bgG" class="font-mono text-xs text-white">26</div></div>
+            <div><div class="text-xs text-neutral-500">B</div><div id="bgB" class="font-mono text-xs text-white">46</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Swap button -->
+      <div class="flex justify-center mb-6">
+        <button id="swapBtn" type="button"
+          class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-white rounded-xl transition-all text-sm border border-neutral-600 flex items-center gap-2">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>Swap Colors
+        </button>
+      </div>
+
+      <!-- Ratio display -->
+      <div class="bg-neutral-900 rounded-2xl border border-neutral-700 p-6 mb-6 text-center">
+        <div class="text-neutral-500 text-sm mb-1">Contrast Ratio</div>
+        <div id="ratioDisplay" class="text-5xl font-bold font-mono text-white mb-1"><i class="fa-solid fa-minus opacity-30"></i></div>
+        <div id="ratioMax" class="text-xs text-neutral-600">out of 21:1 maximum</div>
+      </div>
+
+      <!-- WCAG Results -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">Normal Text (≥4.5:1)</div>
+          <div class="flex gap-2">
+            <span id="normalAA" class="flex-1 text-center py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-minus opacity-30"></i></span>
+            <span id="normalAAA" class="flex-1 text-center py-1.5 rounded-lg text-xs font-bold border"><i class="fa-solid fa-minus opacity-30"></i></span>
+          </div>
+          <div class="flex gap-2 mt-1 text-xs text-neutral-600 text-center">
+            <span class="flex-1">AA</span><span class="flex-1">AAA</span>
+          </div>
+        </div>
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">Large Text (≥3:1)</div>
+          <div class="flex gap-2">
+            <span id="largeAA" class="flex-1 text-center py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-minus opacity-30"></i></span>
+            <span id="largeAAA" class="flex-1 text-center py-1.5 rounded-lg text-xs font-bold border"><i class="fa-solid fa-minus opacity-30"></i></span>
+          </div>
+          <div class="flex gap-2 mt-1 text-xs text-neutral-600 text-center">
+            <span class="flex-1">AA</span><span class="flex-1">AAA</span>
+          </div>
+        </div>
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">UI Components (≥3:1)</div>
+          <div class="flex gap-2">
+            <span id="uiAA" class="flex-1 text-center py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-minus opacity-30"></i></span>
+            <span class="flex-1 text-center py-1.5 rounded-lg text-xs font-bold text-neutral-700">N/A</span>
+          </div>
+          <div class="flex gap-2 mt-1 text-xs text-neutral-600 text-center">
+            <span class="flex-1">AA</span><span class="flex-1"></span>
+          </div>
+        </div>
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4 flex items-center">
+          <div id="ratioBar" class="w-full">
+            <div class="flex justify-between text-xs text-neutral-600 mb-1"><span>1</span><span>4.5</span><span>7</span><span>21</span></div>
+            <div class="h-3 rounded-full bg-neutral-700 relative">
+              <div id="ratioBarFill" class="h-full rounded-full transition-all duration-500" style="width:0%"></div>
+              <div class="absolute top-0 h-full border-l-2 border-dashed border-yellow-500/50" style="left:21.4%"></div>
+              <div class="absolute top-0 h-full border-l-2 border-dashed border-green-500/50" style="left:33.3%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div id="livePreview" class="rounded-2xl overflow-hidden border border-neutral-700">
+        <div id="pvLarge"  class="p-5"><span class="text-2xl font-bold">Large Text Preview (18pt / 14pt bold)</span></div>
+        <div id="pvNormal" class="px-5 py-3"><span class="text-base">Normal text preview <i class="fa-solid fa-circle text-[5px] align-middle mx-1.5 opacity-60"></i> The quick brown fox jumps over the lazy dog.</span></div>
+        <div id="pvSmall"  class="px-5 pb-5"><span class="text-sm text-opacity-80">Small body copy text <i class="fa-solid fa-circle text-[5px] align-middle mx-1.5 opacity-60"></i> accessibility matters for all users.</span></div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    const fgColor = document.getElementById('fgColor');
+    const bgColor = document.getElementById('bgColor');
+    const fgHex   = document.getElementById('fgHex');
+    const bgHex   = document.getElementById('bgHex');
+    const fgR = document.getElementById('fgR'),  fgG = document.getElementById('fgG'),  fgB = document.getElementById('fgB');
+    const bgR = document.getElementById('bgR'),  bgG = document.getElementById('bgG'),  bgB = document.getElementById('bgB');
+    const ratioDsp  = document.getElementById('ratioDisplay');
+    const normalAA  = document.getElementById('normalAA');
+    const normalAAA = document.getElementById('normalAAA');
+    const largeAA   = document.getElementById('largeAA');
+    const largeAAA  = document.getElementById('largeAAA');
+    const uiAA      = document.getElementById('uiAA');
+    const pvLarge   = document.getElementById('pvLarge');
+    const pvNormal  = document.getElementById('pvNormal');
+    const pvSmall   = document.getElementById('pvSmall');
+    const barFill   = document.getElementById('ratioBarFill');
+    const swapBtn   = document.getElementById('swapBtn');
+
+    function hexToRgb(hex) {
+      const m = hex.replace('#','').match(/^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+      return m ? { r: parseInt(m[1],16), g: parseInt(m[2],16), b: parseInt(m[3],16) } : null;
+    }
+
+    function linearise(c) {
+      const s = c / 255;
+      return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    }
+
+    function luminance({ r, g, b }) {
+      return 0.2126 * linearise(r) + 0.7152 * linearise(g) + 0.0722 * linearise(b);
+    }
+
+    function contrast(l1, l2) {
+      const lighter = Math.max(l1, l2);
+      const darker  = Math.min(l1, l2);
+      return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    function badge(el, pass, label = null) {
+      const text = label || (pass ? 'Pass' : 'Fail');
+      el.textContent = text;
+      if (pass) {
+        el.className = 'flex-1 text-center py-1.5 rounded-lg text-xs font-bold bg-green-500/15 text-green-400 border border-green-500/20';
+      } else {
+        el.className = 'flex-1 text-center py-1.5 rounded-lg text-xs font-bold bg-red-500/15 text-red-400 border border-red-500/20';
+      }
+    }
+
+    function update() {
+      const fg = hexToRgb(fgColor.value);
+      const bg = hexToRgb(bgColor.value);
+      if (!fg || !bg) return;
+
+      // Sync hex text
+      fgHex.value = fgColor.value.toUpperCase();
+      bgHex.value = bgColor.value.toUpperCase();
+      fgR.textContent = fg.r; fgG.textContent = fg.g; fgB.textContent = fg.b;
+      bgR.textContent = bg.r; bgG.textContent = bg.g; bgB.textContent = bg.b;
+
+      const ratio = contrast(luminance(fg), luminance(bg));
+      const ratioStr = ratio.toFixed(2) + ':1';
+      ratioDsp.textContent = ratioStr;
+
+      badge(normalAA,  ratio >= 4.5, ratio >= 4.5 ? 'AA ✓' : 'AA ✗');
+      badge(normalAAA, ratio >= 7,   ratio >= 7    ? 'AAA ✓' : 'AAA ✗');
+      badge(largeAA,   ratio >= 3,   ratio >= 3    ? 'AA ✓' : 'AA ✗');
+      badge(largeAAA,  ratio >= 4.5, ratio >= 4.5  ? 'AAA ✓' : 'AAA ✗');
+      badge(uiAA,      ratio >= 3,   ratio >= 3    ? 'AA ✓' : 'AA ✗');
+
+      // Bar fill (log scale to 21)
+      const pct = Math.min(100, (ratio / 21) * 100);
+      barFill.style.width = pct + '%';
+      barFill.style.background = ratio >= 7 ? '#22c55e' : ratio >= 4.5 ? '#29C79F' : ratio >= 3 ? '#eab308' : '#ef4444';
+
+      // Live preview
+      const fgStr = fgColor.value;
+      const bgStr = bgColor.value;
+      [pvLarge, pvNormal, pvSmall].forEach(el => {
+        el.style.background = bgStr;
+        el.style.color = fgStr;
+      });
+    }
+
+    function syncFromPicker(picker, hexEl) {
+      hexEl.value = picker.value.toUpperCase();
+      update();
+    }
+
+    function syncFromHex(hexEl, picker) {
+      const val = hexEl.value.trim();
+      if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+        picker.value = val;
+        update();
+      }
+    }
+
+    fgColor.addEventListener('input', () => syncFromPicker(fgColor, fgHex));
+    bgColor.addEventListener('input', () => syncFromPicker(bgColor, bgHex));
+    fgHex.addEventListener('input', () => syncFromHex(fgHex, fgColor));
+    bgHex.addEventListener('input', () => syncFromHex(bgHex, bgColor));
+
+    swapBtn.addEventListener('click', () => {
+      const tmp = fgColor.value;
+      fgColor.value = bgColor.value;
+      bgColor.value = tmp;
+      update();
+    });
+
+    update();
+  </script>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

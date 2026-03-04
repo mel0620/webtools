@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word &amp; Character Counter – WebTools</title>
+  <meta name="description" content="Count words, characters, sentences, paragraphs and estimate reading time. Free, instant, privacy-first." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/word-counter.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/word-counter.html" />
+  <meta property="og:title" content="Word &amp; Character Counter – WebTools" />
+  <meta property="og:description" content="Count words, characters, sentences, paragraphs and estimate reading time. Free, instant, privacy-first." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Word &amp; Character Counter – WebTools" />
+  <meta name="twitter:description" content="Count words, characters, sentences, paragraphs and estimate reading time. Free, instant, privacy-first." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+<body>
+  <main class="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+    <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0" aria-hidden="true">
+          <i class="fa-solid fa-calculator text-black text-lg"></i>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">Word &amp; Character Counter</h1>
+      </div>
+      <p class="text-neutral-400 text-sm mb-6 ml-[52px]">Paste or type text <i class="fa-solid fa-circle text-[5px] align-middle mx-1.5 opacity-40"></i> stats update instantly</p>
+
+      <!-- Stats bar -->
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-5">
+        <div class="stat-card bg-neutral-900 rounded-xl border border-neutral-700 p-3 text-center">
+          <div class="text-[#29C79F] font-bold text-xl font-mono" id="statWords">0</div>
+          <div class="text-neutral-500 text-xs mt-0.5">Words</div>
+        </div>
+        <div class="stat-card bg-neutral-900 rounded-xl border border-neutral-700 p-3 text-center">
+          <div class="text-[#29C79F] font-bold text-xl font-mono" id="statChars">0</div>
+          <div class="text-neutral-500 text-xs mt-0.5">Characters</div>
+        </div>
+        <div class="stat-card bg-neutral-900 rounded-xl border border-neutral-700 p-3 text-center">
+          <div class="text-[#29C79F] font-bold text-xl font-mono" id="statCharsNoSpace">0</div>
+          <div class="text-neutral-500 text-xs mt-0.5">No Spaces</div>
+        </div>
+        <div class="stat-card bg-neutral-900 rounded-xl border border-neutral-700 p-3 text-center">
+          <div class="text-[#29C79F] font-bold text-xl font-mono" id="statSentences">0</div>
+          <div class="text-neutral-500 text-xs mt-0.5">Sentences</div>
+        </div>
+        <div class="stat-card bg-neutral-900 rounded-xl border border-neutral-700 p-3 text-center">
+          <div class="text-[#29C79F] font-bold text-xl font-mono" id="statParagraphs">0</div>
+          <div class="text-neutral-500 text-xs mt-0.5">Paragraphs</div>
+        </div>
+        <div class="stat-card bg-neutral-900 rounded-xl border border-neutral-700 p-3 text-center">
+          <div class="text-[#29C79F] font-bold text-xl font-mono" id="statLines">0</div>
+          <div class="text-neutral-500 text-xs mt-0.5">Lines</div>
+        </div>
+      </div>
+
+      <!-- Reading / speaking time -->
+      <div class="grid grid-cols-2 gap-2 mb-5">
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-3 flex items-center gap-3">
+          <i class="fa-solid fa-book-open-reader text-[#29C79F] text-lg w-5 shrink-0"></i>
+          <div>
+            <div class="text-white text-sm font-semibold" id="statReadTime"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div>
+            <div class="text-neutral-500 text-xs">Reading time <span class="text-neutral-600">(200 wpm)</span></div>
+          </div>
+        </div>
+        <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-3 flex items-center gap-3">
+          <i class="fa-solid fa-microphone text-[#29C79F] text-lg w-5 shrink-0"></i>
+          <div>
+            <div class="text-white text-sm font-semibold" id="statSpeakTime"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div>
+            <div class="text-neutral-500 text-xs">Speaking time <span class="text-neutral-600">(130 wpm)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Textarea -->
+      <div class="relative">
+        <textarea id="textInput" rows="12"
+          placeholder="Type or paste your text here…"
+          class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-white rounded-xl font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#29C79F] resize-y"
+          spellcheck="true" aria-label="Text to analyse"></textarea>
+        <button id="clearBtn" type="button"
+          class="absolute top-3 right-3 text-xs text-neutral-500 hover:text-neutral-300 transition-colors px-2 py-1 bg-neutral-800 rounded-lg border border-neutral-600">
+          Clear
+        </button>
+      </div>
+
+      <!-- Top words -->
+      <div id="topWordsSection" class="mt-6 hidden">
+        <h2 class="text-sm font-semibold text-neutral-300 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-chart-bar text-[#29C79F]"></i>
+          Top 10 Words
+        </h2>
+        <div id="topWordsList" class="grid grid-cols-2 sm:grid-cols-5 gap-2"></div>
+      </div>
+
+      <!-- Copy summary -->
+      <button id="copySummaryBtn" type="button"
+        class="mt-6 w-full py-2.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-white font-medium rounded-xl transition-all text-sm border border-neutral-600 hidden">
+        <i class="fa-solid fa-copy mr-2"></i>Copy Summary
+      </button>
+    </div>
+  </main>
+
+  <script type="module">
+    import { copyToClipboard } from '../src/js/utils/clipboard.js';
+
+    const textInput     = document.getElementById('textInput');
+    const clearBtn      = document.getElementById('clearBtn');
+    const copySummary   = document.getElementById('copySummaryBtn');
+    const topSection    = document.getElementById('topWordsSection');
+    const topWordsList  = document.getElementById('topWordsList');
+
+    const statWords       = document.getElementById('statWords');
+    const statChars       = document.getElementById('statChars');
+    const statCharsNo     = document.getElementById('statCharsNoSpace');
+    const statSentences   = document.getElementById('statSentences');
+    const statParagraphs  = document.getElementById('statParagraphs');
+    const statLines       = document.getElementById('statLines');
+    const statReadTime    = document.getElementById('statReadTime');
+    const statSpeakTime   = document.getElementById('statSpeakTime');
+
+    const STOP_WORDS = new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','is','it','this','that','was','are','be','as','i','you','he','she','we','they','have','had','has','do','did','will','would','could','should','may','might','can','not','so','if','then','than','also','into','its','my','your','his','her','our','their','up','out','about','what','which','who','all','when','there','no','been','more','about','me']);
+
+    function formatTime(words, wpm) {
+      if (words === 0) return '';
+      const secs = Math.round((words / wpm) * 60);
+      if (secs < 60) return `${secs}s`;
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      return s ? `${m}m ${s}s` : `${m}m`;
+    }
+
+    function analyse(text) {
+      const words = text.trim() === '' ? [] : text.trim().split(/\s+/).filter(Boolean);
+      const chars = text.length;
+      const charsNoSpace = text.replace(/\s/g, '').length;
+      const sentences = text.trim() === '' ? 0 : (text.match(/[^.!?]*[.!?]+/g) || []).length;
+      const paragraphs = text.trim() === '' ? 0 : text.trim().split(/\n\s*\n/).filter(p => p.trim()).length;
+      const lines = text.trim() === '' ? 0 : text.split('\n').length;
+
+      statWords.textContent      = words.length.toLocaleString();
+      statChars.textContent      = chars.toLocaleString();
+      statCharsNo.textContent    = charsNoSpace.toLocaleString();
+      statSentences.textContent  = sentences.toLocaleString();
+      statParagraphs.textContent = paragraphs.toLocaleString();
+      statLines.textContent      = lines.toLocaleString();
+      statReadTime.textContent   = formatTime(words.length, 200);
+      statSpeakTime.textContent  = formatTime(words.length, 130);
+
+      // Top words
+      if (words.length > 0) {
+        const freq = {};
+        words.forEach(w => {
+          const clean = w.toLowerCase().replace(/[^a-z']/g, '');
+          if (clean.length > 1 && !STOP_WORDS.has(clean)) {
+            freq[clean] = (freq[clean] || 0) + 1;
+          }
+        });
+        const top = Object.entries(freq)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+        if (top.length) {
+          const max = top[0][1];
+          topWordsList.innerHTML = top.map(([w, c]) => `
+            <div class="bg-neutral-900 rounded-lg px-3 py-2 border border-neutral-700">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-white text-xs font-mono truncate">${w}</span>
+                <span class="text-[#29C79F] text-xs font-bold ml-1">${c}</span>
+              </div>
+              <div class="h-1 rounded-full bg-neutral-700">
+                <div class="h-full rounded-full bg-[#29C79F]" style="width:${Math.round((c/max)*100)}%"></div>
+              </div>
+            </div>`).join('');
+          topSection.classList.remove('hidden');
+        } else {
+          topSection.classList.add('hidden');
+        }
+        copySummary.classList.remove('hidden');
+      } else {
+        topSection.classList.add('hidden');
+        copySummary.classList.add('hidden');
+      }
+    }
+
+    textInput.addEventListener('input', () => analyse(textInput.value));
+    clearBtn.addEventListener('click', () => { textInput.value = ''; analyse(''); });
+    copySummary.addEventListener('click', async () => {
+      const t = textInput.value;
+      const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+      const summary = [
+        `Words: ${words}`,
+        `Characters: ${t.length}`,
+        `Characters (no spaces): ${t.replace(/\s/g,'').length}`,
+        `Sentences: ${(t.match(/[^.!?]*[.!?]+/g)||[]).length}`,
+        `Reading time: ${formatTime(words, 200)}`,
+        `Speaking time: ${formatTime(words, 130)}`,
+      ].join('\n');
+      await copyToClipboard(summary, copySummary);
+    });
+
+    analyse('');
+  </script>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

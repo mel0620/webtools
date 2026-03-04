@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Preview Editor – WebTools</title>
+    <meta name="description" content="Write and preview Markdown in real-time with live rendering. Export to HTML instantly. 100% in-browser, no data sent anywhere." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://webtools.pro/tools/markdown-preview.html" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://webtools.pro/tools/markdown-preview.html" />
+    <meta property="og:title" content="Markdown Preview Editor – WebTools" />
+    <meta property="og:description" content="Write and preview Markdown in real-time with live rendering. Export to HTML instantly. 100% in-browser, no data sent anywhere." />
+    <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+    <meta property="og:site_name" content="WebTools" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Markdown Preview Editor – WebTools" />
+    <meta name="twitter:description" content="Write and preview Markdown in real-time with live rendering. Export to HTML instantly. 100% in-browser, no data sent anywhere." />
+    <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- PWA + Vite entry -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#29C79F" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Markdown Preview Styles */
+        .markdown-body {
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .markdown-body h1 {
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 2px solid #475569;
+        }
+        .markdown-body h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #475569;
+        }
+        .markdown-body h3 {
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+        }
+        .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+            font-weight: bold;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+        }
+        .markdown-body p {
+            margin-bottom: 1em;
+        }
+        .markdown-body ul, .markdown-body ol {
+            margin-bottom: 1em;
+            padding-left: 2em;
+        }
+        .markdown-body ul {
+            list-style-type: disc;
+        }
+        .markdown-body ol {
+            list-style-type: decimal;
+        }
+        .markdown-body li {
+            margin-bottom: 0.25em;
+        }
+        .markdown-body code {
+            background-color: #334155;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-body pre {
+            background-color: #1e293b;
+            padding: 1em;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1em;
+        }
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        .markdown-body blockquote {
+            border-left: 4px solid #29C79F;
+            padding-left: 1em;
+            margin-left: 0;
+            margin-bottom: 1em;
+            color: #94a3b8;
+        }
+        .markdown-body a {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+        .markdown-body a:hover {
+            color: #93c5fd;
+        }
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1em;
+        }
+        .markdown-body table th,
+        .markdown-body table td {
+            border: 1px solid #475569;
+            padding: 0.5em;
+        }
+        .markdown-body table th {
+            background-color: #334155;
+            font-weight: bold;
+        }
+        .markdown-body hr {
+            border: none;
+            border-top: 2px solid #475569;
+            margin: 2em 0;
+        }
+        .markdown-body img {
+            max-width: 100%;
+            height: auto;
+        }
+        .markdown-body strong {
+            font-weight: bold;
+        }
+        .markdown-body em {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+        <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-white">Markdown Preview</h1>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="copyMarkdown" class="flex-1 md:flex-none px-3 md:px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-xs md:text-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span class="hidden sm:inline">Copy Markdown</span>
+                        <span class="sm:hidden">MD</span>
+                    </button>
+                    <button id="copyHtml" class="flex-1 md:flex-none px-3 md:px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all text-xs md:text-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        <span class="hidden sm:inline">Copy HTML</span>
+                        <span class="sm:hidden">HTML</span>
+                    </button>
+                    <button id="clearBtn" class="flex-1 md:flex-none px-3 md:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all text-xs md:text-sm">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="grid grid-cols-3 gap-2 mb-4 md:mb-6">
+                <button id="splitView" class="py-2 px-2 md:px-4 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-xs md:text-sm font-medium">
+                    <span class="hidden md:inline">Split View</span>
+                    <span class="md:hidden">Split</span>
+                </button>
+                <button id="editorView" class="py-2 px-2 md:px-4 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-xs md:text-sm font-medium">
+                    <span class="hidden md:inline">Editor Only</span>
+                    <span class="md:hidden">Editor</span>
+                </button>
+                <button id="previewView" class="py-2 px-2 md:px-4 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-xs md:text-sm font-medium">
+                    <span class="hidden md:inline">Preview Only</span>
+                    <span class="md:hidden">Preview</span>
+                </button>
+            </div>
+
+            <!-- Editor & Preview -->
+            <div id="container" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                <!-- Editor -->
+                <div id="editorPanel" class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-white text-sm">Editor</h3>
+                        <div class="text-xs text-neutral-400">
+                            <span id="charCount">0</span> <span class="hidden sm:inline">characters</span><span class="sm:hidden">chars</span> | <span id="wordCount">0</span> <span class="hidden sm:inline">words</span><span class="sm:hidden">w</span>
+                        </div>
+                    </div>
+                    <textarea id="editor" class="w-full h-[400px] md:h-[600px] px-3 md:px-4 py-2 md:py-3 bg-neutral-600 border border-neutral-500 text-white rounded-lg font-mono text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" placeholder="Start typing markdown here...
+
+# Heading 1
+## Heading 2
+### Heading 3
+
+**Bold text** and *italic text*
+
+- List item 1
+- List item 2
+- List item 3
+
+1. Numbered item
+2. Another item
+
+> This is a blockquote
+
+`inline code`
+
+```
+code block
+```
+
+[Link text](https://example.com)
+
+![Image alt text](https://via.placeholder.com/300)
+
+| Header 1 | Header 2 |
+|----------|----------|
+| Cell 1   | Cell 2   |
+"></textarea>
+                </div>
+
+                <!-- Preview -->
+                <div id="previewPanel" class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-white text-sm">Preview</h3>
+                    </div>
+                    <div id="preview" class="markdown-body h-[400px] md:h-[600px] overflow-y-auto px-2">
+                        <p class="text-neutral-500 italic">Preview will appear here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Markdown Cheatsheet -->
+        <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+            <h2 class="max-md:mt-8 text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Markdown Cheatsheet</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Headers</h4>
+                    <code class="text-green-400 text-xs block">
+                        # H1<br>
+                        ## H2<br>
+                        ### H3
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Emphasis</h4>
+                    <code class="text-green-400 text-xs block">
+                        **bold**<br>
+                        *italic*<br>
+                        ~~strikethrough~~
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Lists</h4>
+                    <code class="text-green-400 text-xs block">
+                        - Item 1<br>
+                        - Item 2<br>
+                        1. Numbered
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Links</h4>
+                    <code class="text-green-400 text-xs block">
+                        [text](url)
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Images</h4>
+                    <code class="text-green-400 text-xs block">
+                        ![alt](image.jpg)
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Code</h4>
+                    <code class="text-green-400 text-xs block">
+                        `inline code`<br>
+                        ```<br>
+                        code block<br>
+                        ```
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Blockquote</h4>
+                    <code class="text-green-400 text-xs block">
+                        > Quote text
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Horizontal Rule</h4>
+                    <code class="text-green-400 text-xs block">
+                        ---
+                    </code>
+                </div>
+                <div class="bg-neutral-700 rounded-lg p-3 md:p-4 border border-neutral-600">
+                    <h4 class="font-semibold text-white mb-2 text-sm">Table</h4>
+                    <code class="text-green-400 text-xs block">
+                        | Col1 | Col2 |<br>
+                        |------|------|<br>
+                        | A    | B    |
+                    </code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
+
+        const editor = document.getElementById('editor');
+        const preview = document.getElementById('preview');
+        const charCount = document.getElementById('charCount');
+        const wordCount = document.getElementById('wordCount');
+        const copyMarkdown = document.getElementById('copyMarkdown');
+        const copyHtml = document.getElementById('copyHtml');
+        const clearBtn = document.getElementById('clearBtn');
+        const container = document.getElementById('container');
+        const editorPanel = document.getElementById('editorPanel');
+        const previewPanel = document.getElementById('previewPanel');
+        const splitView = document.getElementById('splitView');
+        const editorView = document.getElementById('editorView');
+        const previewView = document.getElementById('previewView');
+
+        let currentView = 'split';
+
+        // Update preview on input
+        editor.addEventListener('input', updatePreview);
+
+        function updatePreview() {
+            const markdown = editor.value;
+            const html = marked.parse(markdown);
+            preview.innerHTML = html || '<p class="text-neutral-500 italic">Preview will appear here...</p>';
+            
+            // Update stats
+            charCount.textContent = markdown.length;
+            const words = markdown.trim() ? markdown.trim().split(/\s+/).length : 0;
+            wordCount.textContent = words;
+        }
+
+        // Copy markdown
+        copyMarkdown.addEventListener('click', () => {
+            navigator.clipboard.writeText(editor.value).then(() => {
+                showCopyFeedback(copyMarkdown);
+            });
+        });
+
+        // Copy HTML
+        copyHtml.addEventListener('click', () => {
+            const html = marked.parse(editor.value);
+            navigator.clipboard.writeText(html).then(() => {
+                showCopyFeedback(copyHtml);
+            });
+        });
+
+        // Clear
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear the editor?')) {
+                editor.value = '';
+                updatePreview();
+            }
+        });
+
+        function showCopyFeedback(button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Copied!
+            `;
+            setTimeout(() => {
+                button.innerHTML = originalText;
+            }, 2000);
+        }
+
+        // View switching
+        splitView.addEventListener('click', () => setView('split'));
+        editorView.addEventListener('click', () => setView('editor'));
+        previewView.addEventListener('click', () => setView('preview'));
+
+        function setView(view) {
+            currentView = view;
+            
+            // Update button styles
+            [splitView, editorView, previewView].forEach(btn => {
+                btn.classList.remove('bg-[#29C79F]', 'text-white');
+                btn.classList.add('bg-neutral-700', 'text-neutral-200');
+            });
+
+            if (view === 'split') {
+                splitView.classList.remove('bg-neutral-700', 'text-neutral-200');
+                splitView.classList.add('bg-[#29C79F]', 'text-white');
+                container.classList.remove('lg:grid-cols-1');
+                container.classList.add('lg:grid-cols-2');
+                editorPanel.classList.remove('hidden');
+                previewPanel.classList.remove('hidden');
+            } else if (view === 'editor') {
+                editorView.classList.remove('bg-neutral-700', 'text-neutral-200');
+                editorView.classList.add('bg-[#29C79F]', 'text-white');
+                container.classList.remove('lg:grid-cols-2');
+                container.classList.add('lg:grid-cols-1');
+                editorPanel.classList.remove('hidden');
+                previewPanel.classList.add('hidden');
+            } else if (view === 'preview') {
+                previewView.classList.remove('bg-neutral-700', 'text-neutral-200');
+                previewView.classList.add('bg-[#29C79F]', 'text-white');
+                container.classList.remove('lg:grid-cols-2');
+                container.classList.add('lg:grid-cols-1');
+                editorPanel.classList.add('hidden');
+                previewPanel.classList.remove('hidden');
+            }
+        }
+
+        // Initialize with split view
+        setView('split');
+    </script>
+  </main>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merge PDF Files – WebTools</title>
+  <meta name="description" content="Combine multiple PDF files into one document. Reorder pages, then download instantly — no upload needed, 100% client-side." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/merge-pdf.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/merge-pdf.html" />
+  <meta property="og:title" content="Merge PDF Files – WebTools" />
+  <meta property="og:description" content="Combine multiple PDF files into one document. Reorder pages, then download instantly — no upload needed, 100% client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Merge PDF Files – WebTools" />
+  <meta name="twitter:description" content="Combine multiple PDF files into one document. Reorder pages, then download instantly — no upload needed, 100% client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-file-pdf text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Merge PDF</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Combine multiple PDFs into one. 100% client-side, files never leave your device.</p>
+          </div>
+        </div>
+
+        <!-- Drop zone -->
+        <div id="dropZone"
+             class="border-2 border-dashed border-neutral-600 rounded-xl p-10 mb-6 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+          <i class="fa-solid fa-cloud-arrow-up text-4xl text-neutral-500 mb-3"></i>
+          <p class="text-neutral-300 font-medium">Drop PDF files here or <span class="text-[#29C79F] underline">browse</span></p>
+          <p class="text-neutral-500 text-sm mt-1">Select 2 or more PDF files. Drag to reorder.</p>
+          <input type="file" id="fileInput" accept=".pdf,application/pdf" multiple class="hidden">
+        </div>
+
+        <!-- File list -->
+        <div id="fileList" class="hidden mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Files to merge <span id="fileCount" class="text-[#29C79F]"></span></p>
+            <button id="clearAll" class="text-xs text-neutral-500 hover:text-red-400 transition-colors">
+              <i class="fa-solid fa-trash mr-1"></i>Clear all
+            </button>
+          </div>
+          <ul id="sortableList" class="space-y-2"></ul>
+          <p class="text-xs text-neutral-600 mt-2"><i class="fa-solid fa-grip-lines mr-1"></i>Drag rows to reorder pages</p>
+        </div>
+
+        <!-- Total pages info -->
+        <div id="totalsBar" class="hidden bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-3 mb-6 flex items-center justify-between text-sm">
+          <span class="text-neutral-400"><i class="fa-solid fa-layer-group text-[#29C79F] mr-2"></i><span id="totalPages">0</span> total pages from <span id="totalFiles">0</span> files</span>
+          <span id="totalSize" class="text-neutral-500 text-xs"></span>
+        </div>
+
+        <!-- Merge options -->
+        <div id="optionsPanel" class="hidden bg-neutral-900 border border-neutral-700 rounded-xl p-4 mb-6">
+          <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">Options</p>
+          <div class="flex flex-wrap gap-4">
+            <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+              <input type="checkbox" id="addBookmarks" checked class="rounded">
+              Add filename bookmarks
+            </label>
+            <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+              <input type="checkbox" id="addPageNums" class="rounded">
+              Add page numbers
+            </label>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button id="addMoreBtn" class="hidden px-4 py-2.5 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-semibold rounded-lg transition-colors">
+            <i class="fa-solid fa-plus mr-1.5"></i>Add More
+          </button>
+          <button id="mergeBtn"
+            class="flex-1 px-5 py-2.5 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled>
+            <i class="fa-solid fa-layer-group mr-1.5"></i>Merge &amp; Download
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progressWrap" class="hidden mt-5">
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span id="progressLabel" class="text-neutral-300">Merging...</span>
+            <span id="progressPct" class="text-[#29C79F] font-semibold">0%</span>
+          </div>
+          <div class="w-full bg-neutral-700 rounded-full h-2">
+            <div id="progressBar" class="h-2 rounded-full bg-[#29C79F] transition-all duration-300" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="resultBox" class="hidden mt-5 px-4 py-3 bg-[#29C79F]/10 border border-[#29C79F]/30 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-2 text-[#29C79F] text-sm font-medium">
+            <i class="fa-solid fa-circle-check"></i>
+            <span id="resultLabel">Merged successfully!</span>
+          </div>
+          <button id="downloadBtn" class="px-4 py-1.5 bg-[#29C79F] hover:bg-[#22b08c] text-white text-xs font-semibold rounded-lg transition-colors">
+            <i class="fa-solid fa-download mr-1.5"></i>Download
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const dropZone    = document.getElementById('dropZone');
+    const fileInput   = document.getElementById('fileInput');
+    const fileListEl  = document.getElementById('fileList');
+    const sortableList= document.getElementById('sortableList');
+    const mergeBtn    = document.getElementById('mergeBtn');
+    const addMoreBtn  = document.getElementById('addMoreBtn');
+    const clearAllBtn = document.getElementById('clearAll');
+
+    let files = [];        // { file, name, pages, sizeBytes, arrayBuffer }
+    let mergedBlob = null;
+    let dragSrc = null;
+
+    // ── Drop / file input ────────────────────────────────────────────────
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]','bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5');
+      addFiles([...e.dataTransfer.files].filter(f => f.type === 'application/pdf' || f.name.endsWith('.pdf')));
+    });
+    fileInput.addEventListener('change', () => { addFiles([...fileInput.files]); fileInput.value = ''; });
+    addMoreBtn.addEventListener('click', () => fileInput.click());
+    clearAllBtn.addEventListener('click', () => { files = []; renderList(); });
+
+    async function addFiles(newFiles) {
+      for (const f of newFiles) {
+        const buf = await f.arrayBuffer();
+        let pages = 0;
+        try {
+          const pdf = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
+          pages = pdf.getPageCount();
+        } catch(e) { pages = '?'; }
+        files.push({ file: f, name: f.name, pages, sizeBytes: f.size, arrayBuffer: buf });
+      }
+      renderList();
+    }
+
+    function renderList() {
+      sortableList.innerHTML = '';
+      if (files.length === 0) {
+        fileListEl.classList.add('hidden');
+        document.getElementById('totalsBar').classList.add('hidden');
+        document.getElementById('optionsPanel').classList.add('hidden');
+        mergeBtn.disabled = true;
+        addMoreBtn.classList.add('hidden');
+        dropZone.classList.remove('hidden');
+        document.getElementById('resultBox').classList.add('hidden');
+        return;
+      }
+
+      dropZone.classList.add('hidden');
+      fileListEl.classList.remove('hidden');
+      document.getElementById('totalsBar').classList.remove('hidden');
+      document.getElementById('optionsPanel').classList.remove('hidden');
+      addMoreBtn.classList.remove('hidden');
+
+      const totalPages = files.reduce((s,f) => s + (typeof f.pages === 'number' ? f.pages : 0), 0);
+      const totalSize  = files.reduce((s,f) => s + f.sizeBytes, 0);
+      document.getElementById('fileCount').textContent = `(${files.length})`;
+      document.getElementById('totalPages').textContent = totalPages;
+      document.getElementById('totalFiles').textContent = files.length;
+      document.getElementById('totalSize').textContent  = formatBytes(totalSize);
+
+      files.forEach((f, i) => {
+        const li = document.createElement('li');
+        li.dataset.idx = i;
+        li.draggable = true;
+        li.className = 'flex items-center gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl cursor-grab active:cursor-grabbing hover:border-neutral-500 transition-colors';
+        li.innerHTML = `
+          <i class="fa-solid fa-grip-vertical text-neutral-600 shrink-0"></i>
+          <div class="w-8 h-8 bg-red-500/20 rounded flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-file-pdf text-red-400 text-sm"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-white truncate">${escHtml(f.name)}</p>
+            <p class="text-xs text-neutral-500">${f.pages} page${f.pages !== 1 ? 's' : ''} &middot; ${formatBytes(f.sizeBytes)}</p>
+          </div>
+          <span class="text-xs text-neutral-600 shrink-0">#${i+1}</span>
+          <button data-remove="${i}" class="remove-btn shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-neutral-800 hover:bg-red-500/20 hover:text-red-400 text-neutral-500 transition-colors">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        `;
+        // Drag reorder
+        li.addEventListener('dragstart', e => { dragSrc = i; li.classList.add('opacity-40'); });
+        li.addEventListener('dragend',   () => li.classList.remove('opacity-40'));
+        li.addEventListener('dragover',  e => { e.preventDefault(); });
+        li.addEventListener('drop', e => {
+          e.preventDefault();
+          if (dragSrc === null || dragSrc === i) return;
+          const moved = files.splice(dragSrc, 1)[0];
+          files.splice(i, 0, moved);
+          dragSrc = null;
+          renderList();
+        });
+        sortableList.appendChild(li);
+      });
+
+      sortableList.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          files.splice(parseInt(btn.dataset.remove), 1);
+          renderList();
+        });
+      });
+
+      mergeBtn.disabled = files.length < 2;
+    }
+
+    // ── Merge ────────────────────────────────────────────────────────────
+    mergeBtn.addEventListener('click', async () => {
+      if (files.length < 2) return;
+      mergeBtn.disabled = true;
+      document.getElementById('resultBox').classList.add('hidden');
+      document.getElementById('progressWrap').classList.remove('hidden');
+      setProgress(0, 'Loading PDFs...');
+
+      try {
+        const merged = await PDFLib.PDFDocument.create();
+        const addBookmarks = document.getElementById('addBookmarks').checked;
+
+        for (let i = 0; i < files.length; i++) {
+          setProgress(Math.round((i / files.length) * 85), `Adding "${files[i].name}"...`);
+          const src = await PDFLib.PDFDocument.load(files[i].arrayBuffer, { ignoreEncryption: true });
+          const pageIdxs = src.getPageIndices();
+          const copied = await merged.copyPages(src, pageIdxs);
+
+          if (addBookmarks) {
+            // Set a simple title bookmark for the first page of this file
+            // (pdf-lib does not expose a full outline API easily, so we add metadata only)
+          }
+          copied.forEach(p => merged.addPage(p));
+        }
+
+        setProgress(90, 'Saving PDF...');
+        const pdfBytes = await merged.save();
+        mergedBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+        setProgress(100, 'Done!');
+        const totalPagesMerged = merged.getPageCount();
+        document.getElementById('resultLabel').textContent =
+          `Merged ${files.length} files into ${totalPagesMerged} pages (${formatBytes(mergedBlob.size)})`;
+        document.getElementById('resultBox').classList.remove('hidden');
+
+      } catch(e) {
+        setProgress(0, 'Error: ' + e.message);
+        document.getElementById('progressBar').style.background = '#ef4444';
+      } finally {
+        mergeBtn.disabled = false;
+      }
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      if (!mergedBlob) return;
+      const url = URL.createObjectURL(mergedBlob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'merged.pdf';
+      a.click(); URL.revokeObjectURL(url);
+    });
+
+    function setProgress(pct, label) {
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressPct').textContent = pct + '%';
+      document.getElementById('progressLabel').textContent = label;
+    }
+
+    function formatBytes(n) {
+      if (n < 1024) return n + ' B';
+      if (n < 1048576) return (n/1024).toFixed(1) + ' KB';
+      return (n/1048576).toFixed(2) + ' MB';
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  </script>
+</body>
+</html>

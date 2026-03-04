@@ -1,0 +1,462 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Icon &amp; Favicon Generator – WebTools</title>
+    <meta name="description" content="Generate app icons and favicons at multiple sizes from any image. Download PNG sets or a ZIP for iOS, Android, and web. 100% client-side." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://webtools.pro/tools/icon-generator.html" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://webtools.pro/tools/icon-generator.html" />
+    <meta property="og:title" content="App Icon &amp; Favicon Generator – WebTools" />
+    <meta property="og:description" content="Generate app icons and favicons at multiple sizes from any image. Download PNG sets or a ZIP for iOS, Android, and web. 100% client-side." />
+    <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+    <meta property="og:site_name" content="WebTools" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="App Icon &amp; Favicon Generator – WebTools" />
+    <meta name="twitter:description" content="Generate app icons and favicons at multiple sizes from any image. Download PNG sets or a ZIP for iOS, Android, and web. 100% client-side." />
+    <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- PWA + Vite entry -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#29C79F" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="bg-neutral-800/80 backdrop-blur-sm border-b border-neutral-700 sticky top-0 z-50">
+        <div class="container max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <div class="block">
+                            <span class="text-xl font-bold text-white">AWD Digital</span>
+                            <span class="text-xl font-bold text-[#29C79F] ml-1">Tools</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/" class="text-white font-medium hover:text-[#de4d44] transition-colors">
+                        Home
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-neutral-300 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-neutral-700 bg-neutral-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-white font-medium hover:text-[#de4d44] transition-colors">
+                    Home
+                </a>
+                <a href="#tools" class="block text-neutral-300 hover:text-white transition-colors">
+                    Tools
+                </a>
+                <a href="https://awddigital.com" target="_blank" class="block text-neutral-300 hover:text-white transition-colors">
+                    About
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main class="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+        <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                    </svg>
+                </div>
+                <h1 class="text-lg md:text-3xl font-bold text-white">Icon Generator</h1>
+            </div>
+            <p class="text-neutral-400 mb-8">Upload your logo and generate icons for web and mobile apps</p>
+            
+            <!-- Upload Section -->
+            <div class="mb-8">
+                <div id="dropZone" class="border-2 border-dashed border-neutral-600 rounded-xl p-10 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+                    <svg class="mx-auto h-16 w-16 text-neutral-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="text-lg text-neutral-300 mb-2">Click to upload or drag and drop</p>
+                    <p class="text-sm text-neutral-500">PNG, JPG, SVG (Recommended: 1024x1024px or larger)</p>
+                    <input type="file" id="fileInput" accept="image/*" class="hidden">
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div id="previewSection" class="hidden mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Preview</h2>
+                <div class="bg-neutral-900 rounded-xl p-6 flex items-center justify-center border border-neutral-700">
+                    <img id="preview" class="max-w-xs max-h-64 rounded-lg shadow-lg">
+                </div>
+            </div>
+
+            <!-- Size Selection -->
+            <div id="sizeSection" class="hidden mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Select Icon Sizes</h2>
+                
+                <div class="bg-neutral-900 rounded-xl p-6 border border-neutral-700">
+                    <h3 class="text-lg font-semibold text-neutral-200 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#29C79F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                        </svg>
+                        Web Favicons
+                    </h3>
+                    <div class="space-y-3 mb-6">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="16" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">favicon-16x16.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="32" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">favicon-32x32.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="48" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">favicon-48x48.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="ico" data-format="ico" checked>
+                            <span class="ml-3 text-neutral-300">favicon.ico (multi-size)</span>
+                        </label>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-neutral-200 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#29C79F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        Apple iOS Icons
+                    </h3>
+                    <div class="space-y-3 mb-6">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="120" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">apple-touch-icon-120x120.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="152" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">apple-touch-icon-152x152.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="180" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">apple-touch-icon.png (180x180)</span>
+                        </label>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-neutral-200 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#29C79F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        Android Icons
+                    </h3>
+                    <div class="space-y-3 mb-6">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="192" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">android-chrome-192x192.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="512" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">android-chrome-512x512.png</span>
+                        </label>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-neutral-200 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#29C79F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        Microsoft Icons
+                    </h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="144" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">mstile-144x144.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="150" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">mstile-150x150.png</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="size-checkbox w-4 h-4 text-[#de4d44] rounded bg-neutral-700 border-neutral-600" data-size="310" data-format="png" checked>
+                            <span class="ml-3 text-neutral-300">mstile-310x310.png</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <button id="generateBtn" class="mt-8 w-full bg-[#29C79F] hover:bg-[#22a884] text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Generate & Download Icons
+                    </span>
+                </button>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="progressSection" class="hidden">
+                <div class="bg-neutral-900 rounded-xl p-6 border border-neutral-700">
+                    <p class="text-center text-neutral-300 font-semibold mb-3" id="progressText">Generating icons...</p>
+                    <div class="w-full bg-neutral-700 rounded-full h-3">
+                        <div id="progressBar" class="bg-[#29C79F] h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const previewSection = document.getElementById('previewSection');
+        const sizeSection = document.getElementById('sizeSection');
+        const generateBtn = document.getElementById('generateBtn');
+        const progressSection = document.getElementById('progressSection');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        let uploadedImage = null;
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleFile(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImage = new Image();
+                uploadedImage.onload = () => {
+                    preview.src = e.target.result;
+                    previewSection.classList.remove('hidden');
+                    sizeSection.classList.remove('hidden');
+                };
+                uploadedImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resizeImage(img, size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, size, size);
+            
+            return canvas.toDataURL('image/png');
+        }
+
+        async function createICO(img) {
+            // Create ICO with multiple sizes (16, 32, 48)
+            const sizes = [16, 32, 48];
+            const images = [];
+            
+            for (const size of sizes) {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                const imageData = ctx.getImageData(0, 0, size, size);
+                images.push({ size, imageData });
+            }
+            
+            // ICO header
+            const header = new Uint8Array([
+                0, 0, // Reserved
+                1, 0, // Type (1 = ICO)
+                images.length, 0 // Number of images
+            ]);
+            
+            let offset = 6 + (images.length * 16); // Header + directory entries
+            const entries = [];
+            const imageDataArrays = [];
+            
+            for (const { size, imageData } of images) {
+                // Convert RGBA to PNG
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                ctx.putImageData(imageData, 0, 0);
+                
+                const pngDataUrl = canvas.toDataURL('image/png');
+                const pngData = dataURLtoBlob(pngDataUrl);
+                const arrayBuffer = await pngData.arrayBuffer();
+                const pngBytes = new Uint8Array(arrayBuffer);
+                
+                imageDataArrays.push(pngBytes);
+                
+                // Directory entry
+                const entry = new Uint8Array(16);
+                entry[0] = size === 256 ? 0 : size; // Width (0 = 256)
+                entry[1] = size === 256 ? 0 : size; // Height (0 = 256)
+                entry[2] = 0; // Color palette
+                entry[3] = 0; // Reserved
+                entry[4] = 1; entry[5] = 0; // Color planes
+                entry[6] = 32; entry[7] = 0; // Bits per pixel
+                
+                // Size of image data
+                const dataSize = pngBytes.length;
+                entry[8] = dataSize & 0xFF;
+                entry[9] = (dataSize >> 8) & 0xFF;
+                entry[10] = (dataSize >> 16) & 0xFF;
+                entry[11] = (dataSize >> 24) & 0xFF;
+                
+                // Offset to image data
+                entry[12] = offset & 0xFF;
+                entry[13] = (offset >> 8) & 0xFF;
+                entry[14] = (offset >> 16) & 0xFF;
+                entry[15] = (offset >> 24) & 0xFF;
+                
+                entries.push(entry);
+                offset += dataSize;
+            }
+            
+            // Combine everything
+            const totalSize = 6 + (entries.length * 16) + imageDataArrays.reduce((sum, arr) => sum + arr.length, 0);
+            const icoData = new Uint8Array(totalSize);
+            
+            icoData.set(header, 0);
+            let pos = 6;
+            
+            for (const entry of entries) {
+                icoData.set(entry, pos);
+                pos += 16;
+            }
+            
+            for (const imgData of imageDataArrays) {
+                icoData.set(imgData, pos);
+                pos += imgData.length;
+            }
+            
+            return new Blob([icoData], { type: 'image/x-icon' });
+        }
+
+        function dataURLtoBlob(dataURL) {
+            const arr = dataURL.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
+        generateBtn.addEventListener('click', async () => {
+            if (!uploadedImage) return;
+
+            progressSection.classList.remove('hidden');
+            generateBtn.disabled = true;
+            
+            const zip = new JSZip();
+            const checkboxes = document.querySelectorAll('.size-checkbox:checked');
+            const total = checkboxes.length;
+            let completed = 0;
+
+            for (const checkbox of checkboxes) {
+                const size = checkbox.dataset.size;
+                const format = checkbox.dataset.format;
+                
+                if (format === 'ico') {
+                    progressText.textContent = `Generating favicon.ico (multi-size)...`;
+                    const icoBlob = await createICO(uploadedImage);
+                    zip.file('favicon.ico', icoBlob);
+                } else {
+                    const sizeNum = parseInt(size);
+                    progressText.textContent = `Generating ${sizeNum}x${sizeNum} PNG...`;
+                    
+                    const dataURL = resizeImage(uploadedImage, sizeNum);
+                    const blob = dataURLtoBlob(dataURL);
+                    
+                    let filename;
+                    if (sizeNum === 16) filename = 'favicon-16x16.png';
+                    else if (sizeNum === 32) filename = 'favicon-32x32.png';
+                    else if (sizeNum === 48) filename = 'favicon-48x48.png';
+                    else if (sizeNum === 192) filename = 'android-chrome-192x192.png';
+                    else if (sizeNum === 512) filename = 'android-chrome-512x512.png';
+                    else if (sizeNum === 180) filename = 'apple-touch-icon.png';
+                    else if (sizeNum === 120) filename = 'apple-touch-icon-120x120.png';
+                    else if (sizeNum === 152) filename = 'apple-touch-icon-152x152.png';
+                    else if (sizeNum === 144) filename = 'mstile-144x144.png';
+                    else if (sizeNum === 150) filename = 'mstile-150x150.png';
+                    else if (sizeNum === 310) filename = 'mstile-310x310.png';
+                    else filename = `icon-${sizeNum}x${sizeNum}.png`;
+                    
+                    zip.file(filename, blob);
+                }
+                
+                completed++;
+                progressBar.style.width = `${(completed / total) * 100}%`;
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            progressText.textContent = 'Creating ZIP file...';
+            
+            const content = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(content);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'icons.zip';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            progressText.textContent = 'Download complete!';
+            setTimeout(() => {
+                progressSection.classList.add('hidden');
+                progressBar.style.width = '0%';
+                generateBtn.disabled = false;
+            }, 2000);
+        });
+    </script>
+  </main>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

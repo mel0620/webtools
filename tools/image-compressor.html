@@ -1,0 +1,535 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Image Compressor – WebTools</title>
+    <meta name="description" content="Compress JPEG, PNG, and WebP images in bulk directly in your browser. No upload required — 100% client-side and privacy-first." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://webtools.pro/tools/image-compressor.html" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://webtools.pro/tools/image-compressor.html" />
+    <meta property="og:title" content="Bulk Image Compressor – WebTools" />
+    <meta property="og:description" content="Compress JPEG, PNG, and WebP images in bulk directly in your browser. No upload required — 100% client-side and privacy-first." />
+    <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+    <meta property="og:site_name" content="WebTools" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Bulk Image Compressor – WebTools" />
+    <meta name="twitter:description" content="Compress JPEG, PNG, and WebP images in bulk directly in your browser. No upload required — 100% client-side and privacy-first." />
+    <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- PWA + Vite entry -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#29C79F" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+</head>
+<body>
+    <main id="app">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-white">Bulk Image Compressor</h1>
+                    </div>
+                    <span id="slotCounter" class="hidden text-xs text-neutral-400 bg-neutral-700 px-3 py-1 rounded-full"></span>
+                </div>
+
+                <!-- Settings Panel -->
+                <div class="bg-neutral-900 rounded-lg p-6 mb-6 border border-neutral-700">
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg class="w-5 h-5 text-[#29C79F]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <h2 class="text-lg font-semibold text-neutral-200">Optimization Settings</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">
+                                Quality: <span id="qualityValue" class="text-[#29C79F]">80</span>%
+                            </label>
+                            <input type="range" id="quality" min="1" max="100" value="80" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">Max Width (px)</label>
+                            <input type="number" id="maxWidth" value="1920" class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-300 mb-2">Max Height (px)</label>
+                            <input type="number" id="maxHeight" value="1080" class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Area -->
+                <div id="uploadArea" class="border-2 border-dashed border-neutral-600 rounded-xl p-10 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5 mb-6">
+                    <svg class="w-16 h-16 text-neutral-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="text-lg font-medium text-neutral-300 mb-2">Click or drag &amp; drop images here</p>
+                    <p class="text-sm text-neutral-500">JPG, PNG, WebP &mdash; up to <strong class="text-neutral-400">10 images</strong> per session</p>
+                    <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
+                </div>
+
+                <!-- Action Buttons -->
+                <div id="actionButtons" class="hidden grid md:flex gap-3 mb-6 flex-wrap">
+                    <button id="optimizeAll" class="flex-1 bg-[#29C79F] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#22a884] transition-all">
+                        Optimize All Images
+                    </button>
+                    <button id="downloadAll" class="flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-all">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        <span id="downloadAllText">Download as ZIP</span>
+                    </button>
+                    <span id="progressLabel" class="hidden self-center text-sm text-blue-400 font-medium"></span>
+                    <button id="clearAll" class="flex items-center justify-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-all">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Clear All
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div id="stats" class="hidden bg-neutral-900 border border-neutral-700 rounded-lg p-4 mb-6"></div>
+
+                <!-- Image List -->
+                <div id="imageList" class="space-y-4"></div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-12 text-neutral-500">
+                    <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p>No images uploaded yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── Constants ────────────────────────────────────────────────────────────
+        const MAX_IMAGES    = 10;   // hard cap per session – keeps memory & CPU sane
+        const CONCURRENCY   = 3;    // simultaneous canvas operations per batch
+        const RENDER_DELAY  = 80;   // ms – debounce redraws during batch processing
+
+        // ─── State ────────────────────────────────────────────────────────────────
+        let images       = [];
+        let isProcessing = false;
+        let renderTimer  = null;
+
+        // ─── DOM refs ─────────────────────────────────────────────────────────────
+        const fileInput     = document.getElementById('fileInput');
+        const uploadArea    = document.getElementById('uploadArea');
+        const imageList     = document.getElementById('imageList');
+        const emptyState    = document.getElementById('emptyState');
+        const actionButtons = document.getElementById('actionButtons');
+        const stats         = document.getElementById('stats');
+        const quality       = document.getElementById('quality');
+        const qualityValue  = document.getElementById('qualityValue');
+        const maxWidth      = document.getElementById('maxWidth');
+        const maxHeight     = document.getElementById('maxHeight');
+
+        // ─── Event wiring ─────────────────────────────────────────────────────────
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', e => processFiles(Array.from(e.target.files)));
+        quality.addEventListener('input', e => { qualityValue.textContent = e.target.value; });
+        document.getElementById('optimizeAll').addEventListener('click', optimizeAll);
+        document.getElementById('downloadAll').addEventListener('click', downloadAll);
+        document.getElementById('clearAll').addEventListener('click', clearAll);
+
+        // Drag-and-drop
+        uploadArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadArea.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+        });
+        uploadArea.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+            processFiles(Array.from(e.dataTransfer.files));
+        });
+
+        // ─── File ingestion ───────────────────────────────────────────────────────
+        function processFiles(files) {
+            const slots = MAX_IMAGES - images.length;
+            if (slots <= 0) {
+                showToast(`Limit reached: max ${MAX_IMAGES} images per session.`, 'warn');
+                return;
+            }
+
+            const imageFiles = files.filter(f => f.type.startsWith('image/')).slice(0, slots);
+            const skipped    = files.filter(f => f.type.startsWith('image/')).length - imageFiles.length;
+
+            if (skipped > 0) {
+                showToast(`Only ${imageFiles.length} image(s) added – ${MAX_IMAGES}-image limit reached.`, 'warn');
+            }
+
+            let loaded = 0;
+            if (imageFiles.length === 0) return;
+
+            imageFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const img = new Image();
+                    img.onload = () => {
+                        images.push({
+                            id:           crypto.randomUUID ? crypto.randomUUID() : (Date.now() + Math.random()).toString(36),
+                            name:         file.name,
+                            originalSize: file.size,
+                            originalSrc:  ev.target.result, // base64 kept only for compression input
+                            previewSrc:   ev.target.result, // will be swapped to blob URL after optimize
+                            optimizedBlob: null,
+                            optimizedSrc:  null,
+                            optimizedSize: null,
+                            width:        img.width,
+                            height:       img.height,
+                            status:       'pending'
+                        });
+                        loaded++;
+                        if (loaded === imageFiles.length) scheduleRender();
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Reset file input so the same file(s) can be re-added after clear
+            fileInput.value = '';
+        }
+
+        // ─── Compression ─────────────────────────────────────────────────────────
+        function compressOne(image) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onerror = () => reject(new Error(`Failed to load ${image.name}`));
+                img.onload = () => {
+                    let { width, height } = img;
+                    const w = Math.max(1, parseInt(maxWidth.value)  || 1920);
+                    const h = Math.max(1, parseInt(maxHeight.value) || 1080);
+
+                    if (width > w || height > h) {
+                        const ratio = Math.min(w / width, h / height);
+                        width  = Math.floor(width  * ratio);
+                        height = Math.floor(height * ratio);
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width  = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d', { alpha: false });
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const q = Math.min(100, Math.max(1, parseInt(quality.value))) / 100;
+                    canvas.toBlob(blob => {
+                        if (!blob) { reject(new Error('Canvas toBlob failed')); return; }
+                        resolve({ blob, size: blob.size });
+                    }, 'image/jpeg', q);
+                };
+                img.src = image.originalSrc;
+            });
+        }
+
+        // Run up to CONCURRENCY compressions at the same time
+        async function runConcurrent(items, fn, onEach) {
+            const queue  = [...items];
+            async function worker() {
+                while (queue.length) {
+                    const item = queue.shift();
+                    await fn(item);
+                    if (onEach) onEach();
+                }
+            }
+            const workers = Array.from({ length: Math.min(CONCURRENCY, items.length) }, worker);
+            await Promise.all(workers);
+        }
+
+        async function optimizeAll() {
+            if (isProcessing) return;
+            const pending = images.filter(img => img.status === 'pending');
+            if (!pending.length) return;
+
+            isProcessing = true;
+            updateButtons();
+
+            await runConcurrent(pending, async image => {
+                image.status = 'processing';
+                scheduleRender();
+
+                try {
+                    const { blob, size } = await compressOne(image);
+                    // Revoke previous preview blob URL if one exists
+                    if (image.optimizedSrc && image.optimizedSrc.startsWith('blob:')) {
+                        URL.revokeObjectURL(image.optimizedSrc);
+                    }
+                    image.optimizedBlob = blob;
+                    image.optimizedSrc  = URL.createObjectURL(blob); // lightweight for display
+                    image.optimizedSize = size;
+                    image.status        = 'complete';
+                } catch {
+                    image.status = 'error';
+                }
+
+                scheduleRender();
+            });
+
+            isProcessing = false;
+            scheduleRender();
+        }
+
+        // ─── Download ─────────────────────────────────────────────────────────────
+        function downloadImage(id) {
+            const image = images.find(img => img.id === id);
+            if (!image || !image.optimizedBlob) return;
+
+            const url  = URL.createObjectURL(image.optimizedBlob);
+            const link = document.createElement('a');
+            link.href     = url;
+            link.download = `optimized_${image.name.replace(/\.[^.]+$/, '')}.jpg`;
+            link.click();
+            // Revoke after a brief delay so the browser can trigger the save
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        async function downloadAll() {
+            const completed = images.filter(img => img.status === 'complete');
+            if (!completed.length) return;
+
+            const downloadBtn  = document.getElementById('downloadAll');
+            const downloadText = document.getElementById('downloadAllText');
+            downloadBtn.disabled = true;
+            downloadText.textContent = 'Creating ZIP...';
+
+            try {
+                const zip    = new JSZip();
+                const folder = zip.folder('optimized_images');
+
+                for (const img of completed) {
+                    const baseName = img.name.replace(/\.[^.]+$/, '');
+                    folder.file(`optimized_${baseName}.jpg`, img.optimizedBlob);
+                }
+
+                const zipBlob = await zip.generateAsync({
+                    type:             'blob',
+                    compression:      'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+
+                const url  = URL.createObjectURL(zipBlob);
+                const link = document.createElement('a');
+                link.href     = url;
+                link.download = `optimized_images_${Date.now()}.zip`;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            } catch (err) {
+                console.error('ZIP error:', err);
+                showToast('Could not create ZIP. Try downloading images individually.', 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadText.textContent = 'Download as ZIP';
+            }
+        }
+
+        // ─── Mutations ────────────────────────────────────────────────────────────
+        function removeImage(id) {
+            const idx = images.findIndex(img => img.id === id);
+            if (idx === -1) return;
+            const img = images[idx];
+            if (img.optimizedSrc && img.optimizedSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(img.optimizedSrc);
+            }
+            images.splice(idx, 1);
+            scheduleRender();
+        }
+
+        function clearAll() {
+            images.forEach(img => {
+                if (img.optimizedSrc && img.optimizedSrc.startsWith('blob:')) {
+                    URL.revokeObjectURL(img.optimizedSrc);
+                }
+            });
+            images = [];
+            scheduleRender();
+        }
+
+        // ─── Render (debounced) ───────────────────────────────────────────────────
+        function scheduleRender() {
+            clearTimeout(renderTimer);
+            renderTimer = setTimeout(render, RENDER_DELAY);
+        }
+
+        function updateButtons() {
+            const optimizeBtn = document.getElementById('optimizeAll');
+            const downloadBtn = document.getElementById('downloadAll');
+            const allDone     = images.length > 0 && images.every(img => img.status === 'complete' || img.status === 'error');
+            const hasComplete = images.some(img => img.status === 'complete');
+
+            optimizeBtn.disabled = isProcessing || allDone;
+            downloadBtn.disabled = !hasComplete;
+
+            optimizeBtn.classList.toggle('bg-neutral-600',   optimizeBtn.disabled);
+            optimizeBtn.classList.toggle('cursor-not-allowed', optimizeBtn.disabled);
+            optimizeBtn.classList.toggle('bg-[#29C79F]',     !optimizeBtn.disabled);
+            optimizeBtn.classList.toggle('hover:bg-[#22a884]', !optimizeBtn.disabled);
+
+            downloadBtn.classList.toggle('bg-neutral-600',   downloadBtn.disabled);
+            downloadBtn.classList.toggle('cursor-not-allowed', downloadBtn.disabled);
+            downloadBtn.classList.toggle('bg-green-600',     !downloadBtn.disabled);
+            downloadBtn.classList.toggle('hover:bg-green-700', !downloadBtn.disabled);
+
+            // Show/hide progress label during batch
+            const processing = images.filter(img => img.status === 'processing' || img.status === 'complete');
+            const pending     = images.filter(img => img.status === 'pending');
+            const total       = images.length;
+            const done        = images.filter(img => img.status === 'complete' || img.status === 'error').length;
+            const progressEl  = document.getElementById('progressLabel');
+            if (progressEl) {
+                if (isProcessing) {
+                    progressEl.textContent = `Processing ${done} / ${total}...`;
+                    progressEl.classList.remove('hidden');
+                } else {
+                    progressEl.classList.add('hidden');
+                }
+            }
+        }
+
+        function render() {
+            if (images.length === 0) {
+                emptyState.classList.remove('hidden');
+                actionButtons.classList.add('hidden');
+                stats.classList.add('hidden');
+                imageList.innerHTML = '';
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            actionButtons.classList.remove('hidden');
+
+            // Stats bar
+            const totalOriginal  = images.reduce((s, img) => s + img.originalSize, 0);
+            const totalOptimized = images.reduce((s, img) => s + (img.optimizedSize || 0), 0);
+            const savingsPct     = totalOriginal > 0 && totalOptimized > 0
+                ? Math.round((1 - totalOptimized / totalOriginal) * 100) : 0;
+
+            if (totalOptimized > 0) {
+                stats.classList.remove('hidden');
+                stats.innerHTML = `
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-sm text-neutral-400">Original Size</p>
+                            <p class="text-xl font-bold text-neutral-200">${formatSize(totalOriginal)}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-neutral-400">Optimized Size</p>
+                            <p class="text-xl font-bold text-neutral-200">${formatSize(totalOptimized)}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-neutral-400">Space Saved</p>
+                            <p class="text-xl font-bold text-[#29C79F]">${savingsPct}%</p>
+                        </div>
+                    </div>`;
+            } else {
+                stats.classList.add('hidden');
+            }
+
+            // Slot counter badge
+            const slotEl = document.getElementById('slotCounter');
+            if (slotEl) {
+                slotEl.textContent = `${images.length} / ${MAX_IMAGES} images`;
+                slotEl.classList.toggle('hidden', images.length === 0);
+                slotEl.classList.toggle('text-amber-400', images.length >= MAX_IMAGES);
+                slotEl.classList.toggle('text-neutral-400', images.length < MAX_IMAGES);
+            }
+
+            imageList.innerHTML = images.map(img => `
+                <div class="bg-neutral-900 border border-neutral-700 rounded-lg p-4 grid md:flex items-center gap-4">
+                    <img src="${img.optimizedSrc || img.originalSrc}" alt="${escHtml(img.name)}"
+                         class="w-20 h-20 object-cover rounded border border-neutral-700" loading="lazy">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-neutral-200 truncate">${escHtml(img.name)}</p>
+                        <p class="text-sm text-neutral-500">${img.width} &times; ${img.height}</p>
+                        <div class="flex flex-wrap gap-3 mt-1">
+                            <span class="text-sm text-neutral-400">Original: ${formatSize(img.originalSize)}</span>
+                            ${img.optimizedSize ? `
+                                <span class="text-sm text-[#29C79F] font-medium">
+                                    Optimized: ${formatSize(img.optimizedSize)}
+                                    (${Math.round((1 - img.optimizedSize / img.originalSize) * 100)}% saved)
+                                </span>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        ${img.status === 'pending'    ? '<span class="text-sm text-neutral-400 px-3 py-1 bg-neutral-700 rounded">Pending</span>' : ''}
+                        ${img.status === 'processing' ? '<span class="text-sm text-blue-400 px-3 py-1 bg-blue-900/50 rounded animate-pulse">Processing…</span>' : ''}
+                        ${img.status === 'error'      ? '<span class="text-sm text-red-400 px-3 py-1 bg-red-900/50 rounded">Error</span>' : ''}
+                        ${img.status === 'complete'   ? `
+                            <span class="text-sm text-green-400 px-3 py-1 bg-green-900/50 rounded">Done</span>
+                            <button onclick="downloadImage('${img.id}')" title="Download" class="p-2 text-[#29C79F] hover:bg-neutral-700 rounded-lg transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                            </button>` : ''}
+                        <button onclick="removeImage('${img.id}')" title="Remove" class="p-2 text-red-400 hover:bg-neutral-700 rounded-lg transition-all">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>`).join('');
+
+            updateButtons();
+        }
+
+        // ─── Utilities ────────────────────────────────────────────────────────────
+        function formatSize(bytes) {
+            if (!bytes) return '0 B';
+            const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (bytes / Math.pow(k, i)).toFixed(i > 1 ? 2 : 0) + ' ' + sizes[i];
+        }
+
+        function escHtml(str) {
+            return str.replace(/[&<>"']/g, m =>
+                ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+
+        let toastTimer = null;
+        function showToast(msg, type = 'info') {
+            let el = document.getElementById('toastMsg');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'toastMsg';
+                el.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-lg text-sm font-medium shadow-lg transition-all';
+                document.body.appendChild(el);
+            }
+            el.textContent = msg;
+            el.className = el.className.replace(/bg-\S+/g, '');
+            el.classList.add(type === 'error' ? 'bg-red-600' : type === 'warn' ? 'bg-amber-500' : 'bg-neutral-700', 'text-white');
+            el.style.opacity = '1';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 3500);
+        }
+
+        // Expose to inline handlers
+        window.downloadImage = downloadImage;
+        window.removeImage   = removeImage;
+    </script>
+  </main>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Box Shadow Generator – WebTools</title>
+  <meta name="description" content="Visually build CSS box-shadow with multi-layer support, live preview and copy-ready CSS." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/box-shadow-generator.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/box-shadow-generator.html" />
+  <meta property="og:title" content="CSS Box Shadow Generator – WebTools" />
+  <meta property="og:description" content="Visually build CSS box-shadow with multi-layer support, live preview and copy-ready CSS." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CSS Box Shadow Generator – WebTools" />
+  <meta name="twitter:description" content="Visually build CSS box-shadow with multi-layer support, live preview and copy-ready CSS." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <style>
+    input[type=range] { accent-color: #29C79F; }
+    .layer-item.active { border-color: #29C79F !important; }
+  </style>
+</head>
+<body>
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+    <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0" aria-hidden="true">
+          <i class="fa-solid fa-square-full text-black text-lg"></i>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">CSS Box Shadow Generator</h1>
+      </div>
+      <p class="text-neutral-400 text-sm mb-8 ml-[52px]">Build multi-layer box shadows visually</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Left: Controls -->
+        <div class="space-y-5">
+
+          <!-- Layers -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-sm font-semibold text-neutral-300">Layers</h2>
+              <button id="addLayerBtn" type="button"
+                class="text-xs px-3 py-1.5 bg-[#29C79F]/10 hover:bg-[#29C79F]/20 text-[#29C79F] rounded-lg transition-all border border-[#29C79F]/20">
+                <i class="fa-solid fa-plus mr-1"></i>Add Layer
+              </button>
+            </div>
+            <div id="layerList" class="space-y-2"></div>
+          </div>
+
+          <!-- Sliders -->
+          <div id="sliders" class="space-y-4 bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="flex justify-between text-xs text-neutral-400 mb-1">
+                  <span>Horizontal Offset</span><span id="lbX" class="font-mono text-[#29C79F]">0px</span>
+                </div>
+                <input type="range" id="slX" min="-100" max="100" value="0" class="w-full">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-neutral-400 mb-1">
+                  <span>Vertical Offset</span><span id="lbY" class="font-mono text-[#29C79F]">0px</span>
+                </div>
+                <input type="range" id="slY" min="-100" max="100" value="0" class="w-full">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="flex justify-between text-xs text-neutral-400 mb-1">
+                  <span>Blur Radius</span><span id="lbBlur" class="font-mono text-[#29C79F]">10px</span>
+                </div>
+                <input type="range" id="slBlur" min="0" max="100" value="10" class="w-full">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-neutral-400 mb-1">
+                  <span>Spread Radius</span><span id="lbSpread" class="font-mono text-[#29C79F]">0px</span>
+                </div>
+                <input type="range" id="slSpread" min="-50" max="50" value="0" class="w-full">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="flex justify-between text-xs text-neutral-400 mb-1">
+                  <span>Opacity</span><span id="lbOpacity" class="font-mono text-[#29C79F]">75%</span>
+                </div>
+                <input type="range" id="slOpacity" min="0" max="100" value="75" class="w-full">
+              </div>
+              <div>
+                <label class="text-xs text-neutral-400 block mb-1">Color</label>
+                <input type="color" id="shadowColor" value="#000000"
+                  class="w-full h-9 rounded-lg border border-neutral-600 bg-neutral-700 cursor-pointer">
+              </div>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="insetToggle" class="w-4 h-4 accent-[#29C79F]">
+              <span class="text-sm text-neutral-300">Inset (inner shadow)</span>
+            </label>
+          </div>
+
+          <!-- Preview background -->
+          <div>
+            <label class="text-xs text-neutral-500 block mb-2">Preview Background</label>
+            <div class="flex gap-2">
+              <button type="button" data-bg="#ffffff" class="bg-btn w-8 h-8 rounded-lg border-2 border-neutral-600" style="background:#fff"></button>
+              <button type="button" data-bg="#1a1a1a" class="bg-btn w-8 h-8 rounded-lg border-2 border-[#29C79F]" style="background:#1a1a1a"></button>
+              <button type="button" data-bg="#f0f4ff" class="bg-btn w-8 h-8 rounded-lg border-2 border-neutral-600" style="background:#f0f4ff"></button>
+              <button type="button" data-bg="#2d2d44" class="bg-btn w-8 h-8 rounded-lg border-2 border-neutral-600" style="background:#2d2d44"></button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Preview + CSS -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Live preview -->
+          <div id="previewBg" class="rounded-2xl flex items-center justify-center min-h-52"
+            style="background:#1a1a1a; padding:40px;">
+            <div id="previewBox"
+              class="w-28 h-28 rounded-xl transition-all duration-200"
+              style="background:#29C79F;"></div>
+          </div>
+
+          <!-- CSS Output -->
+          <div class="bg-neutral-900 rounded-xl border border-neutral-700 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold uppercase tracking-widest text-[#29C79F]">CSS</span>
+              <button id="copyCssBtn" type="button"
+                class="text-xs px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-white rounded-lg transition-all border border-neutral-600">
+                <i class="fa-solid fa-copy mr-1"></i>Copy
+              </button>
+            </div>
+            <pre id="cssOutput" class="font-mono text-sm text-neutral-200 whitespace-pre-wrap break-all select-all"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { copyToClipboard } from '../src/js/utils/clipboard.js';
+
+    // State
+    let layers = [{ x:0, y:4, blur:10, spread:0, opacity:75, color:'#000000', inset:false }];
+    let activeLayerIdx = 0;
+
+    const layerList  = document.getElementById('layerList');
+    const addLayerBtn = document.getElementById('addLayerBtn');
+    const slX        = document.getElementById('slX');
+    const slY        = document.getElementById('slY');
+    const slBlur     = document.getElementById('slBlur');
+    const slSpread   = document.getElementById('slSpread');
+    const slOpacity  = document.getElementById('slOpacity');
+    const shadowColor = document.getElementById('shadowColor');
+    const insetToggle = document.getElementById('insetToggle');
+    const lbX        = document.getElementById('lbX');
+    const lbY        = document.getElementById('lbY');
+    const lbBlur     = document.getElementById('lbBlur');
+    const lbSpread   = document.getElementById('lbSpread');
+    const lbOpacity  = document.getElementById('lbOpacity');
+    const previewBox = document.getElementById('previewBox');
+    const previewBg  = document.getElementById('previewBg');
+    const cssOutput  = document.getElementById('cssOutput');
+    const copyCssBtn = document.getElementById('copyCssBtn');
+
+    function hexToRgba(hex, opacity) {
+      const r = parseInt(hex.slice(1,3),16);
+      const g = parseInt(hex.slice(3,5),16);
+      const b = parseInt(hex.slice(5,7),16);
+      return `rgba(${r},${g},${b},${(opacity/100).toFixed(2)})`;
+    }
+
+    function buildCSS() {
+      const parts = layers.map(l => {
+        const rgba = hexToRgba(l.color, l.opacity);
+        return `${l.inset ? 'inset ' : ''}${l.x}px ${l.y}px ${l.blur}px ${l.spread}px ${rgba}`;
+      });
+      return `box-shadow: ${parts.join(',\n             ')};`;
+    }
+
+    function render() {
+      const css = buildCSS();
+      previewBox.style.boxShadow = css.replace('box-shadow: ','').replace(';','');
+      cssOutput.textContent = css;
+    }
+
+    function loadLayer(idx) {
+      const l = layers[idx];
+      slX.value      = l.x;
+      slY.value      = l.y;
+      slBlur.value   = l.blur;
+      slSpread.value = l.spread;
+      slOpacity.value = l.opacity;
+      shadowColor.value = l.color;
+      insetToggle.checked = l.inset;
+      lbX.textContent     = l.x + 'px';
+      lbY.textContent     = l.y + 'px';
+      lbBlur.textContent  = l.blur + 'px';
+      lbSpread.textContent = l.spread + 'px';
+      lbOpacity.textContent = l.opacity + '%';
+    }
+
+    function renderLayerList() {
+      layerList.innerHTML = layers.map((l, i) => `
+        <div class="layer-item flex items-center gap-3 px-3 py-2.5 rounded-lg border cursor-pointer transition-all ${i === activeLayerIdx ? 'border-[#29C79F] bg-[#29C79F]/5' : 'border-neutral-700 bg-neutral-900 hover:border-neutral-600'}"
+             data-idx="${i}">
+          <div class="w-5 h-5 rounded flex-shrink-0 border border-neutral-600"
+               style="background:${hexToRgba(l.color, l.opacity)}"></div>
+          <span class="text-sm text-neutral-300 flex-1">
+            ${l.inset ? 'inset ' : ''}${l.x}px ${l.y}px ${l.blur}px
+          </span>
+          ${layers.length > 1 ? `<button type="button" class="del-layer text-neutral-600 hover:text-red-400 text-xs transition-colors" data-idx="${i}">
+            <i class="fa-solid fa-trash"></i></button>` : ''}
+        </div>`).join('');
+    }
+
+    function update() {
+      const l = layers[activeLayerIdx];
+      l.x = parseInt(slX.value);
+      l.y = parseInt(slY.value);
+      l.blur = parseInt(slBlur.value);
+      l.spread = parseInt(slSpread.value);
+      l.opacity = parseInt(slOpacity.value);
+      l.color = shadowColor.value;
+      l.inset = insetToggle.checked;
+      lbX.textContent = l.x + 'px';
+      lbY.textContent = l.y + 'px';
+      lbBlur.textContent = l.blur + 'px';
+      lbSpread.textContent = l.spread + 'px';
+      lbOpacity.textContent = l.opacity + '%';
+      render();
+      renderLayerList();
+    }
+
+    [slX, slY, slBlur, slSpread, slOpacity, shadowColor, insetToggle].forEach(el =>
+      el.addEventListener('input', update));
+
+    addLayerBtn.addEventListener('click', () => {
+      layers.push({ x:5, y:5, blur:15, spread:0, opacity:50, color:'#000000', inset:false });
+      activeLayerIdx = layers.length - 1;
+      loadLayer(activeLayerIdx);
+      renderLayerList();
+      render();
+    });
+
+    layerList.addEventListener('click', e => {
+      const del = e.target.closest('.del-layer');
+      if (del) {
+        layers.splice(parseInt(del.dataset.idx), 1);
+        activeLayerIdx = Math.min(activeLayerIdx, layers.length - 1);
+        loadLayer(activeLayerIdx);
+        renderLayerList();
+        render();
+        return;
+      }
+      const item = e.target.closest('[data-idx]');
+      if (item) {
+        activeLayerIdx = parseInt(item.dataset.idx);
+        loadLayer(activeLayerIdx);
+        renderLayerList();
+      }
+    });
+
+    document.querySelectorAll('.bg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        previewBg.style.background = btn.dataset.bg;
+        document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('border-[#29C79F]'));
+        document.querySelectorAll('.bg-btn').forEach(b => b.classList.add('border-neutral-600'));
+        btn.classList.remove('border-neutral-600');
+        btn.classList.add('border-[#29C79F]');
+      });
+    });
+
+    copyCssBtn.addEventListener('click', async () => {
+      await copyToClipboard(buildCSS(), copyCssBtn);
+    });
+
+    // Init
+    renderLayerList();
+    loadLayer(0);
+    render();
+  </script>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

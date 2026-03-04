@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Image Resizer – WebTools</title>
+  <meta name="description" content="Resize images to exact dimensions for Instagram, YouTube, Twitter, Facebook, LinkedIn, and more. Free and 100% client-side." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/social-image-resizer.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/social-image-resizer.html" />
+  <meta property="og:title" content="Social Media Image Resizer – WebTools" />
+  <meta property="og:description" content="Resize images to exact dimensions for Instagram, YouTube, Twitter, Facebook, LinkedIn, and more. Free and 100% client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Social Media Image Resizer – WebTools" />
+  <meta name="twitter:description" content="Resize images to exact dimensions for Instagram, YouTube, Twitter, Facebook, LinkedIn, and more. Free and 100% client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-crop-simple text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Social Image Resizer</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Resize images to exact platform dimensions. 100% client-side, no upload</p>
+          </div>
+        </div>
+
+        <!-- Upload area -->
+        <div id="dropZone"
+             class="border-2 border-dashed border-neutral-600 rounded-xl p-10 mb-6 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5">
+          <i class="fa-solid fa-cloud-arrow-up text-4xl text-neutral-500 mb-3"></i>
+          <p class="text-neutral-300 font-medium">Drop an image here or <span class="text-[#29C79F] underline">browse</span></p>
+          <p class="text-neutral-500 text-sm mt-1">PNG, JPG, WebP, GIF supported</p>
+          <input type="file" id="fileInput" accept="image/*" class="hidden">
+        </div>
+
+        <!-- Platform presets grid -->
+        <div class="mb-6">
+          <h2 class="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-3">Platform Presets</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2" id="presetsGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Custom size -->
+        <div class="bg-neutral-900 rounded-xl p-4 border border-neutral-700 mb-6">
+          <h2 class="text-sm font-semibold text-neutral-300 mb-3"><i class="fa-solid fa-ruler-combined text-[#29C79F] mr-1.5"></i>Custom Size</h2>
+          <div class="flex flex-wrap gap-3 items-end">
+            <div>
+              <label class="block text-xs text-neutral-400 mb-1">Width (px)</label>
+              <input type="number" id="customW" value="1200" min="1" max="8000"
+                class="w-28 px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs text-neutral-400 mb-1">Height (px)</label>
+              <input type="number" id="customH" value="630" min="1" max="8000"
+                class="w-28 px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs text-neutral-400 mb-1">Quality</label>
+              <div class="flex items-center gap-2">
+                <input type="range" id="quality" min="20" max="100" value="92" class="w-24">
+                <span id="qualityVal" class="text-xs text-[#29C79F] w-8">92%</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-neutral-400 mb-1">Fit Mode</label>
+              <select id="fitMode" class="px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm">
+                <option value="cover">Cover (crop)</option>
+                <option value="contain">Contain (letterbox)</option>
+                <option value="stretch">Stretch</option>
+              </select>
+            </div>
+            <button id="resizeCustom"
+              class="px-5 py-2 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-lg text-sm transition-colors disabled:opacity-40"
+              disabled>
+              <i class="fa-solid fa-scissors mr-1.5"></i>Resize & Download
+            </button>
+          </div>
+        </div>
+
+        <!-- Preview area -->
+        <div id="previewSection" class="hidden">
+          <h2 class="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-3">Preview</h2>
+          <div class="flex flex-col sm:flex-row gap-6 items-start">
+            <div class="shrink-0">
+              <p class="text-xs text-neutral-500 mb-1">Original</p>
+              <img id="originalPreview" class="max-w-[200px] max-h-[200px] rounded-lg border border-neutral-700 object-contain bg-neutral-900" alt="Original">
+              <p id="originalSize" class="text-xs text-neutral-500 mt-1"></p>
+            </div>
+            <div class="shrink-0">
+              <p class="text-xs text-neutral-500 mb-1">Resized</p>
+              <img id="resizedPreview" class="max-w-[200px] max-h-[200px] rounded-lg border border-neutral-700 object-contain bg-neutral-900" alt="Resized">
+              <p id="resizedSize" class="text-xs text-neutral-500 mt-1"></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <canvas id="offscreen" class="hidden"></canvas>
+
+  <script>
+    const PRESETS = [
+      // Instagram
+      { label: 'Instagram Post', sub: '1:1', w: 1080, h: 1080, color: '#E1306C', icon: 'fa-brands fa-instagram' },
+      { label: 'Instagram Portrait', sub: '4:5', w: 1080, h: 1350, color: '#E1306C', icon: 'fa-brands fa-instagram' },
+      { label: 'Instagram Story', sub: '9:16', w: 1080, h: 1920, color: '#E1306C', icon: 'fa-brands fa-instagram' },
+      // YouTube
+      { label: 'YouTube Thumbnail', sub: '16:9', w: 1280, h: 720, color: '#FF0000', icon: 'fa-brands fa-youtube' },
+      { label: 'YouTube Banner', sub: 'Channel art', w: 2560, h: 1440, color: '#FF0000', icon: 'fa-brands fa-youtube' },
+      // Twitter / X
+      { label: 'X / Twitter Post', sub: '16:9', w: 1200, h: 675, color: '#000000', icon: 'fa-brands fa-x-twitter' },
+      { label: 'X / Twitter Header', sub: '3:1', w: 1500, h: 500, color: '#000000', icon: 'fa-brands fa-x-twitter' },
+      // Facebook
+      { label: 'Facebook Post', sub: '1.91:1', w: 1200, h: 630, color: '#1877F2', icon: 'fa-brands fa-facebook' },
+      { label: 'Facebook Cover', sub: '2.7:1', w: 820, h: 312, color: '#1877F2', icon: 'fa-brands fa-facebook' },
+      // LinkedIn
+      { label: 'LinkedIn Post', sub: '1.91:1', w: 1200, h: 627, color: '#0A66C2', icon: 'fa-brands fa-linkedin' },
+      { label: 'LinkedIn Banner', sub: '4:1', w: 1584, h: 396, color: '#0A66C2', icon: 'fa-brands fa-linkedin' },
+      // TikTok
+      { label: 'TikTok Video', sub: '9:16', w: 1080, h: 1920, color: '#010101', icon: 'fa-brands fa-tiktok' },
+      // Pinterest
+      { label: 'Pinterest Pin', sub: '2:3', w: 1000, h: 1500, color: '#E60023', icon: 'fa-brands fa-pinterest' },
+      // OG / Generic
+      { label: 'OG Image', sub: '1.91:1', w: 1200, h: 630, color: '#29C79F', icon: 'fa-solid fa-globe' },
+      { label: 'Open Graph Square', sub: '1:1', w: 1200, h: 1200, color: '#29C79F', icon: 'fa-solid fa-globe' },
+      { label: 'Email Banner', sub: '3:1', w: 600, h: 200, color: '#6c63ff', icon: 'fa-solid fa-envelope' },
+    ];
+
+    let currentImage = null;
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const canvas   = document.getElementById('offscreen');
+    const ctx      = canvas.getContext('2d');
+    const resizeCustomBtn = document.getElementById('resizeCustom');
+    const quality  = document.getElementById('quality');
+    const qualityVal = document.getElementById('qualityVal');
+
+    // Build preset cards
+    const grid = document.getElementById('presetsGrid');
+    PRESETS.forEach((p, i) => {
+      const btn = document.createElement('button');
+      btn.dataset.idx = i;
+      btn.disabled = true;
+      btn.className = 'preset-btn text-left p-3 rounded-xl border border-neutral-700 bg-neutral-900 hover:border-[#29C79F] hover:bg-[#29C79F]/5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
+      btn.innerHTML = `
+        <div class="flex items-center gap-2 mb-1">
+          <i class="${p.icon} text-sm" style="color:${p.color}"></i>
+          <span class="text-white text-xs font-semibold leading-tight">${p.label}</span>
+        </div>
+        <p class="text-neutral-500 text-xs">${p.w} × ${p.h} &nbsp;<span class="text-neutral-600">${p.sub}</span></p>
+      `;
+      btn.addEventListener('click', () => {
+        if (!currentImage) return;
+        document.getElementById('customW').value = p.w;
+        document.getElementById('customH').value = p.h;
+        resizeAndDownload(currentImage, p.w, p.h, getQuality(), getFit(), `${p.label.replace(/\s+/g,'-').toLowerCase()}-${p.w}x${p.h}`);
+      });
+      grid.appendChild(btn);
+    });
+
+    quality.addEventListener('input', () => qualityVal.textContent = quality.value + '%');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]','bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5');
+      if (e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadImage(fileInput.files[0]); });
+
+    function loadImage(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          currentImage = img;
+          document.querySelectorAll('.preset-btn').forEach(b => b.disabled = false);
+          resizeCustomBtn.disabled = false;
+          const prev = document.getElementById('originalPreview');
+          prev.src = e.target.result;
+          document.getElementById('originalSize').textContent = `${img.naturalWidth} × ${img.naturalHeight} · ${formatBytes(file.size)}`;
+          document.getElementById('previewSection').classList.remove('hidden');
+          document.getElementById('resizedPreview').src = '';
+          document.getElementById('resizedSize').textContent = '';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    resizeCustomBtn.addEventListener('click', () => {
+      if (!currentImage) return;
+      const w = parseInt(document.getElementById('customW').value) || 1200;
+      const h = parseInt(document.getElementById('customH').value) || 630;
+      resizeAndDownload(currentImage, w, h, getQuality(), getFit(), `resized-${w}x${h}`);
+    });
+
+    function getQuality() { return parseInt(quality.value) / 100; }
+    function getFit()     { return document.getElementById('fitMode').value; }
+
+    function resizeAndDownload(img, tw, th, q, fit, name) {
+      canvas.width  = tw;
+      canvas.height = th;
+      ctx.clearRect(0, 0, tw, th);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, tw, th);
+
+      const sw = img.naturalWidth, sh = img.naturalHeight;
+      let sx = 0, sy = 0, sW = sw, sH = sh;
+      let dx = 0, dy = 0, dW = tw, dH = th;
+
+      if (fit === 'cover') {
+        const ratio = Math.max(tw / sw, th / sh);
+        sW = tw / ratio; sH = th / ratio;
+        sx = (sw - sW) / 2; sy = (sh - sH) / 2;
+      } else if (fit === 'contain') {
+        const ratio = Math.min(tw / sw, th / sh);
+        dW = sw * ratio; dH = sh * ratio;
+        dx = (tw - dW) / 2; dy = (th - dH) / 2;
+      }
+
+      ctx.drawImage(img, sx, sy, sW, sH, dx, dy, dW, dH);
+
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = name + '.jpg';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        // update preview
+        document.getElementById('resizedPreview').src = canvas.toDataURL('image/jpeg', q);
+        document.getElementById('resizedSize').textContent = `${tw} × ${th} · ${formatBytes(blob.size)}`;
+      }, 'image/jpeg', q);
+    }
+
+    function formatBytes(b) {
+      if (b < 1024) return b + ' B';
+      if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+      return (b/1048576).toFixed(2) + ' MB';
+    }
+  </script>
+</body>
+</html>

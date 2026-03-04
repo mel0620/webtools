@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Resolution Checker – WebTools</title>
+    <meta name="description" content="Check your screen resolution, viewport size, device pixel ratio, color depth, and display specs instantly in your browser." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://webtools.pro/tools/screen-resolution.html" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://webtools.pro/tools/screen-resolution.html" />
+    <meta property="og:title" content="Screen Resolution Checker – WebTools" />
+    <meta property="og:description" content="Check your screen resolution, viewport size, device pixel ratio, color depth, and display specs instantly in your browser." />
+    <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+    <meta property="og:site_name" content="WebTools" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Screen Resolution Checker – WebTools" />
+    <meta name="twitter:description" content="Check your screen resolution, viewport size, device pixel ratio, color depth, and display specs instantly in your browser." />
+    <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- PWA + Vite entry -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#29C79F" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="bg-neutral-800/80 backdrop-blur-sm border-b border-neutral-700 sticky top-0 z-50">
+        <div class="container max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <div class="block">
+                            <span class="text-xl font-bold text-white">AWD Digital</span>
+                            <span class="text-xl font-bold text-[#29C79F] ml-1">Tools</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/" class="text-white font-medium hover:text-[#de4d44] transition-colors">
+                        Home
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-neutral-300 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-neutral-700 bg-neutral-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-white font-medium hover:text-[#de4d44] transition-colors">
+                    Home
+                </a>
+                <a href="#tools" class="block text-neutral-300 hover:text-white transition-colors">
+                    Tools
+                </a>
+                <a href="https://awddigital.com" target="_blank" class="block text-neutral-300 hover:text-white transition-colors">
+                    About
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+        <div class="md:bg-neutral-800 rounded-2xl shadow-xl p-4 md:p-8 md:border border-neutral-700">
+            <div class="flex items-center gap-3 mb-6 md:mb-8">
+                <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h1 class="text-lg md:text-3xl font-bold text-white">What's My Screen Resolution?</h1>
+            </div>
+            <p class="text-neutral-400 mb-6 md:mb-8">Detect your screen resolution, viewport size, and display information</p>
+
+            <!-- Main Resolution Display -->
+            <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-8 md:p-12 text-center mb-6 md:mb-8">
+                <p class="text-white/80 text-sm md:text-base mb-2">Your Screen Resolution</p>
+                <p class="text-white text-5xl md:text-7xl font-bold mb-4">
+                    <span id="mainWidth">0</span> × <span id="mainHeight">0</span>
+                </p>
+                <p class="text-white/90 text-lg md:text-xl">
+                    <span id="mainOrientation">Landscape</span> • <span id="mainAspect">16:9</span>
+                </p>
+            </div>
+
+            <!-- Detailed Information Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+                <!-- Screen Resolution -->
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-[#29C79F] rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-white">Screen Resolution</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-1"><span id="screenWidth">0</span> × <span id="screenHeight">0</span></p>
+                    <p class="text-sm text-neutral-400">Physical display resolution</p>
+                </div>
+
+                <!-- Browser Viewport -->
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-white">Browser Viewport</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-1"><span id="viewportWidth">0</span> × <span id="viewportHeight">0</span></p>
+                    <p class="text-sm text-neutral-400">Visible browser window size</p>
+                </div>
+
+                <!-- Device Pixel Ratio -->
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-white">Pixel Ratio</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-1"><span id="pixelRatio">1</span>x</p>
+                    <p class="text-sm text-neutral-400" id="pixelRatioDesc">Standard display</p>
+                </div>
+
+                <!-- Color Depth -->
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-white">Color Depth</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-1"><span id="colorDepth">24</span>-bit</p>
+                    <p class="text-sm text-neutral-400"><span id="colorCount">16.7M</span> colors</p>
+                </div>
+
+                <!-- Orientation -->
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-white">Orientation</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-1" id="orientation">Landscape</p>
+                    <p class="text-sm text-neutral-400">Screen orientation</p>
+                </div>
+
+                <!-- Aspect Ratio -->
+                <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-white">Aspect Ratio</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-1" id="aspectRatio">16:9</p>
+                    <p class="text-sm text-neutral-400" id="aspectName">Widescreen</p>
+                </div>
+            </div>
+
+            <!-- Device Information -->
+            <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600 mb-6 md:mb-8">
+                <h3 class="font-semibold text-white mb-4">Device Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-neutral-400 mb-1">Browser</p>
+                        <p class="text-white font-medium" id="browser">Loading...</p>
+                    </div>
+                    <div>
+                        <p class="text-neutral-400 mb-1">Operating System</p>
+                        <p class="text-white font-medium" id="os">Loading...</p>
+                    </div>
+                    <div>
+                        <p class="text-neutral-400 mb-1">Device Type</p>
+                        <p class="text-white font-medium" id="deviceType">Desktop</p>
+                    </div>
+                    <div>
+                        <p class="text-neutral-400 mb-1">Touch Support</p>
+                        <p class="text-white font-medium" id="touchSupport">No</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Common Resolutions Reference -->
+            <div class="bg-neutral-700 rounded-xl p-4 md:p-6 border border-neutral-600">
+                <h3 class="font-semibold text-white mb-4">Common Resolutions</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-sm">
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">HD</p>
+                        <p class="text-neutral-400">1280 × 720</p>
+                    </div>
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">Full HD</p>
+                        <p class="text-neutral-400">1920 × 1080</p>
+                    </div>
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">2K</p>
+                        <p class="text-neutral-400">2560 × 1440</p>
+                    </div>
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">4K</p>
+                        <p class="text-neutral-400">3840 × 2160</p>
+                    </div>
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">MacBook Air</p>
+                        <p class="text-neutral-400">1440 × 900</p>
+                    </div>
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">iPad Pro</p>
+                        <p class="text-neutral-400">1024 × 1366</p>
+                    </div>
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">iPhone 14</p>
+                        <p class="text-neutral-400">393 × 852</p>
+                    </div>
+                    <div class="bg-neutral-600 rounded-lg p-3">
+                        <p class="text-white font-medium">Galaxy S23</p>
+                        <p class="text-neutral-400">412 × 915</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function getAspectRatio(width, height) {
+            const divisor = gcd(width, height);
+            const w = width / divisor;
+            const h = height / divisor;
+            return `${w}:${h}`;
+        }
+
+        function getAspectName(ratio) {
+            const names = {
+                '16:9': 'Widescreen',
+                '16:10': 'Widescreen',
+                '4:3': 'Standard',
+                '21:9': 'Ultrawide',
+                '32:9': 'Super Ultrawide',
+                '3:2': 'Surface/iPad',
+                '19.5:9': 'Mobile'
+            };
+            return names[ratio] || 'Custom';
+        }
+
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Safari')) return 'Safari';
+            if (ua.includes('Edge')) return 'Edge';
+            if (ua.includes('Opera')) return 'Opera';
+            return 'Unknown';
+        }
+
+        function detectOS() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Win')) return 'Windows';
+            if (ua.includes('Mac')) return 'macOS';
+            if (ua.includes('Linux')) return 'Linux';
+            if (ua.includes('Android')) return 'Android';
+            if (ua.includes('iOS')) return 'iOS';
+            return 'Unknown';
+        }
+
+        function detectDeviceType() {
+            const width = window.screen.width;
+            if (width < 768) return 'Mobile';
+            if (width < 1024) return 'Tablet';
+            return 'Desktop';
+        }
+
+        function updateDisplay() {
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const pixelRatio = window.devicePixelRatio || 1;
+            const colorDepth = window.screen.colorDepth;
+            const orientation = screenWidth > screenHeight ? 'Landscape' : 'Portrait';
+            const aspectRatio = getAspectRatio(screenWidth, screenHeight);
+            const aspectName = getAspectName(aspectRatio);
+
+            // Main display
+            document.getElementById('mainWidth').textContent = screenWidth;
+            document.getElementById('mainHeight').textContent = screenHeight;
+            document.getElementById('mainOrientation').textContent = orientation;
+            document.getElementById('mainAspect').textContent = aspectRatio;
+
+            // Detailed info
+            document.getElementById('screenWidth').textContent = screenWidth;
+            document.getElementById('screenHeight').textContent = screenHeight;
+            document.getElementById('viewportWidth').textContent = viewportWidth;
+            document.getElementById('viewportHeight').textContent = viewportHeight;
+            document.getElementById('pixelRatio').textContent = pixelRatio;
+            document.getElementById('colorDepth').textContent = colorDepth;
+            document.getElementById('orientation').textContent = orientation;
+            document.getElementById('aspectRatio').textContent = aspectRatio;
+            document.getElementById('aspectName').textContent = aspectName;
+
+            // Pixel ratio description
+            let pixelDesc = 'Standard display';
+            if (pixelRatio >= 3) pixelDesc = 'Retina 3x display';
+            else if (pixelRatio >= 2) pixelDesc = 'Retina display';
+            else if (pixelRatio > 1) pixelDesc = 'High-DPI display';
+            document.getElementById('pixelRatioDesc').textContent = pixelDesc;
+
+            // Color count
+            const colorCount = Math.pow(2, colorDepth);
+            let colorText = '';
+            if (colorCount >= 16777216) colorText = '16.7M colors';
+            else if (colorCount >= 65536) colorText = '65K colors';
+            else colorText = `${(colorCount / 1000).toFixed(0)}K colors`;
+            document.getElementById('colorCount').textContent = colorText;
+
+            // Device info
+            document.getElementById('browser').textContent = detectBrowser();
+            document.getElementById('os').textContent = detectOS();
+            document.getElementById('deviceType').textContent = detectDeviceType();
+            document.getElementById('touchSupport').textContent = 
+                ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? 'Yes' : 'No';
+        }
+
+        // Update on load
+        updateDisplay();
+
+        // Update on resize
+        window.addEventListener('resize', updateDisplay);
+        
+        // Update on orientation change
+        window.addEventListener('orientationchange', () => {
+            setTimeout(updateDisplay, 100);
+        });
+    </script>
+  </main>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

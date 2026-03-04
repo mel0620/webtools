@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aspect Ratio Calculator – WebTools</title>
+  <meta name="description" content="Free online aspect ratio calculator. Instantly compute equivalent dimensions for any ratio — perfect for video, photo, and responsive web design." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/aspect-ratio-calculator.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/aspect-ratio-calculator.html" />
+  <meta property="og:title" content="Aspect Ratio Calculator – WebTools" />
+  <meta property="og:description" content="Free online aspect ratio calculator. Instantly compute equivalent dimensions for any ratio — perfect for video, photo, and responsive web design." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Aspect Ratio Calculator – WebTools" />
+  <meta name="twitter:description" content="Free online aspect ratio calculator. Instantly compute equivalent dimensions for any ratio — perfect for video, photo, and responsive web design." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-maximize text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Aspect Ratio Calculator</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Find equivalent sizes for any aspect ratio. Great for video, print &amp; social</p>
+          </div>
+        </div>
+
+        <!-- Input section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+          <!-- Calculator mode -->
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-5">
+            <p class="text-sm font-semibold text-neutral-300 mb-4"><i class="fa-solid fa-calculator text-[#29C79F] mr-1.5"></i>Calculate Missing Dimension</p>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="flex-1">
+                <label class="block text-xs text-neutral-400 mb-1">Width (px)</label>
+                <input id="inputW" type="number" placeholder="e.g. 1920" min="1"
+                  class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+              </div>
+              <div class="text-neutral-500 font-bold pt-5">×</div>
+              <div class="flex-1">
+                <label class="block text-xs text-neutral-400 mb-1">Height (px)</label>
+                <input id="inputH" type="number" placeholder="e.g. 1080" min="1"
+                  class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+              </div>
+            </div>
+            <p class="text-xs text-neutral-500 mb-3">Enter two values to compute the ratio, or enter one dimension with a ratio to get the other.</p>
+
+            <p class="text-sm font-semibold text-neutral-300 mb-2">Lock Ratio</p>
+            <div class="flex items-center gap-2">
+              <input id="ratioW" type="number" placeholder="16" min="1"
+                class="w-20 px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+              <span class="text-neutral-400">:</span>
+              <input id="ratioH" type="number" placeholder="9" min="1"
+                class="w-20 px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm focus:outline-none focus:border-[#29C79F]">
+              <button id="lockRatio"
+                class="px-4 py-2 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-lg text-sm transition-colors">
+                Lock
+              </button>
+            </div>
+          </div>
+
+          <!-- Ratio display -->
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-5 flex flex-col justify-between">
+            <p class="text-sm font-semibold text-neutral-300 mb-4"><i class="fa-solid fa-border-all text-[#29C79F] mr-1.5"></i>Detected Ratio</p>
+            <div class="text-center py-4">
+              <p class="text-4xl font-bold text-white" id="ratioDisplay">-</p>
+              <p class="text-neutral-500 text-sm mt-1" id="ratioDecimal"></p>
+            </div>
+            <!-- Visual box -->
+            <div class="flex justify-center mt-2">
+              <div id="ratioBox" class="bg-[#29C79F]/20 border-2 border-[#29C79F] rounded-lg transition-all duration-500" style="width:120px;height:68px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick-pick common ratios -->
+        <div class="mb-8">
+          <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">Common Ratios</p>
+          <div class="flex flex-wrap gap-2" id="commonRatios">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Scale table -->
+        <div id="scaleSection" class="hidden">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Equivalent Sizes</p>
+            <button id="copyTable" class="text-xs text-[#29C79F] hover:underline"><i class="fa-solid fa-copy mr-1"></i>Copy table</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm" id="scaleTable">
+              <thead>
+                <tr class="border-b border-neutral-700">
+                  <th class="text-left py-2 pr-4 text-neutral-400 font-medium">Width</th>
+                  <th class="text-left py-2 pr-4 text-neutral-400 font-medium">Height</th>
+                  <th class="text-left py-2 text-neutral-400 font-medium">Label</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody" class="divide-y divide-neutral-800"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-6 right-6 px-4 py-2.5 bg-[#29C79F] text-white text-sm font-medium rounded-xl shadow-lg z-50">
+          Copied!
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const COMMON = [
+      {label:'16:9',  rw:16, rh:9,  desc:'YouTube, HD Video'},
+      {label:'4:3',   rw:4,  rh:3,  desc:'Standard TV'},
+      {label:'1:1',   rw:1,  rh:1,  desc:'Instagram / Square'},
+      {label:'4:5',   rw:4,  rh:5,  desc:'Instagram Portrait'},
+      {label:'9:16',  rw:9,  rh:16, desc:'Stories / Short'},
+      {label:'3:2',   rw:3,  rh:2,  desc:'DSLR / 35mm'},
+      {label:'2:1',   rw:2,  rh:1,  desc:'Panorama'},
+      {label:'21:9',  rw:21, rh:9,  desc:'Cinematic UWide'},
+      {label:'A4',    rw:210,rh:297,desc:'A4 Portrait (mm)'},
+    ];
+
+    const SCALES = [
+      {label:'240p',  w:426},
+      {label:'360p',  w:640},
+      {label:'480p',  w:854},
+      {label:'720p',  w:1280},
+      {label:'1080p', w:1920},
+      {label:'1440p', w:2560},
+      {label:'4K',    w:3840},
+    ];
+
+    let lockedRatioW = null, lockedRatioH = null;
+
+    // Build common ratio pills
+    const crContainer = document.getElementById('commonRatios');
+    COMMON.forEach(r => {
+      const btn = document.createElement('button');
+      btn.className = 'px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 text-xs font-semibold rounded-full border border-neutral-600 hover:border-[#29C79F] transition-colors';
+      btn.title = r.desc;
+      btn.textContent = r.label;
+      btn.addEventListener('click', () => {
+        document.getElementById('ratioW').value = r.rw;
+        document.getElementById('ratioH').value = r.rh;
+        lockRatio(r.rw, r.rh);
+      });
+      crContainer.appendChild(btn);
+    });
+
+    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+    function lockRatio(rw, rh) {
+      lockedRatioW = rw; lockedRatioH = rh;
+      const d = gcd(rw, rh);
+      const sw = rw/d, sh = rh/d;
+      document.getElementById('ratioDisplay').textContent = `${sw}:${sh}`;
+      document.getElementById('ratioDecimal').textContent = `≈ ${(sw/sh).toFixed(4)}`;
+      updateRatioBox(sw, sh);
+      buildScaleTable(sw, sh);
+    }
+
+    function updateRatioBox(rw, rh) {
+      const box = document.getElementById('ratioBox');
+      const maxW = 160, maxH = 120;
+      let w = maxW, h = rh * (maxW / rw);
+      if (h > maxH) { h = maxH; w = rw * (maxH / rh); }
+      box.style.width  = Math.round(w) + 'px';
+      box.style.height = Math.round(h) + 'px';
+    }
+
+    function buildScaleTable(rw, rh) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      SCALES.forEach(s => {
+        const h = Math.round(s.w * rh / rw);
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-neutral-800/50';
+        tr.innerHTML = `
+          <td class="py-2 pr-4 text-white font-mono">${s.w}px</td>
+          <td class="py-2 pr-4 text-white font-mono">${h}px</td>
+          <td class="py-2 text-neutral-500">${s.label}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('scaleSection').classList.remove('hidden');
+    }
+
+    document.getElementById('lockRatio').addEventListener('click', () => {
+      const rw = parseFloat(document.getElementById('ratioW').value);
+      const rh = parseFloat(document.getElementById('ratioH').value);
+      if (rw > 0 && rh > 0) lockRatio(rw, rh);
+    });
+
+    // Auto-detect ratio from W/H inputs
+    const inputW = document.getElementById('inputW');
+    const inputH = document.getElementById('inputH');
+
+    function onDimensionChange() {
+      const w = parseFloat(inputW.value);
+      const h = parseFloat(inputH.value);
+
+      if (w > 0 && h > 0) {
+        // Detect ratio
+        const d  = gcd(Math.round(w), Math.round(h));
+        const rw = Math.round(w) / d;
+        const rh = Math.round(h) / d;
+        document.getElementById('ratioDisplay').textContent = `${rw}:${rh}`;
+        document.getElementById('ratioDecimal').textContent = `≈ ${(w/h).toFixed(4)}`;
+        updateRatioBox(rw, rh);
+        buildScaleTable(rw, rh);
+      } else if (w > 0 && lockedRatioW) {
+        // Compute missing height
+        const h2 = Math.round(w * lockedRatioH / lockedRatioW);
+        inputH.value = h2;
+      } else if (h > 0 && lockedRatioH) {
+        const w2 = Math.round(h * lockedRatioW / lockedRatioH);
+        inputW.value = w2;
+      }
+    }
+
+    inputW.addEventListener('input', onDimensionChange);
+    inputH.addEventListener('input', onDimensionChange);
+
+    document.getElementById('copyTable').addEventListener('click', () => {
+      const rows = [...document.querySelectorAll('#tableBody tr')];
+      const text = rows.map(r => [...r.querySelectorAll('td')].map(td => td.textContent.trim()).join('\t')).join('\n');
+      navigator.clipboard?.writeText(text).catch(() => {});
+      const t = document.getElementById('toast');
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 1800);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Resizer &amp; Cropper – WebTools</title>
+  <meta name="description" content="Resize and crop images to exact dimensions in your browser. No upload needed — 100% client-side." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/image-resizer.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/image-resizer.html" />
+  <meta property="og:title" content="Image Resizer &amp; Cropper – WebTools" />
+  <meta property="og:description" content="Resize and crop images to exact dimensions in your browser. No upload needed — 100% client-side." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Image Resizer &amp; Cropper – WebTools" />
+  <meta name="twitter:description" content="Resize and crop images to exact dimensions in your browser. No upload needed — 100% client-side." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+<body>
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+    <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0" aria-hidden="true">
+          <i class="fa-solid fa-crop-simple text-black text-lg"></i>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">Image Resizer</h1>
+      </div>
+      <p class="text-neutral-400 text-sm mb-8 ml-[52px]">Resize images to exact dimensions <i class="fa-solid fa-circle text-[5px] align-middle mx-1.5 opacity-40"></i> 100% client-side</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Left: Upload + Settings -->
+        <div>
+          <!-- Drop zone -->
+          <div id="dropZone"
+            class="border-2 border-dashed border-neutral-600 rounded-xl p-10 text-center cursor-pointer transition-colors hover:border-[#29C79F] hover:bg-[#29C79F]/5 mb-6"
+            role="button" tabindex="0" aria-label="Upload image">
+            <i class="fa-solid fa-image text-neutral-500 text-3xl mb-3 block"></i>
+            <p class="text-neutral-300 text-sm font-medium mb-1">Drop image here or click to browse</p>
+            <p class="text-neutral-600 text-xs">PNG, JPG, WebP, GIF, BMP <i class="fa-solid fa-circle text-[5px] align-middle mx-1.5 opacity-40"></i> processed in browser</p>
+            <input type="file" id="fileInput" accept="image/*" class="hidden">
+          </div>
+
+          <!-- Original info -->
+          <div id="originalInfo" class="bg-neutral-900 rounded-xl border border-neutral-700 p-4 mb-5 hidden">
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-[#29C79F] mb-3">Original</h2>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div><div class="font-mono text-white text-sm font-semibold" id="origW"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div><div class="text-neutral-500 text-xs">Width</div></div>
+              <div><div class="font-mono text-white text-sm font-semibold" id="origH"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div><div class="text-neutral-500 text-xs">Height</div></div>
+              <div><div class="font-mono text-white text-sm font-semibold" id="origSize"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div><div class="text-neutral-500 text-xs">Size</div></div>
+            </div>
+          </div>
+
+          <!-- Resize settings -->
+          <div id="settings" class="space-y-4 hidden">
+
+            <!-- Dimensions -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium text-neutral-300">Dimensions (px)</label>
+                <label class="flex items-center gap-2 cursor-pointer select-none text-xs text-neutral-400">
+                  <input type="checkbox" id="lockAspect" checked class="w-3.5 h-3.5 accent-[#29C79F]">
+                  <i class="fa-solid fa-link text-[#29C79F]"></i>Lock aspect ratio
+                </label>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="flex-1">
+                  <label class="text-xs text-neutral-500 block mb-1">Width</label>
+                  <input type="number" id="outWidth" min="1" max="8000"
+                    class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-white rounded-lg text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#29C79F]">
+                </div>
+                <div class="pt-5 text-neutral-600">×</div>
+                <div class="flex-1">
+                  <label class="text-xs text-neutral-500 block mb-1">Height</label>
+                  <input type="number" id="outHeight" min="1" max="8000"
+                    class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-white rounded-lg text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#29C79F]">
+                </div>
+              </div>
+            </div>
+
+            <!-- Presets -->
+            <div>
+              <label class="text-xs text-neutral-500 block mb-2">Quick Presets</label>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" data-w="1920" data-h="1080" class="preset-btn text-xs px-2.5 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 rounded-lg border border-neutral-600 transition-all">1920×1080</button>
+                <button type="button" data-w="1280" data-h="720"  class="preset-btn text-xs px-2.5 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 rounded-lg border border-neutral-600 transition-all">1280×720</button>
+                <button type="button" data-w="800"  data-h="600"  class="preset-btn text-xs px-2.5 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 rounded-lg border border-neutral-600 transition-all">800×600</button>
+                <button type="button" data-w="512"  data-h="512"  class="preset-btn text-xs px-2.5 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 rounded-lg border border-neutral-600 transition-all">512×512</button>
+                <button type="button" data-w="256"  data-h="256"  class="preset-btn text-xs px-2.5 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 rounded-lg border border-neutral-600 transition-all">256×256</button>
+                <button type="button" data-w="128"  data-h="128"  class="preset-btn text-xs px-2.5 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 rounded-lg border border-neutral-600 transition-all">128×128</button>
+              </div>
+            </div>
+
+            <!-- Format -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="outFormat" class="text-xs text-neutral-500 block mb-1">Output Format</label>
+                <select id="outFormat"
+                  class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-white rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#29C79F]">
+                  <option value="image/jpeg">JPEG</option>
+                  <option value="image/png" selected>PNG</option>
+                  <option value="image/webp">WebP</option>
+                </select>
+              </div>
+              <div id="qualityWrap">
+                <label for="outQuality" class="text-xs text-neutral-500 block mb-1">Quality <span id="qualityVal" class="text-[#29C79F] font-mono">90</span>%</label>
+                <input type="range" id="outQuality" min="10" max="100" value="90"
+                  class="w-full mt-2 accent-[#29C79F]">
+              </div>
+            </div>
+
+            <!-- Resize mode -->
+            <div>
+              <label class="text-xs text-neutral-500 block mb-2">Resize Mode</label>
+              <div class="flex gap-2">
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="radio" name="resizeMode" value="stretch" class="accent-[#29C79F]">
+                  <span class="text-sm text-neutral-300">Stretch</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="radio" name="resizeMode" value="cover" checked class="accent-[#29C79F]">
+                  <span class="text-sm text-neutral-300">Cover (crop)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="radio" name="resizeMode" value="contain" class="accent-[#29C79F]">
+                  <span class="text-sm text-neutral-300">Contain</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Resize button -->
+            <button id="resizeBtn" type="button"
+              class="w-full py-3 bg-[#29C79F] hover:bg-[#3ee0b5] text-black font-bold rounded-xl transition-all shadow-lg hover:shadow-[#29C79F]/25">
+              <i class="fa-solid fa-crop-simple mr-2"></i>Resize Image
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Preview -->
+        <div>
+          <!-- Before/after thumbnails -->
+          <div id="previewSection" class="hidden">
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div>
+                <p class="text-xs text-neutral-500 mb-2 text-center">Before</p>
+                <div class="checkerboard rounded-xl overflow-hidden h-36 flex items-center justify-center">
+                  <img id="previewBefore" class="max-w-full max-h-full object-contain" alt="Original image preview">
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-500 mb-2 text-center">After</p>
+                <div class="checkerboard rounded-xl overflow-hidden h-36 flex items-center justify-center">
+                  <img id="previewAfter" class="max-w-full max-h-full object-contain hidden" alt="Resized image preview">
+                  <span id="previewAfterEmpty" class="text-neutral-600 text-xs">Click Resize</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Output info -->
+            <div id="outputInfo" class="bg-neutral-900 rounded-xl border border-neutral-700 p-4 mb-4 hidden">
+              <h2 class="text-xs font-semibold uppercase tracking-widest text-[#29C79F] mb-3">Output</h2>
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div><div class="font-mono text-white text-sm font-semibold" id="outW"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div><div class="text-neutral-500 text-xs">Width</div></div>
+                <div><div class="font-mono text-white text-sm font-semibold" id="outH"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div><div class="text-neutral-500 text-xs">Height</div></div>
+                <div><div class="font-mono text-white text-sm font-semibold" id="outSizeDisplay"><i class="fa-solid fa-minus opacity-30 text-xs"></i></div><div class="text-neutral-500 text-xs">Est. Size</div></div>
+              </div>
+            </div>
+
+            <!-- Download -->
+            <a id="downloadLink" href="#" download="resized-image.png"
+              class="block w-full py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 hover:text-white font-medium rounded-xl transition-all text-sm text-center border border-neutral-600 hidden">
+              <i class="fa-solid fa-download mr-2"></i>Download Resized Image
+            </a>
+
+            <!-- Change image -->
+            <button id="changeBtn" type="button"
+              class="mt-3 w-full py-2.5 text-sm text-neutral-500 hover:text-neutral-300 transition-colors text-center">
+              <i class="fa-solid fa-arrow-up-from-bracket mr-1.5"></i>Upload different image
+            </button>
+          </div>
+
+          <!-- Empty state -->
+          <div id="emptyPreview" class="h-full flex flex-col items-center justify-center text-center py-16">
+            <i class="fa-solid fa-image text-neutral-700 text-5xl mb-4"></i>
+            <p class="text-neutral-500 text-sm">Your image preview will appear here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <canvas id="canvas" class="hidden"></canvas>
+
+  <script type="module">
+    let originalImage = null;
+    let originalFile  = null;
+    let aspectRatio   = 1;
+
+    const dropZone    = document.getElementById('dropZone');
+    const fileInput   = document.getElementById('fileInput');
+    const settings    = document.getElementById('settings');
+    const origInfo    = document.getElementById('originalInfo');
+    const origW       = document.getElementById('origW');
+    const origH       = document.getElementById('origH');
+    const origSize    = document.getElementById('origSize');
+    const lockAspect  = document.getElementById('lockAspect');
+    const outWidth    = document.getElementById('outWidth');
+    const outHeight   = document.getElementById('outHeight');
+    const outFormat   = document.getElementById('outFormat');
+    const outQuality  = document.getElementById('outQuality');
+    const qualityVal  = document.getElementById('qualityVal');
+    const qualityWrap = document.getElementById('qualityWrap');
+    const resizeBtn   = document.getElementById('resizeBtn');
+    const previewSec  = document.getElementById('previewSection');
+    const emptyPrev   = document.getElementById('emptyPreview');
+    const prevBefore  = document.getElementById('previewBefore');
+    const prevAfter   = document.getElementById('previewAfter');
+    const prevEmpty   = document.getElementById('previewAfterEmpty');
+    const outputInfo  = document.getElementById('outputInfo');
+    const outWEl      = document.getElementById('outW');
+    const outHEl      = document.getElementById('outH');
+    const outSzEl     = document.getElementById('outSizeDisplay');
+    const dlLink      = document.getElementById('downloadLink');
+    const changeBtn   = document.getElementById('changeBtn');
+    const canvas      = document.getElementById('canvas');
+
+    function fmtBytes(b) {
+      if (b < 1024) return b + ' B';
+      if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+      return (b / 1048576).toFixed(2) + ' MB';
+    }
+
+    function loadImage(file) {
+      originalFile = file;
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        originalImage = img;
+        aspectRatio = img.naturalWidth / img.naturalHeight;
+        origW.textContent = img.naturalWidth + 'px';
+        origH.textContent = img.naturalHeight + 'px';
+        origSize.textContent = fmtBytes(file.size);
+        outWidth.value  = img.naturalWidth;
+        outHeight.value = img.naturalHeight;
+        prevBefore.src = url;
+        origInfo.classList.remove('hidden');
+        settings.classList.remove('hidden');
+        previewSec.classList.remove('hidden');
+        emptyPrev.classList.add('hidden');
+        prevAfter.classList.add('hidden');
+        prevEmpty.classList.remove('hidden');
+        dlLink.classList.add('hidden');
+        outputInfo.classList.add('hidden');
+      };
+      img.src = url;
+    }
+
+    // Drop zone
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5'); });
+    dropZone.addEventListener('dragleave',  () => dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+      const f = e.dataTransfer.files[0];
+      if (f && f.type.startsWith('image/')) loadImage(f);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadImage(fileInput.files[0]); });
+    changeBtn.addEventListener('click', () => fileInput.click());
+
+    // Aspect lock
+    let updatingDims = false;
+    outWidth.addEventListener('input', () => {
+      if (updatingDims || !lockAspect.checked || !originalImage) return;
+      updatingDims = true;
+      outHeight.value = Math.round(parseInt(outWidth.value) / aspectRatio);
+      updatingDims = false;
+    });
+    outHeight.addEventListener('input', () => {
+      if (updatingDims || !lockAspect.checked || !originalImage) return;
+      updatingDims = true;
+      outWidth.value = Math.round(parseInt(outHeight.value) * aspectRatio);
+      updatingDims = false;
+    });
+
+    // Presets
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        outWidth.value  = btn.dataset.w;
+        outHeight.value = btn.dataset.h;
+      });
+    });
+
+    // Quality toggle
+    outFormat.addEventListener('change', () => {
+      qualityWrap.style.opacity = outFormat.value === 'image/png' ? '0.4' : '1';
+    });
+    outQuality.addEventListener('input', () => { qualityVal.textContent = outQuality.value; });
+
+    resizeBtn.addEventListener('click', () => {
+      if (!originalImage) return;
+      const tw = parseInt(outWidth.value)  || originalImage.naturalWidth;
+      const th = parseInt(outHeight.value) || originalImage.naturalHeight;
+      const mode = document.querySelector('[name="resizeMode"]:checked').value;
+      const fmt  = outFormat.value;
+      const q    = parseInt(outQuality.value) / 100;
+
+      canvas.width  = tw;
+      canvas.height = th;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, tw, th);
+
+      const sw = originalImage.naturalWidth;
+      const sh = originalImage.naturalHeight;
+
+      if (mode === 'stretch') {
+        ctx.drawImage(originalImage, 0, 0, tw, th);
+      } else if (mode === 'cover') {
+        const scale = Math.max(tw / sw, th / sh);
+        const dx = (tw - sw * scale) / 2;
+        const dy = (th - sh * scale) / 2;
+        ctx.drawImage(originalImage, dx, dy, sw * scale, sh * scale);
+      } else {
+        // contain
+        const scale = Math.min(tw / sw, th / sh);
+        const dx = (tw - sw * scale) / 2;
+        const dy = (th - sh * scale) / 2;
+        ctx.drawImage(originalImage, dx, dy, sw * scale, sh * scale);
+      }
+
+      const dataUrl = canvas.toDataURL(fmt, q);
+      const byteLen = Math.round((dataUrl.length - (dataUrl.indexOf(',') + 1)) * 3 / 4);
+      const ext = fmt === 'image/jpeg' ? 'jpg' : fmt === 'image/webp' ? 'webp' : 'png';
+
+      prevAfter.src = dataUrl;
+      prevAfter.classList.remove('hidden');
+      prevEmpty.classList.add('hidden');
+      outWEl.textContent = tw + 'px';
+      outHEl.textContent = th + 'px';
+      outSzEl.textContent = fmtBytes(byteLen);
+      outputInfo.classList.remove('hidden');
+      dlLink.href = dataUrl;
+      dlLink.download = `resized-${tw}x${th}.${ext}`;
+      dlLink.classList.remove('hidden');
+    });
+  </script>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>

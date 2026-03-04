@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Readability Checker – WebTools</title>
+  <meta name="description" content="Analyse text readability with Flesch-Kincaid, Gunning Fog, and SMOG scores. Improve writing clarity and grade level instantly." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/readability-checker.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/readability-checker.html" />
+  <meta property="og:title" content="Readability Checker – WebTools" />
+  <meta property="og:description" content="Analyse text readability with Flesch-Kincaid, Gunning Fog, and SMOG scores. Improve writing clarity and grade level instantly." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Readability Checker – WebTools" />
+  <meta name="twitter:description" content="Analyse text readability with Flesch-Kincaid, Gunning Fog, and SMOG scores. Improve writing clarity and grade level instantly." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-book-open text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Readability Checker</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Flesch-Kincaid, Gunning Fog, SMOG scores. Instant, in-browser analysis</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Input -->
+          <div class="flex flex-col">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-sm font-medium text-neutral-300">Paste your text</label>
+              <button id="clearBtn" class="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
+                <i class="fa-solid fa-xmark mr-1"></i>Clear
+              </button>
+            </div>
+            <textarea id="textInput" rows="16"
+              placeholder="Paste your article, blog post, or any text here…"
+              class="w-full flex-1 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-neutral-200 text-sm resize-none focus:outline-none focus:border-[#29C79F] transition-colors leading-relaxed"></textarea>
+            <div class="flex items-center justify-between mt-2">
+              <p class="text-xs text-neutral-500" id="charCount">0 characters · 0 words</p>
+              <button id="sampleBtn" class="text-xs text-[#29C79F] hover:underline">Load sample text</button>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div class="space-y-4">
+            <!-- Score cards -->
+            <div class="grid grid-cols-1 gap-3" id="scoreCards">
+              <!-- FK Reading Ease -->
+              <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <p class="text-sm font-semibold text-white">Flesch Reading Ease</p>
+                    <p class="text-xs text-neutral-500">Higher = easier to read (0-100)</p>
+                  </div>
+                  <span id="fkEaseScore" class="text-2xl font-bold text-neutral-600">-</span>
+                </div>
+                <div class="w-full bg-neutral-700 rounded-full h-1.5">
+                  <div id="fkEaseBar" class="h-1.5 rounded-full transition-all duration-500" style="width:0%;background:#29C79F"></div>
+                </div>
+                <p id="fkEaseLabel" class="text-xs text-neutral-500 mt-1.5">-</p>
+              </div>
+
+              <!-- FK Grade Level -->
+              <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-semibold text-white">Flesch-Kincaid Grade Level</p>
+                    <p class="text-xs text-neutral-500">US school grade equivalent</p>
+                  </div>
+                  <span id="fkGradeScore" class="text-2xl font-bold text-neutral-600">-</span>
+                </div>
+              </div>
+
+              <!-- Gunning Fog -->
+              <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-semibold text-white">Gunning Fog Index</p>
+                    <p class="text-xs text-neutral-500">Years of education needed</p>
+                  </div>
+                  <span id="fogScore" class="text-2xl font-bold text-neutral-600">-</span>
+                </div>
+              </div>
+
+              <!-- SMOG -->
+              <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-semibold text-white">SMOG Index</p>
+                    <p class="text-xs text-neutral-500">Grade level for 100% comprehension</p>
+                  </div>
+                  <span id="smogScore" class="text-2xl font-bold text-neutral-600">-</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Text stats -->
+            <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-4">
+              <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">Text Statistics</p>
+              <div class="grid grid-cols-3 gap-3 text-center">
+                <div><p class="text-lg font-bold text-white" id="statWords">0</p><p class="text-xs text-neutral-500">Words</p></div>
+                <div><p class="text-lg font-bold text-white" id="statSentences">0</p><p class="text-xs text-neutral-500">Sentences</p></div>
+                <div><p class="text-lg font-bold text-white" id="statSyllables">0</p><p class="text-xs text-neutral-500">Syllables</p></div>
+                <div><p class="text-lg font-bold text-white" id="statChars">0</p><p class="text-xs text-neutral-500">Characters</p></div>
+                <div><p class="text-lg font-bold text-white" id="statComplexWords">0</p><p class="text-xs text-neutral-500">Complex Words</p></div>
+                <div><p class="text-lg font-bold text-white" id="statReadTime">0m</p><p class="text-xs text-neutral-500">Read Time</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const SAMPLE = `The quick brown fox jumps over the lazy dog. This simple sentence has been used for decades in typography and printing. Most people find short sentences easier to comprehend than longer, more complicated constructions that require significant cognitive effort to parse. Writers who communicate clearly tend to use familiar vocabulary and avoid unnecessarily convoluted grammatical structures. Good writing balances complexity with accessibility, ensuring target audiences can absorb key messages without undue difficulty or frustration. Academic and professional communications frequently suffer from excessive verbosity and unnecessary jargon that significantly impedes comprehension for general audiences who lack specialized domain knowledge.`;
+
+    const textInput = document.getElementById('textInput');
+    document.getElementById('clearBtn').addEventListener('click', () => { textInput.value = ''; analyze(''); });
+    document.getElementById('sampleBtn').addEventListener('click', () => { textInput.value = SAMPLE; analyze(SAMPLE); });
+    textInput.addEventListener('input', () => analyze(textInput.value));
+
+    function analyze(text) {
+      const trimmed = text.trim();
+      document.getElementById('charCount').textContent = `${trimmed.length} characters · ${countWords(trimmed)} words`;
+
+      if (trimmed.length < 20) {
+        resetScores(); return;
+      }
+
+      const words       = getWords(trimmed);
+      const wc          = words.length;
+      const sentences   = countSentences(trimmed);
+      const syllables   = words.reduce((s,w) => s + syllableCount(w), 0);
+      const complexWords= words.filter(w => syllableCount(w) >= 3).length;
+
+      // Flesch Reading Ease
+      const fkEase = wc < 1 || sentences < 1 ? 0 :
+        206.835 - (1.015 * wc / sentences) - (84.6 * syllables / wc);
+      const fkGrade = wc < 1 || sentences < 1 ? 0 :
+        (0.39 * wc / sentences) + (11.8 * syllables / wc) - 15.59;
+      const fog = wc < 1 || sentences < 1 ? 0 :
+        0.4 * ((wc / sentences) + 100 * complexWords / wc);
+      // SMOG needs >= 30 sentences ideally
+      const smog = sentences >= 3 ?
+        3 + Math.sqrt(complexWords * (30 / sentences)) : 0;
+
+      // Display
+      setScore('fkEaseScore', fkEase.toFixed(1), scoreColor(fkEase, true));
+      setScore('fkGradeScore', Math.max(0, fkGrade).toFixed(1), gradeColor(fkGrade));
+      setScore('fogScore', Math.max(0, fog).toFixed(1), gradeColor(fog));
+      setScore('smogScore', smog > 0 ? smog.toFixed(1) : 'N/A', gradeColor(smog));
+
+      const bar = document.getElementById('fkEaseBar');
+      bar.style.width = Math.min(100, Math.max(0, fkEase)) + '%';
+      bar.style.background = scoreColor(fkEase, true);
+
+      document.getElementById('fkEaseLabel').textContent = fkEaseLabel(fkEase);
+
+      document.getElementById('statWords').textContent = wc;
+      document.getElementById('statSentences').textContent = sentences;
+      document.getElementById('statSyllables').textContent = syllables;
+      document.getElementById('statChars').textContent = trimmed.replace(/\s/g,'').length;
+      document.getElementById('statComplexWords').textContent = complexWords;
+      const readSec = Math.round(wc / 200 * 60);
+      document.getElementById('statReadTime').textContent = readSec < 60 ? `<1m` : Math.round(readSec/60) + 'm ' + (readSec%60) + 's';
+    }
+
+    function setScore(id, val, color) {
+      const el = document.getElementById(id);
+      el.textContent = val;
+      el.style.color = color;
+    }
+
+    function resetScores() {
+      ['fkEaseScore','fkGradeScore','fogScore','smogScore'].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = '-'; el.style.color = '';
+      });
+      document.getElementById('fkEaseBar').style.width = '0%';
+      document.getElementById('fkEaseLabel').textContent = '-';
+      ['statWords','statSentences','statSyllables','statChars','statComplexWords'].forEach(id => document.getElementById(id).textContent = '0');
+      document.getElementById('statReadTime').textContent = '0m';
+    }
+
+    function getWords(text) {
+      return text.toLowerCase().match(/\b[a-z']+\b/g) || [];
+    }
+    function countWords(text)     { return (text.match(/\b\w+\b/g) || []).length; }
+    function countSentences(text) { return (text.match(/[.!?]+/g) || []).length || 1; }
+
+    function syllableCount(word) {
+      word = word.toLowerCase().replace(/[^a-z]/g,'');
+      if (word.length <= 2) return 1;
+      word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+      word = word.replace(/^y/, '');
+      const m = word.match(/[aeiouy]{1,2}/g);
+      return m ? Math.max(1, m.length) : 1;
+    }
+
+    function scoreColor(val, higherBetter) {
+      if (higherBetter) {
+        if (val >= 70) return '#29C79F';
+        if (val >= 50) return '#f59e0b';
+        return '#ef4444';
+      }
+    }
+    function gradeColor(val) {
+      if (val <= 8)  return '#29C79F';
+      if (val <= 12) return '#f59e0b';
+      return '#ef4444';
+    }
+
+    function fkEaseLabel(score) {
+      if (score >= 90) return 'Very Easy (5th grade)';
+      if (score >= 80) return 'Easy (6th grade)';
+      if (score >= 70) return 'Fairly Easy (7th grade)';
+      if (score >= 60) return 'Standard (8th-9th grade)';
+      if (score >= 50) return 'Fairly Difficult (10th-12th grade)';
+      if (score >= 30) return 'Difficult (College level)';
+      return 'Very Confusing (Professional / Academic)';
+    }
+  </script>
+</body>
+</html>

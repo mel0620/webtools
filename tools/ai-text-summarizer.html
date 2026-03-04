@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Text Summarizer – WebTools</title>
+  <meta name="description" content="Summarize long articles and text using AI directly in your browser. Powered by Transformers.js. 100% private, no upload." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/ai-text-summarizer.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/ai-text-summarizer.html" />
+  <meta property="og:title" content="AI Text Summarizer – WebTools" />
+  <meta property="og:description" content="Summarize long text using AI in your browser. 100% private, no upload." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="AI Text Summarizer – WebTools" />
+  <meta name="twitter:description" content="Summarize long text using AI in your browser. 100% private, no upload." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-align-left text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">AI Text Summarizer</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Condense long text into a concise summary using AI. Powered by Transformers.js.</p>
+          </div>
+        </div>
+
+        <!-- AI badge -->
+        <div class="flex items-center gap-2 mb-6 px-3 py-2 bg-purple-500/10 border border-purple-500/20 rounded-xl w-fit text-xs text-purple-300">
+          <i class="fa-solid fa-microchip"></i>
+          Model: Xenova/distilbart-cnn-6-6 (~230 MB, cached after first load)
+        </div>
+
+        <!-- Model progress -->
+        <div id="modelWrap" class="hidden bg-neutral-900 border border-neutral-700 rounded-xl p-4 mb-5">
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span id="modelLabel" class="text-neutral-400">Downloading model...</span>
+            <span id="modelPct" class="text-[#29C79F] font-semibold">0%</span>
+          </div>
+          <div class="w-full bg-neutral-700 rounded-full h-1.5">
+            <div id="modelBar" class="h-1.5 rounded-full bg-purple-500 transition-all duration-300" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-5 mb-5">
+          <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">
+            <i class="fa-solid fa-sliders text-[#29C79F] mr-2"></i>Summary Settings
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-neutral-300 mb-2">
+                Min length: <span id="minLenVal" class="text-[#29C79F] font-semibold">30</span> tokens
+              </label>
+              <input type="range" id="minLen" min="10" max="100" value="30" class="w-full accent-[#29C79F]">
+            </div>
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-neutral-300 mb-2">
+                Max length: <span id="maxLenVal" class="text-[#29C79F] font-semibold">130</span> tokens
+              </label>
+              <input type="range" id="maxLen" min="50" max="512" value="130" class="w-full accent-[#29C79F]">
+            </div>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-neutral-300">Input Text</label>
+            <div class="flex gap-2">
+              <span id="wordCount" class="text-xs text-neutral-500">0 words</span>
+              <button id="clearInputBtn" class="text-xs text-neutral-500 hover:text-red-400 transition-colors">
+                <i class="fa-solid fa-xmark mr-1"></i>Clear
+              </button>
+            </div>
+          </div>
+          <textarea id="inputText"
+            placeholder="Paste a long article, report, or any text here... (minimum ~50 words for best results)"
+            class="w-full h-48 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-neutral-200 text-sm leading-relaxed resize-none focus:outline-none focus:border-[#29C79F] placeholder:text-neutral-600"></textarea>
+        </div>
+
+        <button id="summarizeBtn"
+          class="w-full px-5 py-3 bg-[#29C79F] hover:bg-[#22b08c] text-white font-semibold rounded-xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed mb-5">
+          <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Summarize
+        </button>
+
+        <!-- Result -->
+        <div id="resultSection" class="hidden">
+          <div class="bg-neutral-900 border border-[#29C79F]/30 rounded-xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm font-semibold text-[#29C79F]">
+                <i class="fa-solid fa-check-circle mr-2"></i>Summary
+              </p>
+              <div class="flex gap-2">
+                <span id="compressionRatio" class="text-xs text-neutral-500 bg-neutral-800 px-2 py-0.5 rounded-full"></span>
+                <button id="copyResultBtn" class="px-3 py-1 bg-neutral-800 hover:bg-[#29C79F]/20 hover:text-[#29C79F] text-neutral-400 text-xs rounded-lg transition-colors">
+                  <i class="fa-solid fa-copy mr-1"></i>Copy
+                </button>
+              </div>
+            </div>
+            <p id="summaryText" class="text-neutral-200 text-sm leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div id="errorBox" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-400 mt-4">
+          <i class="fa-solid fa-triangle-exclamation mr-2"></i><span id="errorMsg"></span>
+        </div>
+
+        <p class="text-xs text-neutral-600 text-center mt-6">
+          <i class="fa-solid fa-lock mr-1"></i>Your text never leaves your browser. All processing is 100% local.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    const TRANSFORMERS = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/transformers.min.js';
+    const MODEL_ID     = 'Xenova/distilbart-cnn-6-6';
+    let   summarizer   = null;
+
+    async function ensureModel(onProgress) {
+      if (summarizer) return summarizer;
+      const { pipeline, env } = await import(TRANSFORMERS);
+      env.backends.onnx.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/';
+      env.allowRemoteModels = true;
+      env.useBrowserCache   = true;
+
+      summarizer = await pipeline('summarization', MODEL_ID, {
+        progress_callback: (d) => {
+          if (d.status === 'progress') onProgress(Math.round(d.progress ?? 0), `Downloading model... ${Math.round(d.progress ?? 0)}%`);
+          if (d.status === 'done')     onProgress(100, 'Model ready');
+        },
+      });
+      return summarizer;
+    }
+
+    // ── DOM ────────────────────────────────────────────────────────────────
+    const inputText    = document.getElementById('inputText');
+    const summarizeBtn = document.getElementById('summarizeBtn');
+    const resultSection= document.getElementById('resultSection');
+    const summaryText  = document.getElementById('summaryText');
+    const errorBox     = document.getElementById('errorBox');
+    const modelWrap    = document.getElementById('modelWrap');
+    const wordCountEl  = document.getElementById('wordCount');
+
+    document.getElementById('minLen').addEventListener('input', () => {
+      document.getElementById('minLenVal').textContent = document.getElementById('minLen').value;
+    });
+    document.getElementById('maxLen').addEventListener('input', () => {
+      document.getElementById('maxLenVal').textContent = document.getElementById('maxLen').value;
+    });
+
+    inputText.addEventListener('input', () => {
+      const words = inputText.value.trim().split(/\s+/).filter(Boolean).length;
+      wordCountEl.textContent = words + ' words';
+    });
+
+    document.getElementById('clearInputBtn').addEventListener('click', () => {
+      inputText.value = '';
+      wordCountEl.textContent = '0 words';
+      resultSection.classList.add('hidden');
+      errorBox.classList.add('hidden');
+    });
+
+    summarizeBtn.addEventListener('click', async () => {
+      const text = inputText.value.trim();
+      if (!text) { showError('Please enter some text to summarize.'); return; }
+
+      const words = text.split(/\s+/).filter(Boolean).length;
+      if (words < 20) { showError('Please enter at least 20 words for a meaningful summary.'); return; }
+
+      summarizeBtn.disabled = true;
+      errorBox.classList.add('hidden');
+      resultSection.classList.add('hidden');
+      modelWrap.classList.remove('hidden');
+
+      try {
+        const pipe = await ensureModel((pct, label) => {
+          document.getElementById('modelBar').style.width = pct + '%';
+          document.getElementById('modelPct').textContent = pct + '%';
+          document.getElementById('modelLabel').textContent = label;
+        });
+        modelWrap.classList.add('hidden');
+
+        const minLen = parseInt(document.getElementById('minLen').value);
+        const maxLen = parseInt(document.getElementById('maxLen').value);
+
+        const output = await pipe(text, {
+          min_length: minLen,
+          max_length: Math.max(maxLen, minLen + 20),
+          do_sample: false,
+        });
+
+        const summary = output[0]?.summary_text || 'No summary generated.';
+        const inputWords = words;
+        const outputWords = summary.trim().split(/\s+/).filter(Boolean).length;
+        const reduction = Math.round((1 - outputWords / inputWords) * 100);
+
+        summaryText.textContent = summary;
+        document.getElementById('compressionRatio').textContent =
+          `${inputWords} words → ${outputWords} words (${reduction > 0 ? '-' + reduction + '%' : 'no reduction'})`;
+        resultSection.classList.remove('hidden');
+      } catch (e) {
+        showError('Summarization failed: ' + e.message);
+        console.error(e);
+      } finally {
+        summarizeBtn.disabled = false;
+      }
+    });
+
+    document.getElementById('copyResultBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(summaryText.textContent);
+      const btn = document.getElementById('copyResultBtn');
+      btn.innerHTML = '<i class="fa-solid fa-check mr-1 text-[#29C79F]"></i>Copied!';
+      setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-copy mr-1"></i>Copy'; }, 1800);
+    });
+
+    function showError(msg) {
+      errorBox.classList.remove('hidden');
+      document.getElementById('errorMsg').textContent = msg;
+    }
+  </script>
+</body>
+</html>

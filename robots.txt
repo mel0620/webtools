@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block admin / private paths (add as needed)
+# Disallow: /admin/
+
+Sitemap: https://webtools.pro/sitemap.xml

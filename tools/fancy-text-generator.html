@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fancy Text Generator – WebTools</title>
+  <meta name="description" content="Generate decorative Unicode text styles — bold, italic, script, fraktur, monospace and more. Copy-paste anywhere instantly." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/fancy-text-generator.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/fancy-text-generator.html" />
+  <meta property="og:title" content="Fancy Text Generator – WebTools" />
+  <meta property="og:description" content="Generate decorative Unicode text styles — bold, italic, script, fraktur, monospace and more. Copy-paste anywhere instantly." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Fancy Text Generator – WebTools" />
+  <meta name="twitter:description" content="Generate decorative Unicode text styles — bold, italic, script, fraktur, monospace and more. Copy-paste anywhere instantly." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-wand-sparkles text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">Fancy Text Generator</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Convert text to Unicode styles: bold, italic, script, fraktur, and more</p>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <label for="inputText" class="text-sm font-medium text-neutral-300">Your text</label>
+            <button id="clearBtn" class="text-xs text-neutral-500 hover:text-neutral-300 transition-colors">
+              <i class="fa-solid fa-xmark mr-1"></i>Clear
+            </button>
+          </div>
+          <textarea id="inputText" rows="4"
+            placeholder="Type something..."
+            class="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-base focus:outline-none focus:border-[#29C79F] transition-colors placeholder:text-neutral-600 resize-y">Hello World</textarea>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="flex flex-wrap gap-2 mb-5" id="filterTabs">
+          <button data-filter="all"   class="filter-btn active-filter px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors text-[#29C79F] bg-[#29C79F]/10 border-[#29C79F]">All</button>
+          <button data-filter="bold"  class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors text-neutral-400 bg-transparent border-transparent hover:border-neutral-700 hover:text-white">Bold</button>
+          <button data-filter="italic" class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors text-neutral-400 bg-transparent border-transparent hover:border-neutral-700 hover:text-white">Italic</button>
+          <button data-filter="script" class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors text-neutral-400 bg-transparent border-transparent hover:border-neutral-700 hover:text-white">Script</button>
+          <button data-filter="mono"  class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors text-neutral-400 bg-transparent border-transparent hover:border-neutral-700 hover:text-white">Mono</button>
+          <button data-filter="other" class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors text-neutral-400 bg-transparent border-transparent hover:border-neutral-700 hover:text-white">Other</button>
+        </div>
+
+        <!-- Results grid -->
+        <div id="resultsGrid" class="space-y-2"></div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-6 right-6 px-4 py-2.5 bg-[#29C79F] text-white text-sm font-medium rounded-xl shadow-lg z-50 transition-opacity">
+          Copied!
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ── Unicode mapping tables ─────────────────────────────────────────────
+    // Each style maps a–z, A–Z, 0–9 to their Unicode equivalents.
+    // Values are the codepoint offset from the base character for letters,
+    // or a direct replacement array for digits where needed.
+
+    const STYLES = [
+      // ── Bold ──────────────────────────────────────────
+      { id: 'bold',          tag: 'bold',   label: 'Bold',                  lower: 0x1D41A, upper: 0x1D400, digit: 0x1D7CE },
+      { id: 'bold-italic',   tag: 'italic', label: 'Bold Italic',           lower: 0x1D482, upper: 0x1D468, digit: null    },
+      { id: 'bold-script',   tag: 'script', label: 'Bold Script',           lower: 0x1D4EA, upper: 0x1D4D0, digit: null    },
+      { id: 'bold-fraktur',  tag: 'bold',   label: 'Bold Fraktur',          lower: 0x1D586, upper: 0x1D56C, digit: null    },
+      { id: 'bold-sans',     tag: 'bold',   label: 'Bold Sans-Serif',       lower: 0x1D5EE, upper: 0x1D5D4, digit: 0x1D7EC },
+      { id: 'bold-sans-it',  tag: 'italic', label: 'Bold Sans-Serif Italic',lower: 0x1D656, upper: 0x1D63C, digit: null    },
+      // ── Italic ────────────────────────────────────────
+      { id: 'italic',        tag: 'italic', label: 'Italic',                lower: 0x1D44E, upper: 0x1D434, digit: null, special: { h: '\u210E' } },
+      { id: 'sans-italic',   tag: 'italic', label: 'Sans-Serif Italic',     lower: 0x1D622, upper: 0x1D608, digit: null    },
+      // ── Script ────────────────────────────────────────
+      { id: 'script',        tag: 'script', label: 'Script',                lower: 0x1D4B6, upper: 0x1D49C, digit: null,
+        special: { e:'\u212F', g:'\u210A', o:'\u2134', B:'\u212C', E:'\u2130', F:'\u2131', H:'\u210B', I:'\u2110', L:'\u2112', M:'\u2133', R:'\u211B' } },
+      // ── Fraktur ───────────────────────────────────────
+      { id: 'fraktur',       tag: 'bold',   label: 'Fraktur',               lower: 0x1D51E, upper: 0x1D504, digit: null,
+        special: { C:'\u212D', H:'\u210C', I:'\u2111', R:'\u211C', Z:'\u2128' } },
+      // ── Double-struck ─────────────────────────────────
+      { id: 'double',        tag: 'mono',   label: 'Double-Struck',         lower: 0x1D552, upper: 0x1D538, digit: 0x1D7D8,
+        special: { C:'\u2102', H:'\u210D', N:'\u2115', P:'\u2119', Q:'\u211A', R:'\u211D', Z:'\u2124' } },
+      // ── Monospace ─────────────────────────────────────
+      { id: 'mono',          tag: 'mono',   label: 'Monospace',             lower: 0x1D68A, upper: 0x1D670, digit: 0x1D7F6 },
+      // ── Sans-Serif ────────────────────────────────────
+      { id: 'sans',          tag: 'mono',   label: 'Sans-Serif',            lower: 0x1D5BA, upper: 0x1D5A0, digit: 0x1D7E2 },
+      // ── Circled ───────────────────────────────────────
+      { id: 'circled',       tag: 'other',  label: 'Circled',               direct: buildDirectMap(
+          'abcdefghijklmnopqrstuvwxyz',
+          '\u24D0\u24D1\u24D2\u24D3\u24D4\u24D5\u24D6\u24D7\u24D8\u24D9\u24DA\u24DB\u24DC\u24DD\u24DE\u24DF\u24E0\u24E1\u24E2\u24E3\u24E4\u24E5\u24E6\u24E7\u24E8\u24E9',
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+          '\u24B6\u24B7\u24B8\u24B9\u24BA\u24BB\u24BC\u24BD\u24BE\u24BF\u24C0\u24C1\u24C2\u24C3\u24C4\u24C5\u24C6\u24C7\u24C8\u24C9\u24CA\u24CB\u24CC\u24CD\u24CE\u24CF',
+          '0123456789',
+          '\u24EA\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u2468'
+        )},
+      // ── Squared ───────────────────────────────────────
+      { id: 'squared',       tag: 'other',  label: 'Squared',               direct: buildDirectMap(
+          'abcdefghijklmnopqrstuvwxyz',
+          '\u{1F130}\u{1F131}\u{1F132}\u{1F133}\u{1F134}\u{1F135}\u{1F136}\u{1F137}\u{1F138}\u{1F139}\u{1F13A}\u{1F13B}\u{1F13C}\u{1F13D}\u{1F13E}\u{1F13F}\u{1F140}\u{1F141}\u{1F142}\u{1F143}\u{1F144}\u{1F145}\u{1F146}\u{1F147}\u{1F148}\u{1F149}',
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+          '\u{1F130}\u{1F131}\u{1F132}\u{1F133}\u{1F134}\u{1F135}\u{1F136}\u{1F137}\u{1F138}\u{1F139}\u{1F13A}\u{1F13B}\u{1F13C}\u{1F13D}\u{1F13E}\u{1F13F}\u{1F140}\u{1F141}\u{1F142}\u{1F143}\u{1F144}\u{1F145}\u{1F146}\u{1F147}\u{1F148}\u{1F149}'
+        )},
+      // ── Superscript ───────────────────────────────────
+      { id: 'super',         tag: 'other',  label: 'Superscript',           direct: buildDirectMap(
+          'abcdefghijklmnopqrstuvwxyz',
+          '\u1D43\u1D47\u1D9C\u1D48\u1D49\u1DA0\u1D4D\u02B0\u2071\u02B2\u1D4F\u02E1\u1D50\u207F\u1D52\u1D56\uA7F5\u02B3\u02E2\u1D57\u1D58\u1D5B\u02B7\u02E3\u02B8\u1DBB',
+          '0123456789', '\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079'
+        )},
+      // ── Subscript ─────────────────────────────────────
+      { id: 'sub',           tag: 'other',  label: 'Subscript',             direct: buildDirectMap(
+          'aehijklmnoprstuvx',
+          '\u2090\u2091\u2095\u1D62\u2C7C\u2096\u2097\u2098\u2099\u2092\u1D63\u209A\u209B\u209C\u1D64\u1D65\u2093',
+          '0123456789', '\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089'
+        )},
+      // ── Fullwidth ─────────────────────────────────────
+      { id: 'full',          tag: 'other',  label: 'Full Width',            lower: 0xFF41, upper: 0xFF21, digit: 0xFF10 },
+      // ── Small Caps ────────────────────────────────────
+      { id: 'smallcaps',     tag: 'other',  label: 'Small Caps',            direct: buildDirectMap(
+          'abcdefghijklmnopqrstuvwxyz',
+          '\u1D00\u0299\u1D04\u1D05\u1D07\u0493\u0262\u029C\u026A\u1D0A\u1D0B\u029F\u1D0D\u0274\u1D0F\u1D18\u01EB\u0280\u0405\u1D1B\u1D1C\u1D20\u1D21\u0445\u028F\u1D22'
+        )},
+      // ── Upside Down ───────────────────────────────────
+      { id: 'updown',        tag: 'other',  label: 'Upside Down',           flip: true },
+      // ── Strikethrough ─────────────────────────────────
+      { id: 'strike',        tag: 'other',  label: 'Strikethrough',         overlay: '\u0336' },
+      // ── Underline ─────────────────────────────────────
+      { id: 'underline',     tag: 'other',  label: 'Underline',             overlay: '\u0332' },
+      // ── Double Underline ──────────────────────────────
+      { id: 'dblunder',      tag: 'other',  label: 'Double Underline',      overlay: '\u0333' },
+    ];
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+
+    function buildDirectMap(...pairs) {
+      const m = {};
+      for (let i = 0; i < pairs.length; i += 2) {
+        const chars = [...pairs[i]];
+        const mapped = [...pairs[i+1]];
+        chars.forEach((c, j) => { if (mapped[j]) m[c] = mapped[j]; });
+      }
+      return m;
+    }
+
+    const FLIP_MAP = {
+      a:'\u0250',b:'q',c:'\u0254',d:'p',e:'\u01DD',f:'\u025F',g:'\u0253',
+      h:'\u0265',i:'\u0131',j:'\u027E',k:'\u029E',l:'l',m:'\u026F',
+      n:'u',o:'o',p:'d',q:'b',r:'\u0279',s:'s',t:'\u0287',u:'n',
+      v:'\u028C',w:'\u028D',x:'x',y:'\u028E',z:'z',
+      A:'\u2200',B:'\u15FA',C:'\u0186',D:'\u15E1',E:'\u018E',F:'\u2132',
+      G:'\u2141',H:'H',I:'I',J:'\u148B',K:'\u22CA',L:'J',M:'W',
+      N:'N',O:'O',P:'\u0500',Q:'Q',R:'\u1D1A',S:'S',T:'\u22A5',
+      U:'n',V:'\u2207',W:'M',X:'X',Y:'\u2144',Z:'Z',
+      '0':'0','1':'\u0196','2':'\u1105','3':'\u0190','4':'\u3123',
+      '5':'\u03DB','6':'9','7':'\u3125','8':'8','9':'6',
+      '.':'\u02D9',',':'\u2018','?':'\u00BF','!':'\u00A1',
+      "'":',','"':'\u201E','(':')',')':"(",'[':']',']':'[','{':'}','}':'{',"<":">",'>':"<",
+      '&':'\u214B',
+    };
+
+    function applyStyle(text, style) {
+      if (style.overlay) {
+        return [...text].map(c => c === ' ' ? c : c + style.overlay).join('');
+      }
+      if (style.flip) {
+        return [...text].reverse().map(c => FLIP_MAP[c] || c).join('');
+      }
+      if (style.direct) {
+        return [...text].map(c => style.direct[c] || c).join('');
+      }
+      return [...text].map(c => {
+        const special = style.special?.[c];
+        if (special) return special;
+        const code = c.codePointAt(0);
+        if (code >= 97 && code <= 122) return String.fromCodePoint(style.lower + (code - 97));
+        if (code >= 65 && code <= 90)  return String.fromCodePoint(style.upper + (code - 65));
+        if (code >= 48 && code <= 57 && style.digit != null)
+          return String.fromCodePoint(style.digit + (code - 48));
+        return c;
+      }).join('');
+    }
+
+    // ── UI ────────────────────────────────────────────────────────────────
+
+    let activeFilter = 'all';
+
+    const input    = document.getElementById('inputText');
+    const grid     = document.getElementById('resultsGrid');
+    const clearBtn = document.getElementById('clearBtn');
+    let toastTimer;
+
+    clearBtn.addEventListener('click', () => { input.value = ''; renderAll(); input.focus(); });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter;
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          const on = b.dataset.filter === activeFilter;
+          b.className = 'filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ' +
+            (on ? 'text-[#29C79F] bg-[#29C79F]/10 border-[#29C79F]'
+                : 'text-neutral-400 bg-transparent border-transparent hover:border-neutral-700 hover:text-white');
+        });
+        renderAll();
+      });
+    });
+
+    input.addEventListener('input', renderAll);
+
+    function renderAll() {
+      const text = input.value || 'Type something...';
+      const visible = activeFilter === 'all'
+        ? STYLES
+        : STYLES.filter(s => s.tag === activeFilter);
+
+      grid.innerHTML = '';
+      visible.forEach(style => {
+        const converted = applyStyle(text, style);
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl hover:border-neutral-500 transition-colors group';
+        row.innerHTML = `
+          <div class="min-w-0 flex-1">
+            <p class="text-[10px] text-neutral-500 mb-0.5 uppercase tracking-wide">${style.label}</p>
+            <p class="text-white text-base break-all leading-snug result-text whitespace-pre-wrap" dir="${style.id === 'updown' ? 'ltr' : ''}">${escHtml(converted)}</p>
+          </div>
+          <button class="copy-btn shrink-0 px-3 py-1.5 bg-neutral-700 hover:bg-[#29C79F] text-neutral-300 hover:text-white text-xs font-semibold rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+            <i class="fa-solid fa-copy mr-1"></i>Copy
+          </button>
+        `;
+        row.querySelector('.copy-btn').addEventListener('click', () => {
+          copyText(converted);
+          showToast('Copied: ' + style.label);
+        });
+        grid.appendChild(row);
+      });
+    }
+
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function copyText(t) {
+      navigator.clipboard?.writeText(t).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = t; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.add('hidden'), 1800);
+    }
+
+    // Initial render
+    renderAll();
+  </script>
+</body>
+</html>

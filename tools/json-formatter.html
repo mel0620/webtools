@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Formatter &amp; Validator – WebTools</title>
+  <meta name="description" content="Format, minify, and validate JSON with syntax highlighting. Instant client-side JSON beautifier and compressor." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/json-formatter.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/json-formatter.html" />
+  <meta property="og:title" content="JSON Formatter &amp; Validator – WebTools" />
+  <meta property="og:description" content="Format, minify, and validate JSON with syntax highlighting. Instant client-side JSON beautifier and compressor." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="JSON Formatter &amp; Validator – WebTools" />
+  <meta name="twitter:description" content="Format, minify, and validate JSON with syntax highlighting. Instant client-side JSON beautifier and compressor." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script type="module" src="/src/js/tool-page.js"></script>
+  <style>
+    .json-key    { color: #79c0ff; }
+    .json-str    { color: #a5d6ff; }
+    .json-num    { color: #f8c555; }
+    .json-bool   { color: #ff7b72; }
+    .json-null   { color: #ff7b72; }
+    .json-punct  { color: #8b949e; }
+
+    #outputPane {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre;
+      overflow-x: auto;
+      word-break: normal;
+    }
+
+    /* line numbers */
+    .line-wrap { display: flex; }
+    .line-nums {
+      user-select: none;
+      text-align: right;
+      padding-right: 12px;
+      color: #4b5563;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      min-width: 40px;
+      border-right: 1px solid #374151;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    textarea.json-input {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      tab-size: 2;
+    }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-code text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-white">JSON Formatter &amp; Validator</h1>
+            <p class="text-sm text-neutral-400 mt-0.5">Format, minify and validate JSON. 100% client-side.</p>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <button id="btnFormat" class="px-4 py-2 bg-[#29C79F] hover:bg-[#22b08c] text-white text-sm font-semibold rounded-lg transition-colors">
+            <i class="fa-solid fa-indent mr-1.5"></i>Format
+          </button>
+          <button id="btnMinify" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-semibold rounded-lg transition-colors">
+            <i class="fa-solid fa-compress mr-1.5"></i>Minify
+          </button>
+          <button id="btnClear" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-semibold rounded-lg transition-colors">
+            <i class="fa-solid fa-xmark mr-1.5"></i>Clear
+          </button>
+          <button id="btnSample" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-semibold rounded-lg transition-colors">
+            <i class="fa-solid fa-flask mr-1.5"></i>Sample
+          </button>
+          <div class="flex items-center gap-2 ml-auto">
+            <label class="text-xs text-neutral-400">Indent:</label>
+            <select id="indentSize" class="px-2 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-neutral-200 text-sm">
+              <option value="2" selected>2 spaces</option>
+              <option value="4">4 spaces</option>
+              <option value="tab">Tab</option>
+            </select>
+          </div>
+          <button id="btnCopy" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm font-semibold rounded-lg transition-colors">
+            <i class="fa-solid fa-copy mr-1.5"></i>Copy
+          </button>
+        </div>
+
+        <!-- Status bar -->
+        <div id="statusBar" class="hidden flex items-center gap-3 px-4 py-2.5 rounded-lg mb-4 text-sm font-medium"></div>
+
+        <!-- Editor layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+          <!-- Input -->
+          <div class="flex flex-col">
+            <div class="flex items-center justify-between mb-1.5">
+              <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Input</p>
+              <span id="inputSize" class="text-xs text-neutral-600"></span>
+            </div>
+            <textarea id="inputPane"
+              class="json-input flex-1 w-full min-h-[420px] px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-neutral-200 resize-y focus:outline-none focus:border-[#29C79F] transition-colors"
+              placeholder='Paste your JSON here...'
+              spellcheck="false"></textarea>
+          </div>
+
+          <!-- Output -->
+          <div class="flex flex-col">
+            <div class="flex items-center justify-between mb-1.5">
+              <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Output</p>
+              <span id="outputSize" class="text-xs text-neutral-600"></span>
+            </div>
+            <div class="flex-1 min-h-[420px] px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl overflow-auto">
+              <div class="line-wrap">
+                <div id="lineNums" class="line-nums"></div>
+                <div id="outputPane" class="flex-1 text-neutral-300"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Stats row -->
+        <div id="statsRow" class="hidden mt-4 flex flex-wrap gap-4">
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statKeys">0</p>
+            <p class="text-xs text-neutral-500">Keys</p>
+          </div>
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statDepth">0</p>
+            <p class="text-xs text-neutral-500">Max Depth</p>
+          </div>
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statArrays">0</p>
+            <p class="text-xs text-neutral-500">Arrays</p>
+          </div>
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statObjects">0</p>
+            <p class="text-xs text-neutral-500">Objects</p>
+          </div>
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statStrings">0</p>
+            <p class="text-xs text-neutral-500">Strings</p>
+          </div>
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statNumbers">0</p>
+            <p class="text-xs text-neutral-500">Numbers</p>
+          </div>
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statBools">0</p>
+            <p class="text-xs text-neutral-500">Booleans</p>
+          </div>
+          <div class="bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-center">
+            <p class="text-lg font-bold text-white" id="statNulls">0</p>
+            <p class="text-xs text-neutral-500">Nulls</p>
+          </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-6 right-6 px-4 py-2.5 bg-[#29C79F] text-white text-sm font-medium rounded-xl shadow-lg z-50">
+          Copied!
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const SAMPLE = `{
+  "name": "WebTools",
+  "version": "1.0.0",
+  "description": "Free browser-based developer tools",
+  "author": {
+    "name": "Dev Team",
+    "email": "hello@example.com",
+    "url": "https://example.com"
+  },
+  "features": ["privacy-first", "no-upload", "offline-ready"],
+  "stats": {
+    "tools": 29,
+    "categories": 5,
+    "price": 0,
+    "ads": null,
+    "openSource": true
+  },
+  "tags": ["developer", "creator", "productivity"]
+}`;
+
+    const inputPane  = document.getElementById('inputPane');
+    const outputPane = document.getElementById('outputPane');
+    const lineNums   = document.getElementById('lineNums');
+    const statusBar  = document.getElementById('statusBar');
+    const statsRow   = document.getElementById('statsRow');
+
+    let lastParsed = null;
+    let toastTimer;
+
+    // ── Buttons ──────────────────────────────────────────────────────────
+    document.getElementById('btnFormat').addEventListener('click', () => processJSON('format'));
+    document.getElementById('btnMinify').addEventListener('click', () => processJSON('minify'));
+    document.getElementById('btnClear').addEventListener('click', () => {
+      inputPane.value = ''; clearOutput();
+    });
+    document.getElementById('btnSample').addEventListener('click', () => {
+      inputPane.value = SAMPLE; processJSON('format');
+    });
+    document.getElementById('btnCopy').addEventListener('click', () => {
+      const text = outputPane.innerText || outputPane.textContent;
+      if (!text.trim()) return;
+      navigator.clipboard?.writeText(text).catch(() => {});
+      showToast('Copied to clipboard');
+    });
+
+    // Auto-process on paste
+    inputPane.addEventListener('paste', () => setTimeout(() => processJSON('format'), 50));
+
+    // Update input size live
+    inputPane.addEventListener('input', () => {
+      document.getElementById('inputSize').textContent = formatBytes(inputPane.value.length);
+    });
+
+    function getIndent() {
+      const v = document.getElementById('indentSize').value;
+      return v === 'tab' ? '\t' : ' '.repeat(parseInt(v));
+    }
+
+    function processJSON(mode) {
+      const raw = inputPane.value.trim();
+      if (!raw) { clearOutput(); return; }
+
+      document.getElementById('inputSize').textContent = formatBytes(raw.length);
+
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (e) {
+        showError(e.message, raw);
+        return;
+      }
+
+      lastParsed = parsed;
+      const indent = mode === 'minify' ? null : getIndent();
+      const result = JSON.stringify(parsed, null, indent);
+
+      renderOutput(result);
+      document.getElementById('outputSize').textContent = formatBytes(result.length);
+      showSuccess(mode, raw.length, result.length);
+      computeStats(parsed);
+    }
+
+    function renderOutput(text) {
+      const lines = text.split('\n');
+      // Line numbers
+      lineNums.innerHTML = lines.map((_, i) => `<div>${i+1}</div>`).join('');
+      // Syntax highlight
+      outputPane.innerHTML = lines.map(line => highlightLine(line)).join('\n');
+    }
+
+    function highlightLine(line) {
+      return line
+        // Keys: "anything":
+        .replace(/"((?:[^"\\]|\\.)*)"\s*:/g, (_, k) => `<span class="json-key">"${escHtml(k)}"</span><span class="json-punct">:</span>`)
+        // Strings (values only)
+        .replace(/:\s*"((?:[^"\\]|\\.)*)"/g, (m, v) => m.replace(`"${v}"`, `<span class="json-str">"${escHtml(v)}"</span>`))
+        // Standalone strings (array values)
+        .replace(/^(\s*)"((?:[^"\\]|\\.)*)"([,]?)$/g, (_, sp, v, comma) =>
+          `${sp}<span class="json-str">"${escHtml(v)}"</span><span class="json-punct">${comma}</span>`)
+        // Numbers
+        .replace(/:\s*(-?\d+\.?\d*(?:[eE][+-]?\d+)?)/g, (m, n) => m.replace(n, `<span class="json-num">${n}</span>`))
+        // Standalone numbers (array values)
+        .replace(/^(\s*)(-?\d+\.?\d*(?:[eE][+-]?\d+)?)([,]?)$/g, (_, sp, n, comma) =>
+          `${sp}<span class="json-num">${n}</span><span class="json-punct">${comma}</span>`)
+        // Booleans
+        .replace(/\b(true|false)\b/g, '<span class="json-bool">$1</span>')
+        // Null
+        .replace(/\bnull\b/g, '<span class="json-null">null</span>')
+        // Braces/brackets
+        .replace(/([{}\[\],])/g, '<span class="json-punct">$1</span>');
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function showError(msg, raw) {
+      // Try to find line/col from error message
+      const lineMatch = msg.match(/line (\d+)/i);
+      const colMatch  = msg.match(/column (\d+)|position (\d+)/i);
+      const line = lineMatch ? lineMatch[1] : null;
+      const col  = colMatch  ? (colMatch[1] || colMatch[2]) : null;
+      const hint = line ? ` (line ${line}${col ? ', col ' + col : ''})` : '';
+
+      statusBar.className = 'flex items-center gap-2 px-4 py-2.5 rounded-lg mb-4 text-sm font-medium bg-red-500/10 border border-red-500/30 text-red-400';
+      statusBar.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><span>Invalid JSON${hint}: ${escHtml(msg)}</span>`;
+      statusBar.classList.remove('hidden');
+      statsRow.classList.add('hidden');
+
+      // Show raw in output with error line highlighted
+      const lines = raw.split('\n');
+      lineNums.innerHTML = lines.map((_, i) => `<div>${i+1}</div>`).join('');
+      outputPane.innerHTML = lines.map((l, i) => {
+        const isErr = line && (i + 1) === parseInt(line);
+        return isErr
+          ? `<span style="background:#7f1d1d;display:block">${escHtml(l)}</span>`
+          : escHtml(l);
+      }).join('\n');
+      document.getElementById('outputSize').textContent = '';
+    }
+
+    function showSuccess(mode, inSize, outSize) {
+      const saving = inSize > 0 ? Math.round((1 - outSize / inSize) * 100) : 0;
+      const savingText = mode === 'minify' && saving > 0 ? ` Saved ${saving}% (${formatBytes(inSize - outSize)})` : '';
+      statusBar.className = 'flex items-center gap-2 px-4 py-2.5 rounded-lg mb-4 text-sm font-medium bg-[#29C79F]/10 border border-[#29C79F]/30 text-[#29C79F]';
+      statusBar.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Valid JSON.${savingText}</span>`;
+      statusBar.classList.remove('hidden');
+    }
+
+    function clearOutput() {
+      outputPane.innerHTML = '';
+      lineNums.innerHTML   = '';
+      statusBar.classList.add('hidden');
+      statsRow.classList.add('hidden');
+      document.getElementById('inputSize').textContent  = '';
+      document.getElementById('outputSize').textContent = '';
+    }
+
+    // ── Stats ─────────────────────────────────────────────────────────────
+    function computeStats(data) {
+      const s = { keys: 0, depth: 0, arrays: 0, objects: 0, strings: 0, numbers: 0, bools: 0, nulls: 0 };
+      function walk(node, d) {
+        s.depth = Math.max(s.depth, d);
+        if (Array.isArray(node)) {
+          s.arrays++;
+          node.forEach(v => walk(v, d + 1));
+        } else if (node !== null && typeof node === 'object') {
+          s.objects++;
+          Object.entries(node).forEach(([, v]) => { s.keys++; walk(v, d + 1); });
+        } else if (typeof node === 'string')  s.strings++;
+        else if (typeof node === 'number')    s.numbers++;
+        else if (typeof node === 'boolean')   s.bools++;
+        else if (node === null)               s.nulls++;
+      }
+      walk(data, 0);
+
+      document.getElementById('statKeys').textContent    = s.keys;
+      document.getElementById('statDepth').textContent   = s.depth;
+      document.getElementById('statArrays').textContent  = s.arrays;
+      document.getElementById('statObjects').textContent = s.objects;
+      document.getElementById('statStrings').textContent = s.strings;
+      document.getElementById('statNumbers').textContent = s.numbers;
+      document.getElementById('statBools').textContent   = s.bools;
+      document.getElementById('statNulls').textContent   = s.nulls;
+      statsRow.classList.remove('hidden');
+    }
+
+    function formatBytes(n) {
+      if (n < 1024) return n + ' B';
+      return (n / 1024).toFixed(1) + ' KB';
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.add('hidden'), 1800);
+    }
+  </script>
+</body>
+</html>

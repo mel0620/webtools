@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Case Converter – WebTools</title>
+  <meta name="description" content="Transform text between different cases: lowercase, UPPERCASE, Title Case, camelCase, snake_case, and more." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://webtools.pro/tools/case-converter.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webtools.pro/tools/case-converter.html" />
+  <meta property="og:title" content="Text Case Converter – WebTools" />
+  <meta property="og:description" content="Transform text between different cases: lowercase, UPPERCASE, Title Case, camelCase, snake_case, and more." />
+  <meta property="og:image" content="https://webtools.pro/icons/icon-512.png" />
+  <meta property="og:site_name" content="WebTools" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Text Case Converter – WebTools" />
+  <meta name="twitter:description" content="Transform text between different cases: lowercase, UPPERCASE, Title Case, camelCase, snake_case, and more." />
+  <meta name="twitter:image" content="https://webtools.pro/icons/icon-512.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <!-- Font Awesome 6 Free -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- PWA + Vite entry -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#29C79F" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+<body>
+  <!-- Navigation Header -->
+  <nav class="bg-neutral-800/80 backdrop-blur-sm border-b border-neutral-700 sticky top-0 z-50" aria-label="Main navigation">
+    <div class="container max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <a href="../" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+            </div>
+            <div class="block">
+              <span class="text-xl font-bold text-white">AWD Digital</span>
+              <span class="text-xl font-bold text-[#29C79F] ml-1">Tools</span>
+            </div>
+          </a>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="../" class="text-white font-medium hover:text-[#de4d44] transition-colors">Home</a>
+        </div>
+        <button type="button" id="mobileMenuBtn" class="md:hidden text-neutral-300 hover:text-white p-2" aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle navigation menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-neutral-700 bg-neutral-800">
+      <div class="px-4 py-4 space-y-3">
+        <a href="../" class="block text-white font-medium hover:text-[#de4d44] transition-colors">Home</a>
+        <a href="../#tools" class="block text-neutral-300 hover:text-white transition-colors">Tools</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+    <div class="md:bg-neutral-800 rounded-2xl shadow-xl md:p-8 md:border border-neutral-700">
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 bg-[#29C79F] rounded-lg flex items-center justify-center" aria-hidden="true">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </div>
+        <h1 class="text-lg md:text-3xl font-bold text-white">Text Case Converter</h1>
+      </div>
+      <p class="text-neutral-400 mb-8">Transform text between different cases instantly</p>
+
+      <!-- Input -->
+      <div class="bg-neutral-700 rounded-xl p-6 border border-neutral-600 mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <label for="inputText" class="text-sm font-medium text-neutral-300">Enter your text</label>
+          <button type="button" id="clearBtn" class="text-xs text-neutral-400 hover:text-neutral-200 transition-colors">Clear</button>
+        </div>
+        <textarea
+          id="inputText"
+          rows="6"
+          placeholder="Type or paste your text here..."
+          class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-white rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+          aria-describedby="inputStats"
+        ></textarea>
+        <div id="inputStats" class="mt-2 text-xs text-neutral-400">
+          Characters: <span id="charCount">0</span> | Words: <span id="wordCount">0</span>
+        </div>
+      </div>
+
+      <!-- Conversion Buttons -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6" role="group" aria-label="Case conversion options">
+        <button type="button" data-case="lower" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          lowercase
+        </button>
+        <button type="button" data-case="upper" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          UPPERCASE
+        </button>
+        <button type="button" data-case="title" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          Title Case
+        </button>
+        <button type="button" data-case="sentence" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          Sentence case
+        </button>
+        <button type="button" data-case="camel" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          camelCase
+        </button>
+        <button type="button" data-case="pascal" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          PascalCase
+        </button>
+        <button type="button" data-case="snake" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          snake_case
+        </button>
+        <button type="button" data-case="kebab" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          kebab-case
+        </button>
+        <button type="button" data-case="constant" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          CONSTANT_CASE
+        </button>
+        <button type="button" data-case="dot" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          dot.case
+        </button>
+        <button type="button" data-case="path" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          path/case
+        </button>
+        <button type="button" data-case="toggle" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          tOGGLE cASE
+        </button>
+        <button type="button" data-case="alternating" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          aLtErNaTiNg
+        </button>
+        <button type="button" data-case="reverse" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          Reverse Text
+        </button>
+        <button type="button" data-case="slug" class="case-btn px-4 py-3 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg transition-all text-sm font-medium border border-neutral-600">
+          url-slug
+        </button>
+      </div>
+
+      <!-- Output -->
+      <div class="bg-neutral-700 rounded-xl p-6 border border-neutral-600">
+        <div class="flex items-center justify-between mb-3">
+          <label for="outputText" class="text-sm font-medium text-neutral-300">
+            Result <span id="caseType" class="text-[#29C79F]"></span>
+          </label>
+          <button type="button" id="copyBtn" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            Copy
+          </button>
+        </div>
+        <textarea
+          id="outputText"
+          rows="6"
+          readonly
+          class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-neutral-200 rounded-lg font-mono text-sm focus:outline-none resize-none"
+          aria-live="polite"
+        ></textarea>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { convertCase, countCharacters, countWords } from '../src/js/utils/text.js';
+    import { copyFromInput } from '../src/js/utils/clipboard.js';
+
+    // DOM Elements
+    const inputText = document.getElementById('inputText');
+    const outputText = document.getElementById('outputText');
+    const caseType = document.getElementById('caseType');
+    const charCount = document.getElementById('charCount');
+    const wordCount = document.getElementById('wordCount');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyBtn = document.getElementById('copyBtn');
+
+    // Update stats
+    function updateStats() {
+      const text = inputText.value;
+      charCount.textContent = countCharacters(text);
+      wordCount.textContent = countWords(text);
+    }
+
+    // Clear text
+    function clearText() {
+      inputText.value = '';
+      outputText.value = '';
+      caseType.textContent = '';
+      updateStats();
+      inputText.focus();
+    }
+
+    // Handle case conversion
+    function handleConvert(type) {
+      const text = inputText.value;
+      if (!text) return;
+
+      const result = convertCase(text, type);
+      if (result) {
+        outputText.value = result.result;
+        caseType.textContent = `(${result.label})`;
+      }
+    }
+
+    // Event Listeners
+    inputText.addEventListener('input', updateStats);
+    clearBtn.addEventListener('click', clearText);
+
+    copyBtn.addEventListener('click', async () => {
+      if (!outputText.value) return;
+      await copyFromInput(outputText, copyBtn);
+    });
+
+    // Case button delegation
+    document.querySelectorAll('.case-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const caseKey = btn.dataset.case;
+        handleConvert(caseKey);
+      });
+    });
+
+    // Mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+      mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+  <script type="module" src="/src/js/tool-page.js"></script>
+</body>
+</html>
