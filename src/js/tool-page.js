@@ -5,7 +5,7 @@
  */
 import '../css/main.css'
 import { renderNavbar, initNavbarEvents } from './components/navbar.js'
-import { renderFooter } from './components/footer.js'
+import { renderFooter, initFooter } from './components/footer.js'
 
 // --- Reset body to a consistent dark baseline --------------------------------
 // Remove all utility classes that may have been set directly on <body>
@@ -56,6 +56,7 @@ if (mainEl) {
 if (!document.querySelector('footer')) {
   document.body.insertAdjacentHTML('beforeend', renderFooter())
 }
+initFooter()
 
 // --- Mobile menu events -----------------------------------------------------
 initNavbarEvents()

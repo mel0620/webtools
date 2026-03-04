@@ -55,6 +55,8 @@
       border:2px solid #fff; display:flex; align-items:center; justify-content:center;
       color:#fff; font-size:10px; flex-shrink:0;
     }
+    @keyframes bar-stripe{from{background-position:40px 0}to{background-position:0 0}}
+    .bar-live{background-image:linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.12) 75%,transparent 75%,transparent);background-size:40px 40px;animation:bar-stripe .7s linear infinite}
   </style>
 </head>
 <body>
@@ -206,14 +208,17 @@
 
     let currentFile = null;
     let resultCanvas = null;
+    let resultDataUrl = null;
     let origObjectUrl = null;
 
     // ── Drop / browse ──────────────────────────────────────────────────────
     dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]','bg-[#29C79F]/5'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5'));
+    let _dc = 0;
+    dropZone.addEventListener('dragenter', e => { e.preventDefault(); if (++_dc === 1) dropZone.classList.add('dz-active'); });
+    dropZone.addEventListener('dragover', e => e.preventDefault());
+    dropZone.addEventListener('dragleave', () => { if (--_dc <= 0) { _dc = 0; dropZone.classList.remove('dz-active'); } });
     dropZone.addEventListener('drop', e => {
-      e.preventDefault(); dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5');
+      e.preventDefault(); _dc = 0; dropZone.classList.remove('dz-active');
       const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
       if (f) loadFile(f);
     });
@@ -237,7 +242,7 @@
     }
 
     function resetTool() {
-      currentFile = null; resultCanvas = null;
+      currentFile = null; resultCanvas = null; resultDataUrl = null;
       if (origObjectUrl) { URL.revokeObjectURL(origObjectUrl); origObjectUrl = null; }
       dropZone.classList.remove('hidden');
       previewSection.classList.add('hidden');
@@ -250,6 +255,7 @@
       progressBar.style.width = pct + '%';
       progressPct.textContent = pct + '%';
       progressLbl.textContent = label;
+      progressBar.classList.toggle('bar-live', pct > 0 && pct < 100);
     }
 
     // ── Upscale ────────────────────────────────────────────────────────────
@@ -261,6 +267,17 @@
       progressWrap.classList.remove('hidden');
       setProgress(5, 'Initialising AI model...');
 
+      // Slow ticker so the bar never looks frozen during silent warmup phases
+      let crawlPct = 5;
+      let crawlTimer = null;
+      function startCrawl(fromPct, toPct, label) {
+        crawlPct = fromPct;
+        crawlTimer = setInterval(() => {
+          if (crawlPct < toPct) { crawlPct = Math.min(toPct, crawlPct + 0.5); setProgress(Math.round(crawlPct), label); }
+        }, 350);
+      }
+      function stopCrawl() { if (crawlTimer) { clearInterval(crawlTimer); crawlTimer = null; } }
+
       try {
         const scale = parseInt(document.getElementById('scaleFactor').value);
 
@@ -271,9 +288,10 @@
         if (!model) throw new Error('Could not find UpscalerJS model. Check CDN scripts loaded correctly.');
         const upscaler = new Upscaler({ model });
 
-        setProgress(20, 'Loading model weights...');
+        startCrawl(5, 45, 'Loading model weights...');
         // Warm up
         await upscaler.warmup([{ patchSize: 64, padding: 2 }]);
+        stopCrawl();
         setProgress(50, 'Running super-resolution...');
 
         const img = previewImg;
@@ -298,11 +316,16 @@
         if (scale === 4) {
           // Run a second pass: tensor -> normalized canvas -> upscale again
           const upscaler2 = new Upscaler({ model });
+          startCrawl(92, 94, 'Preparing second pass...');
           await upscaler2.warmup([{ patchSize: 64, padding: 2 }]);
+          stopCrawl();
           const tmpCanvas = document.createElement('canvas');
           await tensorToCanvas(upscaled, tmpCanvas);
           tf.dispose(upscaled);
-          finalTensor = await upscaler2.upscale(tmpCanvas, { output: 'tensor', patchSize: 64, padding: 2 });
+          finalTensor = await upscaler2.upscale(tmpCanvas, {
+            output: 'tensor', patchSize: 64, padding: 2,
+            progress: (p) => setProgress(94 + Math.round(p * 4), `Second pass... ${Math.round(p * 100)}%`),
+          });
         }
 
         resultCanvas = document.createElement('canvas');
@@ -312,12 +335,14 @@
         setProgress(100, 'Done!');
         showResult();
       } catch (e) {
+        stopCrawl();
         errorBox.classList.remove('hidden');
         document.getElementById('errorMsg').textContent = 'Upscaling failed: ' + e.message;
         console.error(e);
       } finally {
         upscaleBtn.disabled = false;
         progressWrap.classList.add('hidden');
+        progressBar.classList.remove('bar-live');
       }
     });
 
@@ -325,11 +350,11 @@
       const w = resultCanvas.width, h = resultCanvas.height;
       document.getElementById('resultDims').textContent = `${w} x ${h} px`;
 
-      const resultUrl = resultCanvas.toDataURL('image/png');
-      const origUrl   = origObjectUrl;
+      // Capture data URL immediately while canvas/WebGL buffer is still valid
+      resultDataUrl = resultCanvas.toDataURL('image/png');
 
-      document.getElementById('compareOrig').src   = origUrl;
-      document.getElementById('compareResult').src = resultUrl;
+      document.getElementById('compareOrig').src   = origObjectUrl;
+      document.getElementById('compareResult').src = resultDataUrl;
       // Fix inner image width for compare
       document.getElementById('compareResult').style.minWidth = document.getElementById('compareWrap').offsetWidth + 'px';
 
@@ -364,13 +389,32 @@
 
     // ── Download ───────────────────────────────────────────────────────────
     document.getElementById('downloadBtn').addEventListener('click', () => {
-      if (!resultCanvas || !currentFile) return;
+      if (!resultDataUrl || !currentFile) return;
       const fmt  = document.getElementById('outFormat').value;
       const ext  = fmt === 'image/jpeg' ? 'jpg' : fmt === 'image/webp' ? 'webp' : 'png';
       const name = currentFile.name.replace(/\.[^.]+$/, '') + '-upscaled.' + ext;
-      const url  = resultCanvas.toDataURL(fmt, 0.92);
-      const a    = document.createElement('a');
-      a.href = url; a.download = name; a.click();
+
+      if (fmt === 'image/png') {
+        // PNG: use the stored lossless data URL directly
+        const a = document.createElement('a');
+        a.href = resultDataUrl; a.download = name; a.click();
+        return;
+      }
+
+      // JPEG / WebP: draw the stored PNG onto a fresh 2D canvas and re-encode
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        c.getContext('2d').drawImage(img, 0, 0);
+        c.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = name; a.click();
+          URL.revokeObjectURL(url);
+        }, fmt, 0.92);
+      };
+      img.src = resultDataUrl;
     });
   </script>
 </body>

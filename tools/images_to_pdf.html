@@ -36,6 +36,11 @@
     <meta name="theme-color" content="#29C79F" />
     <link rel="stylesheet" href="/src/css/main.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    @keyframes bar-stripe{from{background-position:40px 0}to{background-position:0 0}}
+    .bar-live{background-image:linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.12) 75%,transparent 75%,transparent);background-size:40px 40px;animation:bar-stripe .7s linear infinite}
+    .dz-active{border-color:#29C79F!important;background-color:rgba(41,199,159,.12)!important;transform:scale(1.005);transition:transform .15s ease}
+  </style>
 </head>
 <body>
     <main class="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
@@ -149,19 +154,15 @@
 
         // Drag and drop
         dropZone.addEventListener('click', () => fileInput.click());
-        
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5');
-        });
-        
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
-        });
-        
+
+        let _dc = 0;
+        dropZone.addEventListener('dragenter', e => { e.preventDefault(); if (++_dc === 1) dropZone.classList.add('dz-active'); });
+        dropZone.addEventListener('dragover', e => e.preventDefault());
+        dropZone.addEventListener('dragleave', () => { if (--_dc <= 0) { _dc = 0; dropZone.classList.remove('dz-active'); } });
+
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+            _dc = 0; dropZone.classList.remove('dz-active');
             const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
             handleFiles(files);
         });
@@ -309,6 +310,7 @@
             for (let i = 0; i < images.length; i++) {
                 progressText.textContent = `Processing image ${i + 1} of ${images.length}...`;
                 progressBar.style.width = `${((i + 1) / images.length) * 100}%`;
+                progressBar.classList.toggle('bar-live', (i + 1) < images.length);
 
                 if (i > 0) {
                     pdf.addPage();

@@ -32,6 +32,10 @@
   <meta name="theme-color" content="#29C79F" />
   <link rel="stylesheet" href="/src/css/main.css" />
   <script type="module" src="/src/js/tool-page.js"></script>
+  <style>
+    @keyframes bar-stripe{from{background-position:40px 0}to{background-position:0 0}}
+    .bar-live{background-image:linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.12) 75%,transparent 75%,transparent);background-size:40px 40px;animation:bar-stripe .7s linear infinite}
+  </style>
 </head>
 <body>
   <main id="app">
@@ -186,16 +190,21 @@
     let   classifier   = null;
 
     async function ensureModel(onProgress) {
-      if (classifier) return classifier;
+      if (classifier) { onProgress(100, 'Model ready (cached)'); return classifier; }
       const { pipeline, env } = await import(TRANSFORMERS);
       env.backends.onnx.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/';
       env.allowRemoteModels = true;
       env.useBrowserCache   = true;
+      let maxPct = 0;
       classifier = await pipeline('text-classification', MODEL_ID, {
         topk: 2,
         progress_callback: (d) => {
-          if (d.status === 'progress') onProgress(Math.round(d.progress ?? 0), `Downloading model... ${Math.round(d.progress ?? 0)}%`);
-          if (d.status === 'done')     onProgress(100, 'Model ready');
+          const bump = (pct, label) => { maxPct = Math.max(maxPct, pct); onProgress(maxPct, label); };
+          if      (d.status === 'initiate')  bump(3,  `Fetching ${d.file ?? 'model files'}...`);
+          else if (d.status === 'download')  bump(8,  `Downloading ${d.file ?? 'model weights'}...`);
+          else if (d.status === 'progress')  bump(Math.round((d.progress ?? 0) * 0.88), `Downloading... ${Math.round(d.progress ?? 0)}%`);
+          else if (d.status === 'done')      bump(90, `Loaded ${d.file ?? 'file'}`);
+          else if (d.status === 'ready')     bump(100, 'Model ready');
         },
       });
       return classifier;
@@ -257,24 +266,31 @@
       batchResult.classList.add('hidden');
       modelWrap.classList.remove('hidden');
 
+      const bar   = document.getElementById('modelBar');
+      const pctEl = document.getElementById('modelPct');
+      const lblEl = document.getElementById('modelLabel');
+      function setBar(pct, label, animate = true) {
+        bar.style.width   = pct + '%';
+        pctEl.textContent = pct + '%';
+        lblEl.textContent = label;
+        bar.classList.toggle('bar-live', animate && pct < 100);
+      }
+
       try {
-        const pipe = await ensureModel((pct, label) => {
-          document.getElementById('modelBar').style.width = pct + '%';
-          document.getElementById('modelPct').textContent = pct + '%';
-          document.getElementById('modelLabel').textContent = label;
-        });
-        modelWrap.classList.add('hidden');
+        const pipe = await ensureModel((pct, label) => setBar(pct, label));
 
         const allResults = [];
-        for (const t of texts) {
-          const out = await pipe(t, { topk: 2 });
-          // Normalize: always get POSITIVE and NEGATIVE scores
+        for (let i = 0; i < texts.length; i++) {
+          const inferPct = Math.round(10 + (i / texts.length) * 80);
+          setBar(inferPct, texts.length > 1 ? `Analyzing text ${i + 1} of ${texts.length}...` : 'Running AI analysis...', true);
+          const out = await pipe(texts[i], { topk: 2 });
           const pos = out.find(r => r.label === 'POSITIVE')?.score ?? 0;
           const neg = out.find(r => r.label === 'NEGATIVE')?.score ?? 0;
           const top = pos >= neg ? { label: 'POSITIVE', score: pos } : { label: 'NEGATIVE', score: neg };
-          allResults.push({ text: t, label: top.label, score: top.score, pos, neg });
+          allResults.push({ text: texts[i], label: top.label, score: top.score, pos, neg });
         }
 
+        setBar(100, 'Done!', false);
         if (!isBatch && allResults.length === 1) {
           renderSingle(allResults[0]);
         } else {
@@ -286,6 +302,7 @@
         console.error(e);
       } finally {
         analyzeBtn.disabled = false;
+        setTimeout(() => { modelWrap.classList.add('hidden'); bar.classList.remove('bar-live'); }, 700);
       }
     });
 

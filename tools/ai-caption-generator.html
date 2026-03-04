@@ -32,6 +32,10 @@
   <meta name="theme-color" content="#29C79F" />
   <link rel="stylesheet" href="/src/css/main.css" />
   <script type="module" src="/src/js/tool-page.js"></script>
+  <style>
+    @keyframes bar-stripe{from{background-position:40px 0}to{background-position:0 0}}
+    .bar-live{background-image:linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.12) 75%,transparent 75%,transparent);background-size:40px 40px;animation:bar-stripe .7s linear infinite}
+  </style>
 </head>
 <body>
   <main id="app">
@@ -126,16 +130,21 @@
     let   pipeline     = null;
 
     async function ensurePipeline(onProgress) {
-      if (pipeline) return pipeline;
+      if (pipeline) { onProgress(100, 'Model ready (cached)'); return pipeline; }
       const { pipeline: createPipeline, env } = await import(TRANSFORMERS);
       env.backends.onnx.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/';
       env.allowRemoteModels = true;
       env.useBrowserCache   = true;
 
+      let maxPct = 0;
       pipeline = await createPipeline('image-to-text', MODEL_ID, {
         progress_callback: (d) => {
-          if (d.status === 'progress') onProgress(Math.round(d.progress ?? 0), `Downloading model... ${Math.round(d.progress ?? 0)}%`);
-          if (d.status === 'done')     onProgress(100, 'Model ready');
+          const bump = (pct, label) => { maxPct = Math.max(maxPct, pct); onProgress(maxPct, label); };
+          if      (d.status === 'initiate')  bump(3,  `Fetching ${d.file ?? 'model files'}...`);
+          else if (d.status === 'download')  bump(8,  `Downloading ${d.file ?? 'model weights'}...`);
+          else if (d.status === 'progress')  bump(Math.round((d.progress ?? 0) * 0.88), `Downloading... ${Math.round(d.progress ?? 0)}%`);
+          else if (d.status === 'done')      bump(90, `Loaded ${d.file ?? 'file'}`);
+          else if (d.status === 'ready')     bump(100, 'Model ready');
         },
       });
       return pipeline;
@@ -158,10 +167,12 @@
     const modelWrap     = document.getElementById('modelWrap');
 
     dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-[#29C79F]','bg-[#29C79F]/5'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5'));
+    let _dc = 0;
+    dropZone.addEventListener('dragenter', e => { e.preventDefault(); if (++_dc === 1) dropZone.classList.add('dz-active'); });
+    dropZone.addEventListener('dragover', e => e.preventDefault());
+    dropZone.addEventListener('dragleave', () => { if (--_dc <= 0) { _dc = 0; dropZone.classList.remove('dz-active'); } });
     dropZone.addEventListener('drop', e => {
-      e.preventDefault(); dropZone.classList.remove('border-[#29C79F]','bg-[#29C79F]/5');
+      e.preventDefault(); _dc = 0; dropZone.classList.remove('dz-active');
       addFiles([...e.dataTransfer.files].filter(isImg));
     });
     fileInput.addEventListener('change', () => { addFiles([...fileInput.files].filter(isImg)); fileInput.value = ''; });
@@ -223,15 +234,23 @@
       errorBox.classList.add('hidden');
       modelWrap.classList.remove('hidden');
 
-      try {
-        const pipe = await ensurePipeline((pct, label) => {
-          document.getElementById('modelBar').style.width = pct + '%';
-          document.getElementById('modelPct').textContent = pct + '%';
-          document.getElementById('modelLabel2').textContent = label;
-        });
-        modelWrap.classList.add('hidden');
+      const bar   = document.getElementById('modelBar');
+      const pctEl = document.getElementById('modelPct');
+      const lblEl = document.getElementById('modelLabel2');
+      function setBar(pct, label, animate = true) {
+        bar.style.width   = pct + '%';
+        pctEl.textContent = pct + '%';
+        lblEl.textContent = label;
+        bar.classList.toggle('bar-live', animate && pct < 100);
+      }
 
-        for (const item of pending) {
+      try {
+        const pipe = await ensurePipeline((pct, label) => setBar(pct, label));
+
+        for (let i = 0; i < pending.length; i++) {
+          const item    = pending[i];
+          const inferPct = Math.round(10 + (i / pending.length) * 80);
+          setBar(inferPct, `Processing image ${i + 1} of ${pending.length}...`, true);
           item.status = 'processing'; renderQueue();
           try {
             const out    = await pipe(item.objUrl, { max_new_tokens: 50 });
@@ -244,13 +263,14 @@
           }
           renderQueue();
         }
+        setBar(100, 'Done!', false);
         renderResults();
       } catch(e) {
         errorBox.classList.remove('hidden');
         document.getElementById('errorMsg').textContent = e.message;
-        modelWrap.classList.add('hidden');
       } finally {
         generateBtn.disabled = false;
+        setTimeout(() => { modelWrap.classList.add('hidden'); bar.classList.remove('bar-live'); }, 700);
       }
     });
 

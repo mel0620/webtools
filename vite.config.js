@@ -83,7 +83,7 @@ export default defineConfig({
         'compress-pdf':            resolve(__dirname, 'tools/compress-pdf.html'),
         'pdf-to-jpg':              resolve(__dirname, 'tools/pdf-to-jpg.html'),
         'remove-background':       resolve(__dirname, 'tools/remove-background.html'),
-        'ai-image-upscaler':       resolve(__dirname, 'tools/ai-image-upscaler.html'),
+        // 'ai-image-upscaler':       resolve(__dirname, 'tools/ai-image-upscaler.html'),
         'ai-caption-generator':    resolve(__dirname, 'tools/ai-caption-generator.html'),
         'ai-text-summarizer':      resolve(__dirname, 'tools/ai-text-summarizer.html'),
         'ai-sentiment-analyzer':   resolve(__dirname, 'tools/ai-sentiment-analyzer.html'),

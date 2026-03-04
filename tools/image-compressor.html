@@ -5,20 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bulk Image Compressor – WebTools</title>
-    <meta name="description" content="Compress JPEG, PNG, and WebP images in bulk directly in your browser. No upload required. 100% client-side and privacy-first." />
+    <meta name="description" content="Compress JPEG, PNG, WebP, and HEIC images in bulk directly in your browser. No upload required. 100% client-side and privacy-first." />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://wb2ls.netlify.app/tools/image-compressor.html" />
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://wb2ls.netlify.app/tools/image-compressor.html" />
     <meta property="og:title" content="Bulk Image Compressor – WebTools" />
-    <meta property="og:description" content="Compress JPEG, PNG, and WebP images in bulk directly in your browser. No upload required. 100% client-side and privacy-first." />
+    <meta property="og:description" content="Compress JPEG, PNG, WebP, and HEIC images in bulk directly in your browser. No upload required. 100% client-side and privacy-first." />
     <meta property="og:image" content="https://wb2ls.netlify.app/favicon.png" />
     <meta property="og:site_name" content="WebTools" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Bulk Image Compressor – WebTools" />
-    <meta name="twitter:description" content="Compress JPEG, PNG, and WebP images in bulk directly in your browser. No upload required. 100% client-side and privacy-first." />
+    <meta name="twitter:description" content="Compress JPEG, PNG, WebP, and HEIC images in bulk directly in your browser. No upload required. 100% client-side and privacy-first." />
     <meta name="twitter:image" content="https://wb2ls.netlify.app/favicon.png" />
   <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
@@ -37,6 +37,12 @@
     <meta name="theme-color" content="#29C79F" />
     <link rel="stylesheet" href="/src/css/main.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+  <style>
+    @keyframes bar-stripe{from{background-position:40px 0}to{background-position:0 0}}
+    .bar-live{background-image:linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.12) 75%,transparent 75%,transparent);background-size:40px 40px;animation:bar-stripe .7s linear infinite}
+    .dz-active{border-color:#29C79F!important;background-color:rgba(41,199,159,.12)!important;transform:scale(1.005);transition:transform .15s ease}
+  </style>
 
 </head>
 <body>
@@ -88,8 +94,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                     <p class="text-lg font-medium text-neutral-300 mb-2">Click or drag &amp; drop images here</p>
-                    <p class="text-sm text-neutral-500">JPG, PNG, WebP - up to <strong class="text-neutral-400">10 images</strong> per session</p>
-                    <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
+                    <p class="text-sm text-neutral-500">JPG, PNG, WebP, HEIC - up to <strong class="text-neutral-400">10 images</strong> per session</p>
+                    <input type="file" id="fileInput" multiple accept="image/*,.heic,.heif" class="hidden">
                 </div>
 
                 <!-- Action Buttons -->
@@ -161,18 +167,43 @@
         document.getElementById('clearAll').addEventListener('click', clearAll);
 
         // Drag-and-drop
-        uploadArea.addEventListener('dragover', e => {
-            e.preventDefault();
-            uploadArea.classList.add('border-[#29C79F]', 'bg-[#29C79F]/5');
-        });
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
-        });
+        let _dc = 0;
+        uploadArea.addEventListener('dragenter', e => { e.preventDefault(); if (++_dc === 1) uploadArea.classList.add('dz-active'); });
+        uploadArea.addEventListener('dragover', e => e.preventDefault());
+        uploadArea.addEventListener('dragleave', () => { if (--_dc <= 0) { _dc = 0; uploadArea.classList.remove('dz-active'); } });
         uploadArea.addEventListener('drop', e => {
             e.preventDefault();
-            uploadArea.classList.remove('border-[#29C79F]', 'bg-[#29C79F]/5');
+            _dc = 0; uploadArea.classList.remove('dz-active');
             processFiles(Array.from(e.dataTransfer.files));
         });
+
+        // ─── HEIC helpers ──────────────────────────────────────────────────────────
+        function isHeicFile(file) {
+            return file.type === 'image/heic' || file.type === 'image/heif' ||
+                   /\.(heic|heif)$/i.test(file.name);
+        }
+
+        function isImageFile(file) {
+            return file.type.startsWith('image/') || isHeicFile(file);
+        }
+
+        async function fileToDataURL(file) {
+            let sourceBlob = file;
+            if (isHeicFile(file)) {
+                try {
+                    const converted = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+                    sourceBlob = Array.isArray(converted) ? converted[0] : converted;
+                } catch (err) {
+                    throw new Error(`HEIC conversion failed for "${file.name}"`);
+                }
+            }
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload  = ev => resolve(ev.target.result);
+                reader.onerror = () => reject(new Error(`Failed to read "${file.name}"`));
+                reader.readAsDataURL(sourceBlob);
+            });
+        }
 
         // ─── File ingestion ───────────────────────────────────────────────────────
         function processFiles(files) {
@@ -182,40 +213,45 @@
                 return;
             }
 
-            const imageFiles = files.filter(f => f.type.startsWith('image/')).slice(0, slots);
-            const skipped    = files.filter(f => f.type.startsWith('image/')).length - imageFiles.length;
+            const imageFiles = files.filter(isImageFile).slice(0, slots);
+            const skipped    = files.filter(isImageFile).length - imageFiles.length;
 
             if (skipped > 0) {
                 showToast(`Only ${imageFiles.length} image(s) added – ${MAX_IMAGES}-image limit reached.`, 'warn');
             }
 
-            let loaded = 0;
             if (imageFiles.length === 0) return;
 
-            imageFiles.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = ev => {
+            const heicCount = imageFiles.filter(isHeicFile).length;
+            if (heicCount > 0) {
+                showToast(`Converting ${heicCount} HEIC file${heicCount > 1 ? 's' : ''}...`, 'info');
+            }
+
+            imageFiles.forEach(async file => {
+                try {
+                    const dataURL = await fileToDataURL(file);
                     const img = new Image();
+                    img.onerror = () => showToast(`Could not load image: ${file.name}`, 'error');
                     img.onload = () => {
                         images.push({
-                            id:           crypto.randomUUID ? crypto.randomUUID() : (Date.now() + Math.random()).toString(36),
-                            name:         file.name,
-                            originalSize: file.size,
-                            originalSrc:  ev.target.result, // base64 kept only for compression input
-                            previewSrc:   ev.target.result, // will be swapped to blob URL after optimize
+                            id:            crypto.randomUUID ? crypto.randomUUID() : (Date.now() + Math.random()).toString(36),
+                            name:          file.name,
+                            originalSize:  file.size,
+                            originalSrc:   dataURL,
+                            previewSrc:    dataURL,
                             optimizedBlob: null,
                             optimizedSrc:  null,
                             optimizedSize: null,
-                            width:        img.width,
-                            height:       img.height,
-                            status:       'pending'
+                            width:         img.width,
+                            height:        img.height,
+                            status:        'pending'
                         });
-                        loaded++;
-                        if (loaded === imageFiles.length) scheduleRender();
+                        scheduleRender();
                     };
-                    img.src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
+                    img.src = dataURL;
+                } catch (err) {
+                    showToast(err.message || `Failed to process ${file.name}`, 'error');
+                }
             });
 
             // Reset file input so the same file(s) can be re-added after clear
@@ -309,7 +345,7 @@
             const url  = URL.createObjectURL(image.optimizedBlob);
             const link = document.createElement('a');
             link.href     = url;
-            link.download = `optimized_${image.name.replace(/\.[^.]+$/, '')}.jpg`;
+            link.download = `optimized_${image.name.replace(/\.[^.]+$/, '')}.jpg`; // HEIC/HEIF are also saved as JPEG
             link.click();
             // Revoke after a brief delay so the browser can trigger the save
             setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -330,7 +366,7 @@
 
                 for (const img of completed) {
                     const baseName = img.name.replace(/\.[^.]+$/, '');
-                    folder.file(`optimized_${baseName}.jpg`, img.optimizedBlob);
+                    folder.file(`optimized_${baseName}.jpg`, img.optimizedBlob); // HEIC/HEIF converted to JPEG
                 }
 
                 const zipBlob = await zip.generateAsync({

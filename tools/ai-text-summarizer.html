@@ -32,6 +32,10 @@
   <meta name="theme-color" content="#29C79F" />
   <link rel="stylesheet" href="/src/css/main.css" />
   <script type="module" src="/src/js/tool-page.js"></script>
+  <style>
+    @keyframes bar-stripe{from{background-position:40px 0}to{background-position:0 0}}
+    .bar-live{background-image:linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.12) 75%,transparent 75%,transparent);background-size:40px 40px;animation:bar-stripe .7s linear infinite}
+  </style>
 </head>
 <body>
   <main id="app">
@@ -144,16 +148,21 @@
     let   summarizer   = null;
 
     async function ensureModel(onProgress) {
-      if (summarizer) return summarizer;
+      if (summarizer) { onProgress(100, 'Model ready (cached)'); return summarizer; }
       const { pipeline, env } = await import(TRANSFORMERS);
       env.backends.onnx.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/';
       env.allowRemoteModels = true;
       env.useBrowserCache   = true;
 
+      let maxPct = 0;
       summarizer = await pipeline('summarization', MODEL_ID, {
         progress_callback: (d) => {
-          if (d.status === 'progress') onProgress(Math.round(d.progress ?? 0), `Downloading model... ${Math.round(d.progress ?? 0)}%`);
-          if (d.status === 'done')     onProgress(100, 'Model ready');
+          const bump = (pct, label) => { maxPct = Math.max(maxPct, pct); onProgress(maxPct, label); };
+          if      (d.status === 'initiate')  bump(3,  `Fetching ${d.file ?? 'model files'}...`);
+          else if (d.status === 'download')  bump(8,  `Downloading ${d.file ?? 'model weights'}...`);
+          else if (d.status === 'progress')  bump(Math.round((d.progress ?? 0) * 0.88), `Downloading... ${Math.round(d.progress ?? 0)}%`);
+          else if (d.status === 'done')      bump(90, `Loaded ${d.file ?? 'file'}`);
+          else if (d.status === 'ready')     bump(100, 'Model ready');
         },
       });
       return summarizer;
@@ -199,37 +208,58 @@
       resultSection.classList.add('hidden');
       modelWrap.classList.remove('hidden');
 
+      const bar   = document.getElementById('modelBar');
+      const pctEl = document.getElementById('modelPct');
+      const lblEl = document.getElementById('modelLabel');
+      function setBar(pct, label, animate = true) {
+        bar.style.width   = pct + '%';
+        pctEl.textContent = pct + '%';
+        lblEl.textContent = label;
+        bar.classList.toggle('bar-live', animate && pct < 100);
+      }
+
+      // Slow ticker that crawls the bar during inference so it never looks frozen
+      let crawlPct = 0;
+      let crawlTimer = null;
+      function startCrawl(fromPct) {
+        crawlPct = fromPct;
+        crawlTimer = setInterval(() => {
+          if (crawlPct < 92) { crawlPct = Math.min(92, crawlPct + 0.5); setBar(Math.round(crawlPct), 'Summarizing text, this may take a moment...', true); }
+        }, 400);
+      }
+      function stopCrawl() { if (crawlTimer) { clearInterval(crawlTimer); crawlTimer = null; } }
+
       try {
-        const pipe = await ensureModel((pct, label) => {
-          document.getElementById('modelBar').style.width = pct + '%';
-          document.getElementById('modelPct').textContent = pct + '%';
-          document.getElementById('modelLabel').textContent = label;
-        });
-        modelWrap.classList.add('hidden');
+        const pipe = await ensureModel((pct, label) => setBar(pct, label));
 
         const minLen = parseInt(document.getElementById('minLen').value);
         const maxLen = parseInt(document.getElementById('maxLen').value);
 
+        startCrawl(5);
         const output = await pipe(text, {
           min_length: minLen,
           max_length: Math.max(maxLen, minLen + 20),
           do_sample: false,
         });
+        stopCrawl();
 
-        const summary = output[0]?.summary_text || 'No summary generated.';
-        const inputWords = words;
+        const summary     = output[0]?.summary_text || 'No summary generated.';
+        const inputWords  = words;
         const outputWords = summary.trim().split(/\s+/).filter(Boolean).length;
-        const reduction = Math.round((1 - outputWords / inputWords) * 100);
+        const reduction   = Math.round((1 - outputWords / inputWords) * 100);
 
+        setBar(100, 'Done!', false);
         summaryText.textContent = summary;
         document.getElementById('compressionRatio').textContent =
           `${inputWords} words → ${outputWords} words (${reduction > 0 ? '-' + reduction + '%' : 'no reduction'})`;
         resultSection.classList.remove('hidden');
       } catch (e) {
+        stopCrawl();
         showError('Summarization failed: ' + e.message);
         console.error(e);
       } finally {
         summarizeBtn.disabled = false;
+        setTimeout(() => { modelWrap.classList.add('hidden'); bar.classList.remove('bar-live'); }, 700);
       }
     });
 

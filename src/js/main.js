@@ -4,12 +4,13 @@
  */
 import '../css/main.css'
 import { renderNavbar, initNavbarEvents } from './components/navbar.js'
-import { renderFooter } from './components/footer.js'
+import { renderFooter, initFooter } from './components/footer.js'
 
 // Inject shared nav/footer
 document.getElementById('app-navbar').innerHTML = renderNavbar({ activePage: 'home' })
 document.getElementById('app-footer').innerHTML = renderFooter()
 initNavbarEvents()
+initFooter()
 
 // ─── Remove page loader once content is ready ───────────────────────────────
 function dismissLoader () {
