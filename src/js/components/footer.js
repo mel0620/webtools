@@ -51,8 +51,8 @@ export function renderFooter() {
         Built by <a href="https://www.facebook.com/rommel.cuneta" target="_blank" rel="noopener noreferrer" class="text-white font-medium hover:text-brand transition-colors">Rommel Cuneta</a>
       </p>
 
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-zinc-600 mr-1">Support this project:</span>
+      <div class="grid grid-cols-3 md:flex items-center justify-center gap-2">
+        <span class="max-sm:col-span-3 max-sm:text-center text-xs text-zinc-600 mr-1">Support this project:</span>
 
         <!-- GCash -->
         <button id="footer-gcash-btn"

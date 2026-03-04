@@ -1,10 +1,15 @@
 # ─── Build ────────────────────────────────────────────────────────────────────
 [build]
-  publish = "dist"
-  command = "npm run build"
+  publish   = "dist"
+  command   = "npm run build"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
+
+# ─── Functions ────────────────────────────────────────────────────────────────
+[functions]
+  node_bundler = "esbuild"
 
 # ─── Dev server (netlify dev) ────────────────────────────────────────────────
 [dev]
@@ -59,6 +64,12 @@
     X-XSS-Protection        = "1; mode=block"
 
 # ─── Redirects ────────────────────────────────────────────────────────────────
+# Clean URL for the proxy function
+[[redirects]]
+  from   = "/api/proxy"
+  to     = "/.netlify/functions/proxy"
+  status = 200
+
 # Serve index.html for bare root without a trailing-slash redirect loop
 [[redirects]]
   from   = "/"

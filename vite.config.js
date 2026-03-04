@@ -2,10 +2,79 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const STRIP_HEADERS = new Set([
+  'x-frame-options',
+  'content-security-policy',
+  'content-security-policy-report-only',
+  'transfer-encoding',
+  'connection',
+])
+
+/** Vite dev-server middleware that mirrors the Netlify /api/proxy function */
+function devProxyPlugin() {
+  return {
+    name: 'dev-proxy',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url?.startsWith('/api/proxy')) return next()
+
+        const rawUrl = new URL(req.url, 'http://localhost').searchParams.get('url')
+        if (!rawUrl) {
+          res.writeHead(400); res.end('Missing url parameter'); return
+        }
+
+        let parsed
+        try { parsed = new URL(rawUrl) } catch {
+          res.writeHead(400); res.end('Invalid URL'); return
+        }
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+          res.writeHead(400); res.end('Only http/https allowed'); return
+        }
+
+        try {
+          const upstream = await fetch(rawUrl, {
+            redirect: 'follow',
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+              Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9',
+            },
+            signal: AbortSignal.timeout(15_000),
+          })
+
+          const ct = upstream.headers.get('content-type') ?? 'text/html; charset=utf-8'
+          res.writeHead(upstream.status, { 'Content-Type': ct })
+
+          if (ct.includes('text/html')) {
+            let html = await upstream.text()
+            const origin = `${parsed.protocol}//${parsed.host}`
+            const dir = parsed.pathname.replace(/[^/]*$/, '')
+            const baseTag = `<base href="${origin}${dir}">`
+            if (!/<base[\s>]/i.test(html)) {
+              html = /<head[\s>]/i.test(html)
+                ? html.replace(/(<head[^>]*>)/i, `$1${baseTag}`)
+                : baseTag + html
+            }
+            res.end(html)
+          } else {
+            const buf = await upstream.arrayBuffer()
+            res.end(Buffer.from(buf))
+          }
+        } catch (err) {
+          const timedOut = err.name === 'TimeoutError' || err.name === 'AbortError'
+          res.writeHead(timedOut ? 504 : 502)
+          res.end(timedOut ? 'Proxy timeout' : `Proxy error: ${err.message}`)
+        }
+      })
+    },
+  }
+}
+
 export default defineConfig({
   root: '.',
 
   plugins: [
+    devProxyPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'icons/*.png'],
