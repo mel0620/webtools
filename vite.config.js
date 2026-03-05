@@ -115,7 +115,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main:                resolve(__dirname, 'index.html'),
-        'breakpoint-tester': resolve(__dirname, 'tools/breakpoint-tester.html'),
+        // 'breakpoint-tester': resolve(__dirname, 'tools/breakpoint-tester.html'),
         'case-converter':    resolve(__dirname, 'tools/case-converter.html'),
         'color-picker':      resolve(__dirname, 'tools/color-picker.html'),
         'gradient-generator':resolve(__dirname, 'tools/gradient-generator.html'),
